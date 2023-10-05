@@ -1,0 +1,111 @@
+---
+title: "CE302: Projeto"
+date: 2023-10-05
+author:
+  - name: Deisy Morselli Gysi
+    id: dm
+    email: deisy.gysi@ufpr.br
+    affiliation: 
+      - name: Universidade Federal do Paraná
+        city: Curitiba
+        state: PR
+        url: https://deisygysi.github.io/
+abstract: > 
+  Inclua aqui um resumo sobre o seu projeto. Esse resumo deve ter entre 150 e 200 palavras. Deve apresentar a motivação para o estudo, uma breve introdução, a metodologia aplicada, resultados e uma breve conclusão. Não deve conter referências bibliográficas.
+keywords:
+  - Análise de Dados
+  - Exemplo
+lang: pt
+bibliography: refs.bib
+csl: https://raw.githubusercontent.com/citation-style-language/styles/master/apa.csl
+code-fold: true
+code-line-numbers: true
+execute: 
+  warning: false
+  error: false
+format: 
+  html: default
+  pdf: default
+---
+
+## Introdução
+
+O livro *Os Miseráveis* de Victor Hugo (1802 - 1885), publicado em 1862, apresenta uma crítica à desigualdade social e à miséria vividos na França do período da revolução francesa. A história foca no destino de um personagem principal: *Jean Valjean* e narra seus encontros com demais personagens desde o momento da sua soltura até sua morte.
+
+Aqui, temos como objetivo analisar as relações interpessoais de *Jean Valjean* ao longo de sua tragetória.
+
+## Materiais e Métodos
+
+A fim de analisar os encontros do personagem principal, iniciamos lendo os banco de dados `les_mis_personagens.csv` e `lesmis_aparicoes.csv`. Os dados foram coletados por XXXX em XXXX [@nr].
+
+```{r}
+#| label: carregando os pacotes
+require(data.table)
+require(tidyverse)
+require(magrittr)
+```
+
+```{r}
+#| label: lendo dados
+personagens <- fread("../../99_dados/00_raw/lesmis_personagens.csv")
+encontros <- fread("../../99_dados/00_raw/lesmis_aparicoes.csv")
+```
+
+...
+
+## Resultados e Discussão
+
+```{r}
+mais_encontros = encontros %>% 
+  filter(from == "Valjean" | 
+           to == "Valjean") %>% 
+  arrange(desc(degree)) %>% 
+  top_n(2)
+```
+
+O personagem que teve mais encontros com Jean Valjean foi `r mais_encontros$to[1]`, com `r mais_encontros$degree[1]` interações, seguido pelo personagem `r mais_encontros$to[2]`, com `r mais_encontros$degree[2]` encontros. Juntos os dois totalizaram `r round(sum(mais_encontros$degree)/sum(encontros$degree)*100,2)` % do total de interações do personagem principal.
+
+```{r}
+maiores_aparicoes = encontros%>% 
+  pivot_longer(-degree, 
+               names_to = "direcao", 
+               values_to = "personagem") %>% 
+  select(-direcao) %>% 
+  group_by(personagem) %>%
+  summarise(aparicoes = sum(degree)) %>% 
+  arrange(desc(aparicoes)) %>% 
+  filter(aparicoes > 40)
+
+maiores_aparicoes$personagem %<>% factor(levels = maiores_aparicoes$personagem )
+```
+
+Um gráfico mostrando os personagens que aparecem mais vezes está apresentado em @fig-01.
+
+```{r}
+#| fig-cap: Número de aparições dos personagens pricncipais.
+#| label: fig-01
+maiores_aparicoes %>% 
+  ggplot() +
+  aes(y = personagem, 
+      x = aparicoes, 
+      fill = personagem) +
+  geom_col() +
+  scale_fill_hue(direction = 1) +
+  theme_minimal() +
+  labs(x = "# Aparições",
+       y = "Personagem") + 
+  theme(legend.position = "none", 
+        text = element_text(size = 18)) 
+```
+
+`r maiores_aparicoes$personagem[1]` é o personagem que aparece mais vezes no romance de Victor Hugo, seguido por `r maiores_aparicoes$personagem[2]`. Javert, o arqui-inimigo de Jean, aparece apenas `r maiores_aparicoes$aparicoes[maiores_aparicoes$personagem == "Javert"]` vezes, destas `r encontros %>% filter(from %in% c("Javert", "Valjean") & to %in% c("Javert", "Valjean")) %>% pull(degree)` são com Jean, `r encontros %>% filter(from %in% c("Javert", "Enjolras") & to %in% c("Javert", "Enjolras")) %>% pull(degree)` com Enjolras, o líder do ABC.
+
+...
+
+## Conclusões e Persperctivas Futuras
+
+Valjean, um homem condenado à morte - mesmo que livre - é o protagonista do romance de Victor Hugo, _Os miseráveis_. Embora perseguido por Javert durante toda a narrativa, apresentam poucos encontros, de fato, apenas cerca de 9% dos encontros de ambos.
+
+Neste trabalho, analisamos a estrutura dos encontros entre os personagens principais da narrativa de Victor Hugo. Análises referentes a ... ainda devem ser realizadas para melhor compreensão de temas como ...
+
+## Referências
