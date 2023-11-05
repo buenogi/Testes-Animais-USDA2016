@@ -75,8 +75,6 @@ for(i in variaveis){
 
 # Pivotagem  para criação da variável espécie
 
-dados2 <- list(dados_A,dados_B,dados_C,dados_D,dados_E)
-
 dados <- list(dados_A,dados_B,dados_C,dados_D,dados_E)
 
 for(i in 1: length(dados)){
