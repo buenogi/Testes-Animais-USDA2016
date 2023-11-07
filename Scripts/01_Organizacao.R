@@ -3,7 +3,7 @@ library(readr)
 library(magrittr)
 # Organização de dados
  
-dados_A <- read.csv("Dados/Brutos/ALL_PAINTYPES_2016.csv")     # Todos os tipos de dor
+dados_A <- read.csv("Dados/Brutos/ALL_PAINTYPES_2016.csv")     # Todos os tipos de dor (C, D e E)
 dados_B <- read.csv("Dados/Brutos/COLUMNB_ANYU_ALL_2016.csv")  # Animais mantidos para este fim mas não utilizados
 dados_C <- read.csv("Dados/Brutos/COLUMNC_NPND_ALL_2016.csv")  # Animais utilizados para pesquisa sem exposição a dor e sem tratamento
 dados_D <-  read.csv("Dados/Brutos/COLUMND_WPWD_ALL_2016.csv") # Animais utilizados na pesquisa expostos a dor tratados com  fármacos
@@ -112,5 +112,5 @@ dados_E$droga <- "não"
 # União dos bancos de dados 
 dados_full <- rbind(dados_B,dados_C,dados_D, dados_E)
 write_csv(dados_full, file = "Dados/Processados/dados_processados.csv")
-write_csv(dados_A, file = "Dados/Processados/dados_totais.csv")
+write_csv(dados_A, file = "Dados/Processados/dados_simplificado.csv")
 
