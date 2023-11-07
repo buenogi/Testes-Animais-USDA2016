@@ -3,11 +3,11 @@ library(readr)
 library(magrittr)
 # Organização de dados
  
-dados_A <- read.csv("Dados/ALL_PAINTYPES_2016.csv")     # Todos os tipos de dor
-dados_B <- read.csv("Dados/COLUMNB_ANYU_ALL_2016.csv")  # Animais mantidos para este fim mas não utilizados
-dados_C <- read.csv("Dados/COLUMNC_NPND_ALL_2016.csv")  # Animais utilizados para pesquisa sem exposição a dor e sem tratamento
-dados_D <-  read.csv("Dados/COLUMND_WPWD_ALL_2016.csv") # Animais utilizados na pesquisa expostos a dor tratados com  fármacos
-dados_E <-  read.csv("Dados/COLUMNE_WPND_ALL_2016.csv") # Animais utilizados na pesquisa expostos a dor sem tratamento
+dados_A <- read.csv("Dados/Brutos/ALL_PAINTYPES_2016.csv")     # Todos os tipos de dor
+dados_B <- read.csv("Dados/Brutos/COLUMNB_ANYU_ALL_2016.csv")  # Animais mantidos para este fim mas não utilizados
+dados_C <- read.csv("Dados/Brutos/COLUMNC_NPND_ALL_2016.csv")  # Animais utilizados para pesquisa sem exposição a dor e sem tratamento
+dados_D <-  read.csv("Dados/Brutos/COLUMND_WPWD_ALL_2016.csv") # Animais utilizados na pesquisa expostos a dor tratados com  fármacos
+dados_E <-  read.csv("Dados/Brutos/COLUMNE_WPND_ALL_2016.csv") # Animais utilizados na pesquisa expostos a dor sem tratamento
 
 # Abordar na introdução:
 # 1. Qual é o posicionamento da população estadunidense com relação ao uso de animais em pesquisa?
