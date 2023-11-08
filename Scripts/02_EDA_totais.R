@@ -7,6 +7,7 @@ library(tidyverse)
 library(magrittr)
 library(plotly)
 library(patchwork)
+library(sf)
 
 # Funções-----------------------------------------------------------------------
 source("Funcoes/02_AnimalSum.R")
@@ -38,14 +39,21 @@ totais$especie <- as.factor(totais$especie)
 
 # 1º - Medidas resumo por espécie----------------------------------------------
 
-Total <- AnimalSum(totais,especie,n_animais)
+Total_SUM <- AnimalSum(totais,especie,n_animais)
 
-Utilizados <- totais%>%
+Utilizados_SUM  <- totais%>%
   filter(utilizado == "sim")%>%
   AnimalSum(especie = especie, n_animais = n_animais)
 
-Mantidos <- totais%>%
+Mantidos_SUM  <- totais%>%
   filter(utilizado != "sim")%>%
+  AnimalSum(especie = especie, n_animais = n_animais)
+
+# Avaliação dos animais que experenciam dor
+
+Dor_SUM <- totais%>%
+  filter(dor == "sim")%>%
+  group_by(especie)%>%
   AnimalSum(especie = especie, n_animais = n_animais)
 
 # 2º - Distribuição total - (violino)---------------------------------------------------
@@ -467,12 +475,12 @@ Nanimais_Utilizados <- totais%>%
 Nanimais_Utilizados <-sum(Nanimais_Utilizados$n_animais)
 
 #Nº de animais submetidos a dor
-NanimaisDor_Total <-dadosProcessados%>%
+NanimaisDor_Total <-totais%>%
   filter(dor == "sim")%>%
   summarise(NanimaisDor_Total = sum(n_animais))
 NanimaisDor_Total <- NanimaisDor_Total$NanimaisDor_Total
 
-# 8º - Tabelas de Frequencia (Gerais)-------------------------------------------
+# 8º - Tabelas de frequencia (Gerais)-------------------------------------------
 
 FreqUtilizacao <- totais%>%
   group_by(utilizado)%>%
@@ -505,106 +513,52 @@ P6_Utilizacao <- FreqUtilizacao%>%
   ggplot(aes(x = x,  y = freqRel, fill = utilizado))+
   geom_col(position="stack", width = 0.15)+
   scale_fill_manual(values = c("não" = "#e64a19", "sim" = "#052935"))+
+  scale_y_continuous(labels = scales::label_percent())+
   labs(x = "Total",
        y = "Nº de Animais",
-       fill = "Utilização")+
+       fill = "Utilização",
+       title = "Utilização")+
   coord_flip()+
   theme_minimal()+
   theme(text = element_text(size = 18, face = "bold"))
 
 # Dor - Percentual de animais que experenciam dor durante a experimentação
 
-FreqDor%>%
+P6_Dor <- FreqDor%>%
   ggplot(aes(x = x,  y = freqRel, fill = dor))+
   geom_col(position="stack", width = 0.15)+
   scale_fill_manual(values = c("não" = "#e64a19", "sim" = "#052935"))+
+  scale_y_continuous(labels = scales::label_percent())+
   labs(x = "Total",
        y = "Nº de Animais",
-       fill = "Dor")+
+       fill = "Dor",
+       title = "Dor")+
   coord_flip()+
   theme_minimal()+
   theme(text = element_text(size = 18, face = "bold"))
 
-
-
 # Com relação aos que experenciam dor
-FreqDroga%>%
+
+P6_Droga <- FreqDroga%>%
   ggplot(aes(x = x,  y = freqRel, fill = droga))+
   geom_col(position="stack", width = 0.15)+
   scale_fill_manual(values = c("não" = "#e64a19", "sim" = "#052935"))+
+  scale_y_continuous(labels = scales::label_percent())+
   labs(x = "Total",
        y = "Nº de Animais",
-       fill = "Droga")+
+       fill = "Droga",
+       title = "Anestesia/analgesia")+
   coord_flip()+
   theme_minimal()+
   theme(text = element_text(size = 18, face = "bold"))
 
+P6_FreqGeral <- (P6_Utilizacao/P6_Dor/P6_Droga)+ plot_annotation(tag_levels = "A")
+P6_FreqGeral
 
-# Avaliação dos animais que experenciam dor
+ggsave(filename = "Figuras/06_Frequencias.png", plot = P6_FreqGeral)
+  
+# 10º - Tabelas de frequencia de utilização por especie -------------------------
 
-dataDor <- dadosProcessados%>%
-  filter(dor == "sim")
-
-totaisDor_SUM <- dataDor%>%
-  group_by(especie)%>%
-  summarise(minimo = min(n_animais),
-            "1º Quantil" = quantile(n_animais, 0.25),
-            "Mediana" = quantile(n_animais, 0.5),
-            "3º Quantil" = quantile(n_animais, 0.75),
-            maximo = max(n_animais),
-            media = mean(n_animais),
-            desvio = sd(n_animais))
-
-# Ranking das espécies que experenciam dor
-
-dataDor%>% 
-  ggplot(aes(x = especie,  y = n_animais, fill = droga))+
-  geom_col(position="stack")+
-  scale_fill_manual(values = c("não" = "#e64a19", "sim" = "#052935"))+
-  scale_x_discrete(limits = c("gatos","ovelhas","animais_de_fazenda",
-                              "caes","primatas_nao_humanos","porcos",
-                              "outras_especies","hamsters", "cavia_p", 
-                              "coelhos"),
-                   labels = c("cavia_p" = "C. porcellus",
-                              "outras_especies" = "Outras espécies",
-                              "coelhos" = "Coelhos",
-                              "hamsters" = "Hamsters",
-                              "primatas_nao_humanos" = "Primatas não humanos",
-                              "caes" = "Cães",
-                              "porcos" = "Porcos",
-                              "animais_de_fazenda" = "Animais de fazenda",
-                              "gatos" = "Gatos",
-                              "ovelhas" = "Ovelhas"))+
-  labs(x = "Espécies",
-       y = "Nº de Animais",
-       fill = "Terapia")+
-  coord_flip()+
-  theme_minimal()+
-  theme(text = element_text(size = 18, face = "bold"))
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-#8º - Frequencias por especie -------------------------------------------------------
-
-# Frequencias por especie
 Frequencia_Total <- totais%>%
   group_by(especie)%>%
   summarise(FreqAbs = sum(n_animais), 
@@ -632,9 +586,9 @@ Frequencia_Mantidos <- totais%>%
             FreqRelPerM =  (sum(n_animais)/Nanimais_Mantidos)*100,
             x = ".")
 
-# Visualização
+# 11º - Gráficos de frequencia de utilização por especie ------------------------
 
-P6_FreqTotal <- Frequencia_Total %>%
+P7_FreqTotal <- Frequencia_Total %>%
   mutate(especie = factor(especie,levels = c("ovelhas","gatos",
                                              "animais_de_fazenda", "porcos",
                                              "caes","primatas_nao_humanos",
@@ -670,8 +624,8 @@ P6_FreqTotal <- Frequencia_Total %>%
                       coord_flip()+
                       theme_minimal()+
                        theme(text = element_text(size = 12, hjust = 0.5, face = "bold"))
-P6_FreqTotal 
-P6_FreqUtilizadoT <- Frequencia_Utilizados %>%
+P7_FreqTotal 
+P7_FreqUtilizadoT <- Frequencia_Utilizados %>%
   mutate(especie = factor(especie,levels = c("ovelhas","gatos",
                                              "animais_de_fazenda", "porcos",
                                              "caes","primatas_nao_humanos",
@@ -708,7 +662,7 @@ P6_FreqUtilizadoT <- Frequencia_Utilizados %>%
   theme_minimal()+
   theme(text = element_text(size = 12, hjust = 0.5, face = "bold"))
   
-P6_FreqUtilizadoU <- Frequencia_Utilizados %>%
+P7_FreqUtilizadoU <- Frequencia_Utilizados %>%
   mutate(especie = factor(especie,levels = c("ovelhas","gatos",
                                              "animais_de_fazenda", "porcos",
                                              "caes","primatas_nao_humanos",
@@ -745,7 +699,7 @@ P6_FreqUtilizadoU <- Frequencia_Utilizados %>%
   theme_minimal()+
   theme(text = element_text(size = 12, hjust = 0.5, face = "bold"))
   
-P6_FreqMantidoT <- Frequencia_Mantidos %>%
+P7_FreqMantidoT <- Frequencia_Mantidos %>%
   mutate(especie = factor(especie,levels = c("ovelhas","gatos",
                                              "animais_de_fazenda", "porcos",
                                              "caes","primatas_nao_humanos",
@@ -783,7 +737,7 @@ P6_FreqMantidoT <- Frequencia_Mantidos %>%
   theme_minimal()+
   theme(text = element_text(size = 12, hjust = 0.5, face = "bold"))
 
-P6_FreqMantidoM <-Frequencia_Mantidos %>%
+P7_FreqMantidoM <-Frequencia_Mantidos %>%
   mutate(especie = factor(especie,levels = c("ovelhas","gatos",
                                              "animais_de_fazenda", "porcos",
                                              "caes","primatas_nao_humanos",
@@ -822,24 +776,48 @@ P6_FreqMantidoM <-Frequencia_Mantidos %>%
   theme(text = element_text(size = 12, hjust = 0.5, face = "bold"))
 
 
-P6_Frequencias <- (P6_FreqTotal/P6_FreqUtilizadoT/P6_FreqUtilizadoU/
-       P6_FreqMantidoT/P6_FreqMantidoM)+plot_annotation(tag_levels = "A")
-P6_Frequencias
+P7_FreqUtiSp <- (P7_FreqTotal/P7_FreqUtilizadoT/P7_FreqUtilizadoU/
+       P7_FreqMantidoT/P7_FreqMantidoM)+plot_annotation(tag_levels = "A")
+P7_FreqUtiSp
 
-ggsave(filename = "Figuras/06_Frequencias.png", plot = P6_Frequencias)
+ggsave(filename = "Figuras/P7_FreqUtiSp.png", plot = P7_FreqUtiSp)
 
-# Bivariada
+# 12º - Gráfico de frequencia de dor  e terapia por espécie----------------------
+# Ranking das espécies que experenciam dor
 
+P8_FreqDor <- totais%>%
+  filter(dor == "sim")%>% 
+  ggplot(aes(x = especie,  y = n_animais, fill = droga))+
+  geom_col(position="stack")+
+  scale_fill_manual(values = c("não" = "#e64a19", "sim" = "#052935"))+
+  scale_x_discrete(limits = c("gatos","ovelhas","animais_de_fazenda",
+                              "caes","primatas_nao_humanos","porcos",
+                              "outras_especies","hamsters", "cavia_p", 
+                              "coelhos"),
+                   labels = c("cavia_p" = "C. porcellus",
+                              "outras_especies" = "Outras espécies",
+                              "coelhos" = "Coelhos",
+                              "hamsters" = "Hamsters",
+                              "primatas_nao_humanos" = "Primatas não humanos",
+                              "caes" = "Cães",
+                              "porcos" = "Porcos",
+                              "animais_de_fazenda" = "Animais de fazenda",
+                              "gatos" = "Gatos",
+                              "ovelhas" = "Ovelhas"))+
+  labs(x = "Espécies",
+       y = "Nº de Animais",
+       fill = "Terapia")+
+  coord_flip()+
+  theme_minimal()+
+  theme(text = element_text(size = 18, face = "bold"))
 
-Principal = c("#052935", "#00525b",
-              "#007e72", "#45ab79", 
-              "#98d574", "#f9f871",
-              "#897ba0", "#f7b4cf")
+ggsave(filename = "Figuras/P8_FreqDor.png", plot = P8_FreqDor)
 
+# ! Avaliar a composição das espécies dentro do grupo submetido a dor
+# ! Avaliar a composição das espécies dentro do grupo que recebe tratamento
 
-# Dispersão
-
-totais%>%
+# 13º - Dispersão --------------------------------------------------------------
+P9_Dispersao <- totais%>%
   mutate(especie = factor(especie,levels = c("cavia_p", "outras_especies",
                                              "coelhos","hamsters",
                                              "primatas_nao_humanos","caes",
@@ -876,8 +854,9 @@ totais%>%
   theme_light() +
   theme(text = element_text(size = 12, hjust = 0.5, face = "bold"))
 
+ggsave(filename = "Figuras/P9_Dispersao.png", plot = P9_Dispersao)
 
-totais%>%
+P10_Dispersao <- totais%>%
   mutate(especie = factor(especie,levels = c("cavia_p", "outras_especies",
                                              "coelhos","hamsters",
                                              "primatas_nao_humanos","caes",
@@ -901,20 +880,28 @@ totais%>%
        y = "Nº de animais total por espécie")+
   theme_bw()+
   theme(text = element_text(size = 12, hjust = 0.5, face = "bold"))
-
-# Mapas
+P10_Dispersao
+ggsave(filename = "Figuras/P10_Dispersao.png", plot = P10_Dispersao)
+# 14º - Mapas ------------------------------------------------------------------
 
 # Separação do Alaska, Hawaii e Porto Rico
-HI <- dados_full%>%
+HI <- totais%>%
   filter(estado == "HI")
 
-AK <- dados_full%>%
+AK <- totais%>%
   filter(estado == "AK")
 
-PR <- dados_full%>%
+PR <- totais%>%
   filter(estado == "PR") 
 
-dados_full <- dados_full[!(dados_full$estado %in% c("HI", "AK", "PR")), ]
+totais <- totais[!(totais$estado %in% c("HI", "AK", "PR")), ]
+totais$classes <- as.factor(totais$classes)
+totais$classes_N <- as.factor(totais$classes_N)
+totais$geometry <- st_as_sf(totais$geometry)
+
+geometry <- st_as_sf(totais$geometry, wkt = "geometry")
+
+sapply(totais, class)
 
 MAPA1 <- totais%>%
   ggplot() +
@@ -925,6 +912,7 @@ MAPA1 <- totais%>%
   theme(legend.position = "bottom",
         legend.title = element_text(size = 12, face = "bold"))
 MAPA1
+
 
 MAPA1 <- ggplotly(MAPA1)
 
@@ -1037,3 +1025,8 @@ Principal = c("cavia_p" = "#052935",
               "ovelhas" = "#e64a19")
 
 c("#052935" , "#00c6aa", "#2a8476", "#344b46")
+
+
+#LEMBRETES ---------------------------------------------------------------------
+# ! Avaliar a composição das espécies dentro do grupo submetido a dor
+# ! Avaliar a composição das espécies dentro do grupo que recebe tratamento
