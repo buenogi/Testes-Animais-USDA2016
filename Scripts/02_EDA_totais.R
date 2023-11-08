@@ -3,6 +3,14 @@ library(tidyverse)
 library(sf)
 library(plotly)
 library(stringr)
+library(magrittr)
+
+#Para esta análise inicial, será avaliado o conj de dados simplificado no qual
+# há o numero de animais utilizado independentemente da dor e administração de 
+# drogas
+
+totais <- read_csv(file = "Dados/Processados/dados_simplificado.csv")
+
 
 # Definição da paleta de cores:
 # Principal = "#052935"
@@ -19,12 +27,14 @@ c("#052935" , "#00c6aa", "#2a8476", "#344b46")
 
 # Análise exploratória - Dados totais
 
-totais <- read_csv(file = "Dados/Processados/dados_totais.csv")
+
+
+
 totais$estado <- as.factor(totais$estado)
 totais$especie <- as.factor(totais$especie)
 
 # Obs: Neste conjunto de dados estão contabilizados todos os animais utilizados
-# em pesquisas em 2016, independenetemente do tipo de dor associada ao 
+# em pesquisas em 2016, independentemente do tipo de dor associada ao 
 # procedimento realizado
 
 # Variáveis:
