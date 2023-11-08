@@ -88,7 +88,17 @@ frequencias%>%
                                "porcos" = "#face4b", 
                                "animais_de_fazenda" = "#f7b22d",
                                "gatos" = "#ee7014",
-                               "ovelhas" = "#e64a19"))+
+                               "ovelhas" = "#e64a19"),
+                    labels = c("cavia_p" = "C. porcellus",
+                               "outras_especies" = "Outras espécies",
+                               "coelhos" = "Coelhos",
+                               "hamsters" = "Hamsters",
+                               "primatas_nao_humanos" = "Primatas não humanos",
+                               "caes" = "Cães",
+                               "porcos" = "Porcos",
+                               "animais_de_fazenda" = "Animais de fazenda",
+                               "gatos" = "Gatos",
+                               "ovelhas" = "Ovelhas"))+
   labs(x = "Animais",
        y = "Nº de animais",
        fill = "Espécie")+
@@ -207,11 +217,10 @@ ggplot() +
 totais %>%
   ggplot(aes(x = n_animais, y = especie)) +
   geom_violin(fill = "#052935",color = "#052935", size = 1) +
-  scale_y_discrete(limits = c("cavia_p", "outras_especies",
-                              "coelhos", "hamsters",
-                              "primatas_nao_humanos", "caes",
-                              "porcos", "animais_de_fazenda",
-                              "gatos", "ovelhas"),
+  scale_y_discrete(limits = c("ovelhas","gatos",
+                              "animais_de_fazenda", "porcos",
+                              "caes","primatas_nao_humanos",
+                              "coelhos","outras_especies","cavia_p", "hamsters"),
                    labels = c("cavia_p" = "C. porcellus",
                               "outras_especies" = "Outras espécies",
                               "coelhos" = "Coelhos",
@@ -303,34 +312,6 @@ totais%>%
   theme_bw()+
   theme(text = element_text(size = 12, hjust = 0.5, face = "bold"))
 
-# Espécie x n_animais - Gŕafico de barras - Ranking das espécies
-
-
-totais_SUM %>%
-  mutate(especie = factor(especie, levels = c("cavia_p", "outras_especies",
-                                              "coelhos", "hamsters",
-                                              "primatas_nao_humanos", "caes",
-                                              "porcos", "animais_de_fazenda",
-                                              "gatos", "ovelhas"))) %>%
-  ggplot(aes(x = especie, y = maximo)) +
-  geom_col(fill = "#052935", color = "#052935") +
-  labs(x = "Espécie", y = "Nº de animais por espécie") +
-  coord_flip() +
-  scale_x_discrete( labels = c(
-    "cavia_p" = "C. porcellus",
-    "outras_especies" = "Outras espécies",
-    "coelhos" = "Coelhos",
-    "hamsters" = "Hamsters",
-    "primatas_nao_humanos" = "Primatas não humanos",
-    "caes" = "Cães",
-    "porcos" = "Porcos",
-    "animais_de_fazenda" = "Animais de fazenda",
-    "gatos" = "Gatos",
-    "ovelhas" = "Ovelhas"
-  )) +
-  theme_minimal()+
-  theme(text = element_text(size = 12, hjust = 0.5, face = "bold"))
-
 # Mapas
 US <- read_sf("Dados/Brutos/mapa/States_shapefile.shx")
 
@@ -348,7 +329,6 @@ totais$classes <- cut(totais$total,
                                  ">50.000"))
 
 totais$classes <- as.factor(totais$classes)
-
 
 totais$classes_N <- cut(totais$n_animais,
                         breaks = c(0,100,500,1000,5000,10000,25000,Inf),
