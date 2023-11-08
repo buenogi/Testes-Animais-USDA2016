@@ -1,6 +1,7 @@
 library(tidyverse)
-library(readr)
 library(magrittr)
+library(sf)
+
 # Organização de dados
  
 dados_A <- read.csv("Dados/Brutos/ALL_PAINTYPES_2016.csv")     # Todos os tipos de dor (C, D e E)
@@ -8,19 +9,6 @@ dados_B <- read.csv("Dados/Brutos/COLUMNB_ANYU_ALL_2016.csv")  # Animais mantido
 dados_C <- read.csv("Dados/Brutos/COLUMNC_NPND_ALL_2016.csv")  # Animais utilizados para pesquisa sem exposição a dor e sem tratamento
 dados_D <-  read.csv("Dados/Brutos/COLUMND_WPWD_ALL_2016.csv") # Animais utilizados na pesquisa expostos a dor tratados com  fármacos
 dados_E <-  read.csv("Dados/Brutos/COLUMNE_WPND_ALL_2016.csv") # Animais utilizados na pesquisa expostos a dor sem tratamento
-
-# Abordar na introdução:
-# 1. Qual é o posicionamento da população estadunidense com relação ao uso de animais em pesquisa?
-# 2. Quais são as legislações a respeito?
-# 3. Qual é a discussão do ponto de vista ético?
-# 4. Qual é o ponto de vista científico a respeito?
-
-# Pontos a serem avaliados a partir destes dados:
-# 5. Há diferença com relação as espécies utilizadas em ensaios com exposição a dor?
-# 6. há informações a respeito do motivo pelo qual estes animais são empregados em pesquisa?Qual é a relevancia de cada espécie?
-# 7. Qual são as espécies mais utilizadas? 
-# 8. Há diferença com relação as espécies utilizadas por tipo de ensaio ?
-# 9. Quais são os Estados que mais usam animais em pesquisa?
 
 # Alteração da nomenclatura das variáveis
 
@@ -111,6 +99,49 @@ dados_E$droga <- "não"
 
 # União dos bancos de dados 
 dados_full <- rbind(dados_B,dados_C,dados_D, dados_E)
+
+# Adição das geometrias 
+
+US <- read_sf("Dados/Brutos/mapa/States_shapefile.shx")
+dados_full <- full_join(dados_full, US, by = c("estado"= "State_Code"))
+dados_full$State_Name <- str_to_title(dados_full$State_Name)
+
+dados_full%<>%
+  select(-c(Program, FID, FID_1, Flowing_St))
+
+# Discretização do nº de animais utilizados em pesquisa - Total
+
+dados_full$classes <- cut(dados_full$total,
+                          breaks = c(0,500,1000,5000,10000,25000,50000,Inf),
+                          labels = c("< 500", 
+                                     "500 - 1.000",
+                                     "1.000 - 5.000",
+                                     "5.000 - 10.000",
+                                     "10.000 - 25.000",
+                                     "25.000 - 50.000",
+                                     ">50.000"))
+
+dados_full$classes <- as.factor(dados_full$classes)
+
+# Discretização do nº de animais utilizados em pesquisa - Para contagem por espécie
+dados_full$classes_N <- cut(dados_full$n_animais,
+                            breaks = c(0,100,500,1000,5000,10000,25000,Inf),
+                            labels = c("< 100", 
+                                       "100 - 500",
+                                       "500 - 1.000",
+                                       "1.000 - 5.000",
+                                       "5.000 - 10.000",
+                                       "10.000 - 25.000",
+                                       ">25.000"))
+
+dados_full$classes_N <- as.factor(dados_full$classes_N)
+
+for( i in 1:nrow(dados_full)){
+  if (is.na(dados_full$classes_N[i])) {
+    dados_full$classes_N[i] <- "< 100"
+  }
+}
+
 write_csv(dados_full, file = "Dados/Processados/dados_processados.csv")
 write_csv(dados_A, file = "Dados/Processados/dados_simplificado.csv")
 
