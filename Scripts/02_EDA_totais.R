@@ -1,4 +1,3 @@
-library(ggplot2)
 library(tidyverse)
 library(sf)
 library(plotly)
@@ -17,18 +16,21 @@ totais <- read_csv(file = "Dados/Processados/dados_simplificado.csv")
 # #007e72 , #45ab79, #98d574 , 
 # #897ba0 , #f7b4cf
 
-Principal = c("#052935", "#00525b",
-              "#007e72", "#45ab79", 
-              "#98d574", "#f9f871",
-              "#897ba0", "#f7b4cf")
+Principal = c("cavia_p" = "#052935",
+              "outras_especies" = "#00525b",
+              "coelhos" = "#007e72",
+              "hamsters" = "#45ab79",
+              "primatas_nao_humanos" = "#98d574",
+              "caes" = "#d0db5e",
+              "porcos" = "#face4b", 
+              "animais_de_fazenda" = "#f7b22d",
+              "gatos" = "#ee7014",
+              "ovelhas" = "#e64a19")
 
 c("#052935" , "#00c6aa", "#2a8476", "#344b46")
 
 
 # Análise exploratória - Dados totais
-
-
-
 
 totais$estado <- as.factor(totais$estado)
 totais$especie <- as.factor(totais$especie)
@@ -57,6 +59,45 @@ totais_SUM <- totais%>%
             media = mean(n_animais),
             desvio = sd(n_animais)
             )
+
+# Avaliação de frequencias
+
+frequencias <- totais%>%
+  group_by(especie)%>%
+  summarise(FreqAbs = sum(n_animais), 
+            FreqRel = sum(n_animais)/Nanimais_Total, 
+            FreqRelPer =  (sum(n_animais)/Nanimais_Total)*100, 
+            x ="." )
+
+# Visualização
+
+frequencias%>%
+  mutate(especie = factor(especie,levels = c("ovelhas","gatos",
+                                             "animais_de_fazenda", "porcos",
+                                             "caes","primatas_nao_humanos",
+                                             "hamsters","coelhos",
+                                             "outras_especies","cavia_p")))%>%
+  ggplot(aes( y = FreqAbs,x = x, fill = especie))+
+  geom_bar(position = "stack", stat = "identity",width = 0.5)+
+  scale_fill_manual(values = c("cavia_p" = "#052935",
+                               "outras_especies" = "#00525b",
+                               "coelhos" = "#007e72",
+                               "hamsters" = "#45ab79",
+                               "primatas_nao_humanos" = "#98d574",
+                               "caes" = "#d0db5e",
+                               "porcos" = "#face4b", 
+                               "animais_de_fazenda" = "#f7b22d",
+                               "gatos" = "#ee7014",
+                               "ovelhas" = "#e64a19"))+
+  labs(x = "Animais",
+       y = "Nº de animais",
+       fill = "Espécie")+
+  scale_y_continuous(labels = scales::label_number()) +
+                      coord_flip()+
+                      theme_minimal()+
+  
+  theme(text = element_text(size = 12, hjust = 0.5, face = "bold"))
+
 
 # Monovariada
 
@@ -216,11 +257,11 @@ totais%>%
     "coelhos" = "#007e72",
     "hamsters" = "#45ab79",
     "primatas_nao_humanos" = "#98d574",
-    "caes" = "#f9f871",
-    "porcos" = "#897ba0",
-    "animais_de_fazenda" = "#f7b4cf",
-    "gatos" = "violet",
-    "ovelhas" = "cyan"
+    "caes" = "#d0db5e",
+    "porcos" = "#face4b", 
+    "animais_de_fazenda" = "#f7b22d",
+    "gatos" = "#ee7014",
+    "ovelhas" = "#e64a19"
   ), labels = c(
     "cavia_p" = "C. porcellus",
     "outras_especies" = "Outras espécies",
@@ -424,11 +465,11 @@ totais %>%
     "coelhos" = "#007e72",
     "hamsters" = "#45ab79",
     "primatas_nao_humanos" = "#98d574",
-    "caes" = "#f9f871",
-    "porcos" = "#897ba0",
-    "animais_de_fazenda" = "#f7b4cf",
-    "gatos" = "violet",
-    "ovelhas" = "cyan"
+    "caes" = "#d0db5e",
+    "porcos" = "#face4b", 
+    "animais_de_fazenda" = "#f7b22d",
+    "gatos" = "#ee7014",
+    "ovelhas" = "#e64a19"
   ), labels = c(
     "cavia_p" = "C. porcellus",
     "outras_especies" = "Outras espécies",
