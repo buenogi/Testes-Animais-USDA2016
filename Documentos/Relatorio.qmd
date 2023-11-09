@@ -1,21 +1,63 @@
 ---
-title: "Relatório"
+title: "Testes em animais 2016 - USDA "
+subtitle: "Trabalho de conclusão de Programação Aplicada a Estatística"
 author: "Gislayne Bueno"
-format: html
+date: 11/09/2023
+date-format: long # date-format: dddd MMM D, YYYY   
+lang: pt
+
+fig-align: center
+fig-width: 10
+fig-height: 12
+
+toc: true
+toc-depth: 3
+toc-title: "Sumário"
+
+bibliography: REFERENCIAS.bib
+
+theme: 
+  light: journal
+  dark: journal
+format: 
+  pdf: 
+    highlight-style: dracula
+  html:
+    highlight-style: solarized
+  docx: default
 editor: visual
 ---
 
+# Resumo
+# Introdução
 # Perguntas iniciais
-
 ## Abordar na introdução:
- 1. Qual é o posicionamento da população estadunidense com relação ao uso de animais em pesquisa?
- 2. Quais são as legislações a respeito?
- 3. Qual é a discussão do ponto de vista ético?
- 4. Qual é o ponto de vista científico a respeito?
+
+1.  Qual é o posicionamento da população estadunidense com relação ao uso de animais em pesquisa?
+2.  Quais são as legislações a respeito?
+3.  Qual é a discussão do ponto de vista ético?
+4.  Qual é o ponto de vista científico a respeito?
 
 ## Pontos a serem avaliados a partir destes dados:
-5. Há diferença com relação as espécies utilizadas em ensaios com exposição a dor?
-6. há informações a respeito do motivo pelo qual estes animais são empregados em pesquisa?Qual é a relevancia de cada espécie?
-7. Qual são as espécies mais utilizadas? 
-8. Há diferença com relação as espécies utilizadas por tipo de ensaio ?
-9. Quais são os Estados que mais usam animais em pesquisa?
+
+5.  Há diferença com relação as espécies utilizadas em ensaios com exposição a dor?
+6.  Há informações a respeito do motivo pelo qual estes animais são empregados em pesquisa?Qual é a relevancia de cada espécie?
+7.  Qual são as espécies mais utilizadas?
+8.  Há diferença com relação as espécies utilizadas por tipo de ensaio?
+9.  Quais são os Estados que mais usam animais em pesquisa?
+
+# Material e métodos
+
+# Resultados
+
+# Discussão
+
+# Considerações finais
+
+# Recursos adicionais
+
+## Lista de figuras
+
+## Aplicativo
+
+# Referências
