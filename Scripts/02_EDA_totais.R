@@ -780,7 +780,7 @@ P7_FreqUtiSp <- (P7_FreqTotal/P7_FreqUtilizadoT/P7_FreqUtilizadoU/
        P7_FreqMantidoT/P7_FreqMantidoM)+plot_annotation(tag_levels = "A")
 P7_FreqUtiSp
 
-ggsave(filename = "Figuras/P7_FreqUtiSp.png", plot = P7_FreqUtiSp)
+ggsave(filename = "Figuras/07_FreqUtiSp.png", plot = P7_FreqUtiSp)
 
 # 12º - Gráfico de frequencia de dor  e terapia por espécie----------------------
 # Ranking das espécies que experenciam dor
@@ -811,7 +811,7 @@ P8_FreqDor <- totais%>%
   theme_minimal()+
   theme(text = element_text(size = 18, face = "bold"))
 
-ggsave(filename = "Figuras/P8_FreqDor.png", plot = P8_FreqDor)
+ggsave(filename = "Figuras/08_FreqDor.png", plot = P8_FreqDor)
 
 # ! Avaliar a composição das espécies dentro do grupo submetido a dor
 # ! Avaliar a composição das espécies dentro do grupo que recebe tratamento
@@ -854,7 +854,7 @@ P9_Dispersao <- totais%>%
   theme_light() +
   theme(text = element_text(size = 12, hjust = 0.5, face = "bold"))
 P9_Dispersao
-ggsave(filename = "Figuras/P9_Dispersao.png", plot = P9_Dispersao)
+ggsave(filename = "Figuras/09_Dispersao.png", plot = P9_Dispersao)
 
 P10_Dispersao <- totais%>%
   mutate(especie = factor(especie,levels = c("cavia_p", "outras_especies",
@@ -881,7 +881,7 @@ P10_Dispersao <- totais%>%
   theme_bw()+
   theme(text = element_text(size = 12, hjust = 0.5, face = "bold"))
 P10_Dispersao
-ggsave(filename = "Figuras/P10_Dispersao.png", plot = P10_Dispersao)
+ggsave(filename = "Figuras/10_Dispersao.png", plot = P10_Dispersao)
 
 # 14º - Adição das geometrias --------------------------------------------------
 
@@ -934,7 +934,7 @@ P11_MapaUtilizados <- N_animais_estado%>%
 
 
 P11_MapaUtilizados
-ggsave(filename = "Figuras/P11_MapaUtilizados.png", plot = P11_MapaUtilizados)
+ggsave(filename = "Figuras/11_MapaUtilizados.png", plot = P11_MapaUtilizados)
 
 MAPA1 <- ggplotly(P11_MapaUtilizados)
 
@@ -1006,7 +1006,7 @@ P12_MapaUtilizadosSP <- N_animais_estado_sp%>%
 P12_MapaUtilizadosSP
 
 P12_MapaUtilizadosSP
-ggsave(filename = "Figuras/P12_MapaUtilizadosSP.png", plot = P12_MapaUtilizadosSP)
+ggsave(filename = "Figuras/12_MapaUtilizadosSP.png", plot = P12_MapaUtilizadosSP)
 
 MAPA2 <- ggplotly(MAPA2)
 
@@ -1063,7 +1063,7 @@ P13_FreqUtilizadosEstSP <- totais %>%
 
 P13_FreqUtilizadosEstSP
 
-ggsave(filename = "Figuras/P13_FreqUtilizadosEstSP.png", plot = P13_FreqUtilizadosEstSP)
+ggsave(filename = "Figuras/13_FreqUtilizadosEstSP.png", plot = P13_FreqUtilizadosEstSP)
 
 # 17º - Gráfico frequencia de dor por espécie-----------------------------------
 # Ranking das espécies por experenciam dor
@@ -1095,11 +1095,12 @@ P14_FreqDorSP <- totais%>%
   theme(text = element_text(size = 18, face = "bold"))
 
 P14_FreqDorSP
-ggsave(filename = "Figuras/P14_FreqDorSP.png", plot = P14_FreqDorSP)
+ggsave(filename = "Figuras/14_FreqDorSP.png", plot = P14_FreqDorSP)
 
 # Onde são realizadas as experimentações com dor?
 
-P15_FreqDorEst <- dataDor%>% 
+P15_FreqDorEst <- totais%>%
+  filter(dor == "sim")%>%
   ggplot(aes(x = reorder(State_Name, n_animais),  y = n_animais, fill = droga))+
   geom_col(position="stack")+
   scale_fill_manual(values = c("não" = "#e64a19", "sim" = "#052935"))+
@@ -1110,7 +1111,7 @@ P15_FreqDorEst <- dataDor%>%
   theme_minimal()+
   theme(text = element_text(size = 18, face = "bold"))
 P15_FreqDorEst
-ggsave(filename = "Figuras/P15_FreqDorEst.png", plot = P15_FreqDorEst)
+ggsave(filename = "Figuras/15_FreqDorEst.png", plot = P15_FreqDorEst)
 
 # 18º - Resumo da composição - Dados aninhados ---------------------------------------
 library(circlepackeR)

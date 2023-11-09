@@ -29,16 +29,19 @@ editor: visual
 ---
 
 # Resumo
-# Introdução
-# Perguntas iniciais
-## Abordar na introdução:
+
+# 1.  Introdução
+
+## Perguntas iniciais
+
+### Abordar na introdução:
 
 1.  Qual é o posicionamento da população estadunidense com relação ao uso de animais em pesquisa?
 2.  Quais são as legislações a respeito?
 3.  Qual é a discussão do ponto de vista ético?
 4.  Qual é o ponto de vista científico a respeito?
 
-## Pontos a serem avaliados a partir destes dados:
+### Pontos a serem avaliados a partir destes dados:
 
 5.  Há diferença com relação as espécies utilizadas em ensaios com exposição a dor?
 6.  Há informações a respeito do motivo pelo qual estes animais são empregados em pesquisa?Qual é a relevancia de cada espécie?
@@ -46,18 +49,36 @@ editor: visual
 8.  Há diferença com relação as espécies utilizadas por tipo de ensaio?
 9.  Quais são os Estados que mais usam animais em pesquisa?
 
-# Material e métodos
+# 2. Material e métodos
 
-# Resultados
+# 3. Resultados
 
-# Discussão
+# 4. Discussão
 
-# Considerações finais
+# 5. Considerações finais
 
-# Recursos adicionais
+# 6. Recursos adicionais
 
-## Lista de figuras
+## 6.1. Lista de figuras
 
-## Aplicativo
+![Figura 1 - Densidade](../Figuras/01_Densidade.png)
+![Figura 2 - Boxplot total de animais para uso em pesquisa](../Figuras/02_BoxplotTotais.png)
+![Figura 3 - Boxplot Animais mantidos e não utilizados em pesquisa](../Figuras/02_BoxplotMantidos.png)
+![Figura 4 - Boxplot total de animais utilizados em pesquisa](../Figuras/02_BoxplotUtilizados.png)
+![Figura 5 - Histograma total de animais utilizados em pesquisa](../Figuras/03_HistTotais.png)
+![Figura 6 - Histograma Animais mantidos e não utilizados em pesquisa](../Figuras/03_HistMantidos.png)
+![Figura 7 - Histograma total de animais utilizados em pesquisa](../Figuras/03_HistUtilizados.png)
+![Figura 8 - Densidade total de animais utilizados em pesquisa](../Figuras/04_DensTotais.png)
+![Figura 9 - Densidade Animais mantidos e não utilizados em pesquisa](../Figuras/04_DensMantidos.png)
+![Figura 10 - Densidade total de animais utilizados em pesquisa](../Figuras/04_DensUtilizados.png)
+![Figura 11 - Densidade total de animais utilizados em pesquisa](../Figuras/05_ViolinoTotais.png)
+![Figura 12 - Densidade Animais mantidos e não utilizados em pesquisa](../Figuras/05_ViolinoMantidos.png)
+![Figura 13 - Densidade total de animais utilizados em pesquisa](../Figuras/05_ViolinoUtilizados.png)
+![Figura 14 - Frequencias por categoria](../Figuras/06_Frequencias.png)
+![Figura 15 - Densidade Animais mantidos e não utilizados em pesquisa](../Figuras/0)
+![Figura 16 - Densidade total de animais utilizados em pesquisa](../Figuras/05_ViolinoUtilizados.png)
+
+
+## 6.2. Aplicativo
 
 # Referências
