@@ -230,3 +230,4 @@ circlepackeR(population, size = "n_animais")
 circlepackeR(population, size = "n_animais",
                   color_min = "white",
                   color_max = "#052935",width = 600,height = 600)
+

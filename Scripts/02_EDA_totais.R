@@ -20,9 +20,11 @@ totais <- read_csv(file = "Dados/Processados/dados_processados.csv")
 # procedimento realizado
 
 # Classificação das variáveis---------------------------------------------------
-
+sapply(totais, class)
 totais$estado <- as.factor(totais$estado)
 totais$especie <- as.factor(totais$especie)
+totais$classes <- as.factor(totais$classes)
+totais$classes_N <- as.factor(totais$classes_N)
 
 # Variáveis:
 # 1 - Estado - Qualitativa nominal
@@ -32,10 +34,8 @@ totais$especie <- as.factor(totais$especie)
 # 5 - Utilizado - Qualitativa nominal
 # 6 - Dor - Qualitativa nominal
 # 7 - Droga - Qualitativa nominal
-# 8 - State_Name - Qualitativa nominal
-# 9 - Geometry - Poligonos para criação de mapas
-# 10 - Classes - Quantitativa discreta - nº de animais no total
-# 11 - Classes N - Quantitativa discreta  -  nº de animais por espécie
+# 8 - Classes - Quantitativa discreta - nº de animais no total
+# 9 - Classes N - Quantitativa discreta  -  nº de animais por espécie
 
 # 1º - Medidas resumo por espécie----------------------------------------------
 
@@ -853,7 +853,7 @@ P9_Dispersao <- totais%>%
   )) +
   theme_light() +
   theme(text = element_text(size = 12, hjust = 0.5, face = "bold"))
-
+P9_Dispersao
 ggsave(filename = "Figuras/P9_Dispersao.png", plot = P9_Dispersao)
 
 P10_Dispersao <- totais%>%
@@ -882,7 +882,14 @@ P10_Dispersao <- totais%>%
   theme(text = element_text(size = 12, hjust = 0.5, face = "bold"))
 P10_Dispersao
 ggsave(filename = "Figuras/P10_Dispersao.png", plot = P10_Dispersao)
-# 14º - Mapas ------------------------------------------------------------------
+
+# 14º - Adição das geometrias --------------------------------------------------
+
+US <- read_sf("Dados/Brutos/mapa/States_shapefile.shx")
+totais <- full_join(totais, US, by = c("estado"= "State_Code"))
+totais$State_Name <- str_to_title(totais$State_Name)
+totais%<>%
+  select(-c(Program, FID, FID_1, Flowing_St))
 
 # Separação do Alaska, Hawaii e Porto Rico
 HI <- totais%>%
@@ -895,26 +902,42 @@ PR <- totais%>%
   filter(estado == "PR") 
 
 totais <- totais[!(totais$estado %in% c("HI", "AK", "PR")), ]
-totais$classes <- as.factor(totais$classes)
-totais$classes_N <- as.factor(totais$classes_N)
-totais$geometry <- st_as_sf(totais$geometry)
 
-geometry <- st_as_sf(totais$geometry, wkt = "geometry")
+# 15º - Mapas ------------------------------------------------------------------
 
-sapply(totais, class)
+N_animais_estado <- totais%>%
+  filter(utilizado == "sim")%>%
+  group_by(estado, geometry, State_Name)%>%
+  summarise(Nanimais = sum(n_animais))
+# Discretização da variável
 
-MAPA1 <- totais%>%
+N_animais_estado$classes <- cut(N_animais_estado$Nanimais,
+                                breaks = c(0,500,1000,5000,10000,25000,50000,Inf),
+                                labels = c("< 500", 
+                                           "500 - 1.000",
+                                           "1.000 - 5.000",
+                                           "5.000 - 10.000",
+                                           "10.000 - 25.000",
+                                           "25.000 - 50.000",
+                                           ">50.000"))
+
+N_animais_estado$classes <- as.factor(N_animais_estado$classes)
+
+P11_MapaUtilizados <- N_animais_estado%>%
   ggplot() +
-  geom_sf(aes(geometry = geometry, fill = classes), color = "white")+
+  geom_sf(aes(geometry = geometry, fill = classes), color = "gray")+
   scale_fill_manual(values = colorRampPalette(c("white", "#052935"))(7), 
                     name = "Nº de animais utilizados")+
   theme_void()+
   theme(legend.position = "bottom",
         legend.title = element_text(size = 12, face = "bold"))
-MAPA1
 
 
-MAPA1 <- ggplotly(MAPA1)
+P11_MapaUtilizados
+ggsave(filename = "Figuras/P11_MapaUtilizados.png", plot = P11_MapaUtilizados)
+
+MAPA1 <- ggplotly(P11_MapaUtilizados)
+
 
 custom_text <- paste("Estado: ", totais$State_Name, "<br>Nº de animais utilizados: ", totais$total)
 
@@ -922,22 +945,47 @@ MAPA1%>%
   plotly::style(text = custom_text, hoverinfo = "text")%>%
   layout( xaxis = list( linecolor = 'white'), 
           yaxis = list( linecolor = 'white'),
-    legend = list(
-      x = 0.1, 
-      y = -0.1, 
-      bgcolor = "transparent", 
-      bordercolor = "transparent",  
-      orientation = "h",
-      itemsizing = "constant",  # Define o tamanho da amostra de cor
-      itemwidth = 30
-    )
+          legend = list(
+            x = 0.1, 
+            y = -0.1, 
+            bgcolor = "transparent", 
+            bordercolor = "transparent",  
+            orientation = "h",
+            itemsizing = "constant",  # Define o tamanho da amostra de cor
+            itemwidth = 30
+          )
   )
 
 # Mapa por espécie
 
-MAPA2 <- totais %>%
+N_animais_estado_sp <- totais%>%
+  filter(utilizado == "sim")%>%
+  group_by(estado, geometry, State_Name,especie)%>%
+  summarise(Nanimais = sum(n_animais))
+
+# Discretização da variável
+
+N_animais_estado_sp$classes <- cut(N_animais_estado_sp$Nanimais,
+                                   breaks = c(0,100,500,1000,5000,10000,25000,Inf),
+                                   labels = c("< 100", 
+                                              "100 - 500",
+                                              "500 - 1.000",
+                                              "1.000 - 5.000",
+                                              "5.000 - 10.000",
+                                              "10.000 - 25.000",
+                                              ">25.000"))
+
+N_animais_estado_sp$classes <- as.factor(N_animais_estado_sp$classes)
+
+for (i in 1:nrow(N_animais_estado_sp)) {
+  if (is.na(N_animais_estado_sp$classes[i])) {
+    N_animais_estado_sp$classes[i] <- "< 100"
+  }
+}
+
+P12_MapaUtilizadosSP <- N_animais_estado_sp%>%
   ggplot() +
-  geom_sf(aes(geometry = geometry, fill = classes_N), color = "gray") +
+  geom_sf(aes(geometry = geometry, fill = classes), color = "gray") +
   scale_fill_manual(values = colorRampPalette(c("white", "#052935"))(7), 
                     name = "Nº de animais utilizados") +
   facet_wrap(~especie,nrow = 5, labeller = labeller(especie = 
@@ -955,7 +1003,10 @@ MAPA2 <- totais %>%
   theme(legend.position = "bottom",
         legend.text = element_text(size = 18),
         legend.title = element_text(size = 18, face = "bold"))
-MAPA2
+P12_MapaUtilizadosSP
+
+P12_MapaUtilizadosSP
+ggsave(filename = "Figuras/P12_MapaUtilizadosSP.png", plot = P12_MapaUtilizadosSP)
 
 MAPA2 <- ggplotly(MAPA2)
 
@@ -974,9 +1025,9 @@ MAPA2%>%
     )
     )
 
-# Estados que mais utilizam animais em pesquisa - Ranking dos estados
-
-totais %>%
+# 16º - Gráfico de frequencia de utilização de animais por estado e espécie-----
+# Ranking dos estados que mais utilizam animais em pesquisa
+P13_FreqUtilizadosEstSP <- totais %>%
   mutate(State_Name = reorder(State_Name, n_animais),
          especie = reorder(especie, n_animais)) %>%
   ggplot(aes(x = State_Name, y = n_animais, fill = especie)) +
@@ -1010,8 +1061,98 @@ totais %>%
   theme_minimal()+
   theme(text = element_text(size = 12, hjust = 0.5, face = "bold"))
 
+P13_FreqUtilizadosEstSP
 
-#Paleta:
+ggsave(filename = "Figuras/P13_FreqUtilizadosEstSP.png", plot = P13_FreqUtilizadosEstSP)
+
+# 17º - DOR
+# Ranking das espécies que experenciam dor
+
+dataDor%>% 
+  ggplot(aes(x = especie,  y = n_animais, fill = droga))+
+  geom_col(position="stack")+
+  scale_fill_manual(values = c("não" = "#e64a19", "sim" = "#052935"))+
+  scale_x_discrete(limits = c("gatos","ovelhas","animais_de_fazenda",
+                              "caes","primatas_nao_humanos","porcos",
+                              "outras_especies","hamsters", "cavia_p", 
+                              "coelhos"),
+                   labels = c("cavia_p" = "C. porcellus",
+                              "outras_especies" = "Outras espécies",
+                              "coelhos" = "Coelhos",
+                              "hamsters" = "Hamsters",
+                              "primatas_nao_humanos" = "Primatas não humanos",
+                              "caes" = "Cães",
+                              "porcos" = "Porcos",
+                              "animais_de_fazenda" = "Animais de fazenda",
+                              "gatos" = "Gatos",
+                              "ovelhas" = "Ovelhas"))+
+  labs(x = "Espécies",
+       y = "Nº de Animais",
+       fill = "Terapia")+
+  coord_flip()+
+  theme_minimal()+
+  theme(text = element_text(size = 18, face = "bold"))
+
+# Onde são realizadas as experimentações com dor?
+
+dataDor%>% 
+  ggplot(aes(x = reorder(State_Name, n_animais),  y = n_animais, fill = droga))+
+  geom_col(position="stack")+
+  scale_fill_manual(values = c("não" = "#e64a19", "sim" = "#052935"))+
+  labs(x = "Espécies",
+       y = "Nº de Animais",
+       fill = "Terapia")+
+  coord_flip()+
+  theme_minimal()+
+  theme(text = element_text(size = 18, face = "bold"))
+
+# Analise de dados aninhados
+library(circlepackeR)
+library(data.tree)
+
+
+for(i in 1:nrow(dadosProcessados)) {
+  if(dadosProcessados$utilizado[i] == "sim") {
+    dadosProcessados$utilizado[i] <- "Utilizado"
+  } else {
+    dadosProcessados$utilizado[i] <- "Não utilizado"
+  }
+}
+
+for(i in 1:nrow(dadosProcessados)) {
+  if(dadosProcessados$dor[i] == "sim") {
+    dadosProcessados$dor[i] <- "Dor envolvida"
+  } else {
+    dadosProcessados$dor[i] <- "Sem envolvimento de dor"
+  }
+}
+
+for(i in 1:nrow(dadosProcessados)) {
+  if(dadosProcessados$droga[i] == "sim") {
+    dadosProcessados$droga[i] <- "Recebeu anestesia/analgesia"
+  } else {
+    dadosProcessados$droga[i] <- "Não recebeu anestesia/analgesia"
+  }
+}
+
+dadosProcessados$especie <- stringr::str_to_title(dadosProcessados$especie)
+
+dadosProcessados$pathString <- paste("world", dadosProcessados$utilizado,
+                                     dadosProcessados$dor,
+                                     dadosProcessados$droga,
+                                     dadosProcessados$especie, sep = "/")
+
+population <- as.Node(dadosProcessados)
+
+circlepackeR(population, size = "n_animais")
+
+circlepackeR(population, size = "n_animais",
+             color_min = "white",
+             color_max = "#052935",width = 600,height = 600)
+
+
+
+#Paleta-------------------------------------------------------------------------
 
 Principal = c("cavia_p" = "#052935",
               "outras_especies" = "#00525b",
@@ -1030,3 +1171,4 @@ c("#052935" , "#00c6aa", "#2a8476", "#344b46")
 #LEMBRETES ---------------------------------------------------------------------
 # ! Avaliar a composição das espécies dentro do grupo submetido a dor
 # ! Avaliar a composição das espécies dentro do grupo que recebe tratamento
+# ! Tabela de frequencia por classe e estado

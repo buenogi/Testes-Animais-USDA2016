@@ -1,6 +1,5 @@
 library(tidyverse)
 library(magrittr)
-library(sf)
 
 # Organização de dados
  
@@ -100,48 +99,7 @@ dados_E$droga <- "não"
 # União dos bancos de dados 
 dados_full <- rbind(dados_B,dados_C,dados_D, dados_E)
 
-# Adição das geometrias 
-
-US <- read_sf("Dados/Brutos/mapa/States_shapefile.shx")
-dados_full <- full_join(dados_full, US, by = c("estado"= "State_Code"))
-dados_full$State_Name <- str_to_title(dados_full$State_Name)
-
-dados_full%<>%
-  select(-c(Program, FID, FID_1, Flowing_St))
-
-# Discretização do nº de animais utilizados em pesquisa - Total
-
-dados_full$classes <- cut(dados_full$total,
-                          breaks = c(0,500,1000,5000,10000,25000,50000,Inf),
-                          labels = c("< 500", 
-                                     "500 - 1.000",
-                                     "1.000 - 5.000",
-                                     "5.000 - 10.000",
-                                     "10.000 - 25.000",
-                                     "25.000 - 50.000",
-                                     ">50.000"))
-
-dados_full$classes <- as.factor(dados_full$classes)
-
-# Discretização do nº de animais utilizados em pesquisa - Para contagem por espécie
-dados_full$classes_N <- cut(dados_full$n_animais,
-                            breaks = c(0,100,500,1000,5000,10000,25000,Inf),
-                            labels = c("< 100", 
-                                       "100 - 500",
-                                       "500 - 1.000",
-                                       "1.000 - 5.000",
-                                       "5.000 - 10.000",
-                                       "10.000 - 25.000",
-                                       ">25.000"))
-
-dados_full$classes_N <- as.factor(dados_full$classes_N)
-
-for( i in 1:nrow(dados_full)){
-  if (is.na(dados_full$classes_N[i])) {
-    dados_full$classes_N[i] <- "< 100"
-  }
-}
-
+# Salvamento dos dados
 write_csv(dados_full, file = "Dados/Processados/dados_processados.csv")
 write_csv(dados_A, file = "Dados/Processados/dados_simplificado.csv")
 
