@@ -482,7 +482,7 @@ NanimaisDor_Total <- NanimaisDor_Total$NanimaisDor_Total
 
 # 8º - Tabelas de frequencia (Gerais)-------------------------------------------
 
-FreqUtilizacao <- totais%>%
+FreqUtilizacao_copy <- totais%>%
   group_by(utilizado)%>%
   summarise(freqAbs = sum(n_animais),
             freqRel = (sum(n_animais)/Nanimais_Total),

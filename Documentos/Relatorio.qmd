@@ -29,8 +29,9 @@ editor: visual
 ---
 
 # Resumo
+Anualmente o USDA (Departamento de Agricultura dos Estados Unidos) coleta as informações de animais empregados em pesquisas utilizadas em diferentes instâncias de experimentação. Esta prática vai de encontro ao", em('Animal Welfare Act.'),"Este aplicativo foi realizado a partir da análise das observações coletadas pelo USDA no ano de 2016.
 
-# 1.  Introdução
+# 1. Introdução
 
 ## Perguntas iniciais
 
@@ -61,23 +62,28 @@ editor: visual
 
 ## 6.1. Lista de figuras
 
-![Figura 1 - Densidade](../Figuras/01_Densidade.png)
-![Figura 2 - Boxplot total de animais para uso em pesquisa](../Figuras/02_BoxplotTotais.png)
-![Figura 3 - Boxplot Animais mantidos e não utilizados em pesquisa](../Figuras/02_BoxplotMantidos.png)
-![Figura 4 - Boxplot total de animais utilizados em pesquisa](../Figuras/02_BoxplotUtilizados.png)
-![Figura 5 - Histograma total de animais utilizados em pesquisa](../Figuras/03_HistTotais.png)
-![Figura 6 - Histograma Animais mantidos e não utilizados em pesquisa](../Figuras/03_HistMantidos.png)
-![Figura 7 - Histograma total de animais utilizados em pesquisa](../Figuras/03_HistUtilizados.png)
-![Figura 8 - Densidade total de animais utilizados em pesquisa](../Figuras/04_DensTotais.png)
-![Figura 9 - Densidade Animais mantidos e não utilizados em pesquisa](../Figuras/04_DensMantidos.png)
-![Figura 10 - Densidade total de animais utilizados em pesquisa](../Figuras/04_DensUtilizados.png)
-![Figura 11 - Densidade total de animais utilizados em pesquisa](../Figuras/05_ViolinoTotais.png)
-![Figura 12 - Densidade Animais mantidos e não utilizados em pesquisa](../Figuras/05_ViolinoMantidos.png)
-![Figura 13 - Densidade total de animais utilizados em pesquisa](../Figuras/05_ViolinoUtilizados.png)
-![Figura 14 - Frequencias por categoria](../Figuras/06_Frequencias.png)
-![Figura 15 - Densidade Animais mantidos e não utilizados em pesquisa](../Figuras/0)
-![Figura 16 - Densidade total de animais utilizados em pesquisa](../Figuras/05_ViolinoUtilizados.png)
-
+![Figura 1 - Densidade](images/01_Densidade.png)\
+![Figura 2 - Boxplot total de animais para uso em pesquisa](images/02_BoxplotMantidos.png)\
+![Figura 3 - Boxplot Animais mantidos e não utilizados em pesquisa](images/02_BoxplotMantidos.png)\
+![Figura 4 - Boxplot total de animais utilizados em pesquisa](images/02_BoxplotUtilizados.png)\
+![Figura 5 - Histograma total de animais utilizados em pesquisa](images/03_HistTotais.png)\
+![Figura 6 - Histograma Animais mantidos e não utilizados em pesquisa](images/03_HistMantidos.png)\
+![Figura 7 - Histograma total de animais utilizados em pesquisa](images/03_HistUtilizados.png)\
+![Figura 8 - Densidade total de animais utilizados em pesquisa](images/04_DensTotais.png)\
+![Figura 9 - Densidade Animais mantidos e não utilizados em pesquisa](images/04_DensMantidos.png)\
+![Figura 10 - Densidade total de animais utilizados em pesquisa](images/04_DensUtilizados.png)\
+![Figura 11 - Densidade total de animais utilizados em pesquisa](images/05_ViolinoTotais.png)\
+![Figura 12 - Densidade Animais mantidos e não utilizados em pesquisa](images/05_ViolinoMantidos.png)\
+![Figura 13 - Densidade total de animais utilizados em pesquisa](images/05_ViolinoUtilizados.png)\
+![Figura 14 - Frequências por categoria](images/06_Frequencias.png)\
+![Figura 15 - Frequência por espécie](images/07_FreqUtiSp.png)\
+![Figura 16 - Frequência de submissão a dor por espécie](images/08_FreqDor.png)\
+![Figura 17 - Dispersão total x espécie](images/09_Dispersao.png)\
+![Figura 18 - Dispersão total x espécie](images/10_Dispersao.png)\
+![Figura 19 - Mapa - Utilização por estado](images/11_MapaUtilizados.png)\
+![Figura 20 - Mapa - Utilização por estado](images/12_MapaUtilizadosSP.png)\
+![Figura 21 - Frequência de utilização por espécie e estado](images/13_FreqUtilizadosEstSP.png)\
+![Figura 22 - Frequência de espécies submetidas a dor por estado](images/14_FreqDorEst.png)
 
 ## 6.2. Aplicativo
 
