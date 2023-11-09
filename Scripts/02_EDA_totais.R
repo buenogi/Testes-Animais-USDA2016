@@ -1065,10 +1065,11 @@ P13_FreqUtilizadosEstSP
 
 ggsave(filename = "Figuras/P13_FreqUtilizadosEstSP.png", plot = P13_FreqUtilizadosEstSP)
 
-# 17º - DOR
-# Ranking das espécies que experenciam dor
-
-dataDor%>% 
+# 17º - Gráfico frequencia de dor por espécie-----------------------------------
+# Ranking das espécies por experenciam dor
+P14_FreqDorSP <- totais%>%
+  filter(dor == "sim")%>%
+  group_by(especie)%>%
   ggplot(aes(x = especie,  y = n_animais, fill = droga))+
   geom_col(position="stack")+
   scale_fill_manual(values = c("não" = "#e64a19", "sim" = "#052935"))+
@@ -1093,9 +1094,12 @@ dataDor%>%
   theme_minimal()+
   theme(text = element_text(size = 18, face = "bold"))
 
+P14_FreqDorSP
+ggsave(filename = "Figuras/P14_FreqDorSP.png", plot = P14_FreqDorSP)
+
 # Onde são realizadas as experimentações com dor?
 
-dataDor%>% 
+P15_FreqDorEst <- dataDor%>% 
   ggplot(aes(x = reorder(State_Name, n_animais),  y = n_animais, fill = droga))+
   geom_col(position="stack")+
   scale_fill_manual(values = c("não" = "#e64a19", "sim" = "#052935"))+
@@ -1105,52 +1109,76 @@ dataDor%>%
   coord_flip()+
   theme_minimal()+
   theme(text = element_text(size = 18, face = "bold"))
+P15_FreqDorEst
+ggsave(filename = "Figuras/P15_FreqDorEst.png", plot = P15_FreqDorEst)
 
-# Analise de dados aninhados
+# 18º - Resumo da composição - Dados aninhados ---------------------------------------
 library(circlepackeR)
 library(data.tree)
 
+RESUMO <- totais%>%
+  group_by(especie,utilizado,dor,droga)%>%
+  summarise(Nanimais = sum(n_animais))
 
-for(i in 1:nrow(dadosProcessados)) {
-  if(dadosProcessados$utilizado[i] == "sim") {
-    dadosProcessados$utilizado[i] <- "Utilizado"
+# Renomeação das observações
+for(i in 1:nrow(RESUMO)) {
+  if(RESUMO$utilizado[i] == "sim") {
+    RESUMO$utilizado[i] <- "Utilizado"
   } else {
-    dadosProcessados$utilizado[i] <- "Não utilizado"
+    RESUMO$utilizado[i] <- "Não utilizado"
   }
 }
 
-for(i in 1:nrow(dadosProcessados)) {
-  if(dadosProcessados$dor[i] == "sim") {
-    dadosProcessados$dor[i] <- "Dor envolvida"
+for(i in 1:nrow(RESUMO)) {
+  if(RESUMO$dor[i] == "sim") {
+    RESUMO$dor[i] <- "Dor envolvida"
   } else {
-    dadosProcessados$dor[i] <- "Sem envolvimento de dor"
+    RESUMO$dor[i] <- "Sem envolvimento de dor"
   }
 }
 
-for(i in 1:nrow(dadosProcessados)) {
-  if(dadosProcessados$droga[i] == "sim") {
-    dadosProcessados$droga[i] <- "Recebeu anestesia/analgesia"
+for(i in 1:nrow(RESUMO)) {
+  if(RESUMO$droga[i] == "sim") {
+    RESUMO$droga[i] <- "Recebeu anestesia/analgesia"
   } else {
-    dadosProcessados$droga[i] <- "Não recebeu anestesia/analgesia"
+    RESUMO$droga[i] <- "Não recebeu anestesia/analgesia"
   }
 }
 
-dadosProcessados$especie <- stringr::str_to_title(dadosProcessados$especie)
+RESUMO$especie <- stringr::str_to_title(RESUMO$especie)
 
-dadosProcessados$pathString <- paste("world", dadosProcessados$utilizado,
-                                     dadosProcessados$dor,
-                                     dadosProcessados$droga,
-                                     dadosProcessados$especie, sep = "/")
+RESUMO$pathString <- paste("world", RESUMO$utilizado,
+                           RESUMO$dor,
+                           RESUMO$droga,
+                           RESUMO$especie, sep = "/")
 
-population <- as.Node(dadosProcessados)
+population <- as.Node(RESUMO)
 
-circlepackeR(population, size = "n_animais")
+circlepackeR(population, size = "Nanimais")
 
-circlepackeR(population, size = "n_animais",
+circlepackeR(population, size = "Nanimais",
              color_min = "white",
-             color_max = "#052935",width = 600,height = 600)
+             color_max = "#052935")
 
 
+RESUMO2 <- totais%>%
+  group_by(State_Name, especie)%>%
+  summarise(Nanimais = sum(n_animais))
+
+colnames(RESUMO2) <- c("Estado","especie","Nanimais")
+
+RESUMO2$especie <- stringr::str_to_title(RESUMO2$especie)
+
+RESUMO2$pathString <- paste("world", RESUMO2$Estado,
+                           RESUMO2$especie, sep = "/")
+
+population <- as.Node(RESUMO2)
+
+circlepackeR(population, size = "Nanimais")
+
+circlepackeR(population, size = "Nanimais",
+             color_min = "#052935",
+             color_max = "#d0db5e")
 
 #Paleta-------------------------------------------------------------------------
 
