@@ -1066,40 +1066,10 @@ P13_FreqUtilizadosEstSP
 ggsave(filename = "Figuras/13_FreqUtilizadosEstSP.png", plot = P13_FreqUtilizadosEstSP)
 
 # 17º - Gráfico frequencia de dor por espécie-----------------------------------
-# Ranking das espécies por experenciam dor
-P14_FreqDorSP <- totais%>%
-  filter(dor == "sim")%>%
-  group_by(especie)%>%
-  ggplot(aes(x = especie,  y = n_animais, fill = droga))+
-  geom_col(position="stack")+
-  scale_fill_manual(values = c("não" = "#e64a19", "sim" = "#052935"))+
-  scale_x_discrete(limits = c("gatos","ovelhas","animais_de_fazenda",
-                              "caes","primatas_nao_humanos","porcos",
-                              "outras_especies","hamsters", "cavia_p", 
-                              "coelhos"),
-                   labels = c("cavia_p" = "C. porcellus",
-                              "outras_especies" = "Outras espécies",
-                              "coelhos" = "Coelhos",
-                              "hamsters" = "Hamsters",
-                              "primatas_nao_humanos" = "Primatas não humanos",
-                              "caes" = "Cães",
-                              "porcos" = "Porcos",
-                              "animais_de_fazenda" = "Animais de fazenda",
-                              "gatos" = "Gatos",
-                              "ovelhas" = "Ovelhas"))+
-  labs(x = "Espécies",
-       y = "Nº de Animais",
-       fill = "Terapia")+
-  coord_flip()+
-  theme_minimal()+
-  theme(text = element_text(size = 18, face = "bold"))
-
-P14_FreqDorSP
-ggsave(filename = "Figuras/14_FreqDorSP.png", plot = P14_FreqDorSP)
 
 # Onde são realizadas as experimentações com dor?
 
-P15_FreqDorEst <- totais%>%
+P14_FreqDorEst <- totais%>%
   filter(dor == "sim")%>%
   ggplot(aes(x = reorder(State_Name, n_animais),  y = n_animais, fill = droga))+
   geom_col(position="stack")+
@@ -1110,8 +1080,8 @@ P15_FreqDorEst <- totais%>%
   coord_flip()+
   theme_minimal()+
   theme(text = element_text(size = 18, face = "bold"))
-P15_FreqDorEst
-ggsave(filename = "Figuras/15_FreqDorEst.png", plot = P15_FreqDorEst)
+P14_FreqDorEst
+ggsave(filename = "Figuras/14_FreqDorEst.png", plot = P14_FreqDorEst)
 
 # 18º - Resumo da composição - Dados aninhados ---------------------------------------
 library(circlepackeR)
