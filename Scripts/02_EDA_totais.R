@@ -37,7 +37,7 @@ totais$especie <- as.factor(totais$especie)
 # 8 - Classes - Quantitativa discreta - nº de animais no total
 # 9 - Classes N - Quantitativa discreta  -  nº de animais por espécie
 
-# 1º - Medidas resumo por espécie----------------------------------------------
+# 1º - Medidas resumo  geral e por espécie----------------------------------------------
 
 Total_SUM <- AnimalSum(totais,especie,n_animais)
 
@@ -1035,7 +1035,8 @@ P13_FreqUtilizadosEstSP <- totais %>%
   mutate(State_Name = reorder(State_Name, n_animais),
          especie = reorder(especie, n_animais)) %>%
   ggplot(aes(x = State_Name, y = n_animais, fill = especie)) +
-  geom_col(position = "stack", stat = "identity") +
+  geom_col(position = "stack", #stat = "identity"
+           ) +
   scale_fill_manual(values = c(
     "cavia_p" = "#052935",
     "outras_especies" = "#00525b",

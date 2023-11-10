@@ -3,22 +3,9 @@ library(tidyverse)
 library(magrittr)
 library(jsonlite)
 
-dadosProc <- read_csv(file = "Dados/Processados/dados_processados_US.csv",
+dadosT <- read_csv(file = "Dados/Processados/dados_processados_adc2.csv",
                       show_col_types = F)
-dadosJSON <- fromJSON("Dados/Brutos/us-colleges-and-universities.json")
-nome <- dadosJSON$name
-estado <- dadosJSON$state
-dadosAdc2 <- data.frame(nome, estado)
 
-dadosAdc2%<>%
-  group_by(estado)%>%
-  summarise(NUniversidades = n())
-
-dadosProc%<>%
-  group_by(estado)%>%
-  summarise(Nanimais = sum(n_animais))
-
-dadosT <- left_join(dadosProc, dadosAdc2, by = "estado")
 
 coef_correlacao <- cor(dadosT$Nanimais,dadosT$NUniversidades)
 

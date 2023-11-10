@@ -27,8 +27,34 @@ format:
   docx: default
 editor: visual
 ---
+```{r Pacotes}
+# Pacotes
 
-# Resumo
+library(tidyverse)
+library(magrittr)
+library(plotly)
+library(patchwork)
+library(sf)
+
+```
+
+```{r Funções}
+source(file ="../Funcoes/02_AnimalSum.R")
+source(file = "../Funcoes/03_Frequencia.R")
+source(file = "../Funcoes/04_plots_disp.R")
+```
+
+```{r Carregamento dos dados principais}
+totais <- read_csv(file = "Dados/Processados/dados_processados.csv",
+                   show_col_types = F)
+```
+
+```{r Conversão das variáveis}
+totais$estado <- as.factor(totais$estado)
+totais$especie <- as.factor(totais$especie)
+```
+
+# Resumo 
 
 Anualmente o USDA (Departamento de Agricultura dos Estados Unidos) coleta as informações de animais empregados em pesquisas utilizadas em diferentes instâncias de experimentação. Esta prática vai de encontro ao", em('Animal Welfare Act.'),"Este aplicativo foi realizado a partir da análise das observações coletadas pelo USDA no ano de 2016.
 
@@ -54,37 +80,319 @@ Anualmente o USDA (Departamento de Agricultura dos Estados Unidos) coleta as inf
 # 2. Material e métodos
 
 # 3. Resultados
+## 3.1. Composição
+
+Composição geral
+```{r Sunburst}
+plot_ly(labels = c("Utilizados", "Não utilizados", 
+                   "Submetidos a dor", "Não submetidos a dor",
+                   "Receberam terapia", "Não receberam terapia"),
+        parents = c("","","Utilizados","Utilizados",
+            "Submetidos a dor", "Submetidos a dor"),
+        values = c(85.65,14.34,33.31,52.34,25.86,7.44),
+        type = "sunburst",
+        branchvalues = "total",
+        hoverinfo = list("label+value+percent entry",
+                         "label+value+percent entry",
+                         "label+value+percent entry",
+                         "label+value+percent entry",
+                         "label+value+percent entry",
+                         "label+value+percent entry"), 
+        hovertemplate = list("<b>%{label}</b><br>Percentual: %{value}(%)<br>Composição: %{percentEntry}<extra></extra>",
+                             "<b>%{label}</b><br>Percentual: %{value}(%)<br>Composição: %{percentEntry}<extra></extra>",
+                             "<b>%{label}</b><br>Percentual: %{value}(%)<br>Composição: %{percentEntry}<extra></extra>",
+                             "<b>%{label}</b><br>Percentual: %{value}(%)<br>Composição: %{percentEntry}<extra></extra>",
+                             "<b>%{label}</b><br>Percentual: %{value}(%)<br>Composição: %{percentEntry}<extra></extra>",
+                             "<b>%{label}</b><br>Percentual: %{value}(%)<br>Composição: %{percentEntry}<extra></extra>",
+                             "<b>%{label}</b><br>Percentual: %{value}(%)<br>Composição: %{percentEntry}<extra></extra>"),
+        marker = list(colors = c("#e64a19", "#052935",
+                                 "#ee7014", "#00525b",
+                                 "#45ab79", "#f7b22d")))%>%
+  layout(font = list(size = 18))
+
+```
+
+Estatística descritiva - Medidas resumo com relação ao total
+
+```{r - Medidas resumo com relação ao total}
+Total_SUM <- AnimalSum(totais,especie,n_animais)
+```
+Distribuição - total dos animais utilizados
+
+```{r}
+P1_Total <- totais %>%
+  ggplot(aes(x = total, y = 1, fill = "#052935")) +
+  geom_violin(color = "#052935", size = 1) +
+  geom_boxplot(color = "gray",width = 0.10) +
+  scale_fill_identity() + 
+  scale_x_continuous(limits = c(0, 50000),
+                     labels = scales::label_number())+
+  labs(x = "Nº de animais",
+       y = "",
+       title = "Total de animais para pesquisa") +
+  theme_minimal() +
+  theme(plot.title = element_text(size = 14, hjust = 0.0, face = "bold"),
+        text = element_text(size = 12))
+```
+
+## 3.2. Utilização de animais pela espécie
+Estatística descritiva - Medidas resumo por espécie
+
+```{r Medidas resumo por espécie}
+Utilizados_SUM  <- totais%>%
+  filter(utilizado == "sim")%>%
+  AnimalSum(especie = especie, n_animais = n_animais)
+
+Mantidos_SUM  <- totais%>%
+  filter(utilizado != "sim")%>%
+  AnimalSum(especie = especie, n_animais = n_animais)
+```
+
+```{r Frequencia de utilização por espécie}
+# Nº total de animais
+Nanimais_Total <- sum(totais$n_animais)
+
+Frequencia_Utilizados <- totais%>%
+  filter(utilizado == "sim")%>%
+  group_by(especie)%>%
+  summarise(FreqAbsT = sum(n_animais), 
+            FreqRelT = sum(n_animais)/Nanimais_Total, 
+            FreqRelPerT =  (sum(n_animais)/Nanimais_Total)*100,
+            FreqRelU = sum(n_animais)/Nanimais_Utilizados, 
+            FreqRelPerU =  (sum(n_animais)/Nanimais_Utilizados)*100,
+            x = ".")
+
+```
+
+## 3.3. Exposição a dor
+
+```{r Frequencia de exposição a dor}
+FreqDor <- totais%>%
+  filter(utilizado == "sim")%>%
+  group_by(dor)%>%
+  summarise(freqAbsT = sum(n_animais),
+            freqRelT = (sum(n_animais)/Nanimais_Total),
+            freqRelPerT = (sum(n_animais)/Nanimais_Total)*100,
+            freqRel = (sum(n_animais)/Nanimais_Utilizados),
+            freqRelPer = (sum(n_animais)/Nanimais_Utilizados)*100, 
+            x = ".")
+P8_FreqDor <- totais%>%
+  filter(dor == "sim")%>% 
+  ggplot(aes(x = especie,  y = n_animais, fill = droga))+
+  geom_col(position="stack")+
+  scale_fill_manual(values = c("não" = "#e64a19", "sim" = "#052935"))+
+  scale_x_discrete(limits = c("gatos","ovelhas","animais_de_fazenda",
+                              "caes","primatas_nao_humanos","porcos",
+                              "outras_especies","hamsters", "cavia_p", 
+                              "coelhos"),
+                   labels = c("cavia_p" = "C. porcellus",
+                              "outras_especies" = "Outras espécies",
+                              "coelhos" = "Coelhos",
+                              "hamsters" = "Hamsters",
+                              "primatas_nao_humanos" = "Primatas não humanos",
+                              "caes" = "Cães",
+                              "porcos" = "Porcos",
+                              "animais_de_fazenda" = "Animais de fazenda",
+                              "gatos" = "Gatos",
+                              "ovelhas" = "Ovelhas"))+
+  labs(x = "Espécies",
+       y = "Nº de Animais",
+       fill = "Terapia")+
+  coord_flip()+
+  theme_minimal()+
+  theme(text = element_text(size = 18, face = "bold"))
+```
+
+
+
+
+
+## 3.4. Utilização de animais por Estado
+
+```{r Adição das geometrias}
+US <- read_sf("Dados/Brutos/mapa/States_shapefile.shx")
+totais <- full_join(totais, US, by = c("estado"= "State_Code"))
+totais$State_Name <- str_to_title(totais$State_Name)
+totais%<>%
+  select(-c(Program, FID, FID_1, Flowing_St))
+
+# Separação do Alaska, Hawaii e Porto Rico
+HI <- totais%>%
+  filter(estado == "HI")
+
+AK <- totais%>%
+  filter(estado == "AK")
+
+PR <- totais%>%
+  filter(estado == "PR") 
+
+totais <- totais[!(totais$estado %in% c("HI", "AK", "PR")), ]
+
+```
+
+```{r Mapa 1 - Utilização de animais por estado }
+
+N_animais_estado <- totais%>%
+  filter(utilizado == "sim")%>%
+  group_by(estado, geometry, State_Name)%>%
+  summarise(Nanimais = sum(n_animais))
+# Discretização da variável
+
+N_animais_estado$classes <- cut(N_animais_estado$Nanimais,
+                                breaks = c(0,500,1000,5000,10000,25000,50000,Inf),
+                                labels = c("< 500", 
+                                           "500 - 1.000",
+                                           "1.000 - 5.000",
+                                           "5.000 - 10.000",
+                                           "10.000 - 25.000",
+                                           "25.000 - 50.000",
+                                           ">50.000"))
+
+N_animais_estado$classes <- as.factor(N_animais_estado$classes)
+
+P11_MapaUtilizados <- N_animais_estado%>%
+  ggplot() +
+  geom_sf(aes(geometry = geometry, fill = classes, label = State_Name), color = "gray")+
+  scale_fill_manual(values = colorRampPalette(c("white", "#052935"))(7), 
+                    name = "Nº de animais utilizados")+
+  theme_void()+
+  theme(legend.position = "bottom",
+        legend.title = element_text(size = 12, face = "bold"))
+
+
+P11_MapaUtilizados
+ggsave(filename = "Figuras/P11_MapaUtilizados.png", plot = P11_MapaUtilizados)
+
+MAPA1 <- ggplotly(P11_MapaUtilizados)
+
+
+custom_text <- paste("Estado: ", totais$State_Name, "<br>Nº de animais utilizados: ", totais$total)
+
+MAPA1%>%
+  plotly::style(text = custom_text, hoverinfo = "text")%>%
+  layout( xaxis = list( linecolor = 'white'), 
+          yaxis = list( linecolor = 'white'),
+          legend = list(
+            x = 0.1, 
+            y = -0.1, 
+            bgcolor = "transparent", 
+            bordercolor = "transparent",  
+            orientation = "h",
+            itemsizing = "constant",  # Define o tamanho da amostra de cor
+            itemwidth = 30
+          )
+  )
+```
+
+```{r Ranking dos estados que mais utilizam animais em pesquisa}
+totais %>%
+  mutate(State_Name = reorder(State_Name, n_animais),
+         especie = reorder(especie, n_animais)) %>%
+  ggplot(aes(x = State_Name, y = n_animais, fill = especie)) +
+  geom_col(position = "stack", stat = "identity") +
+  scale_fill_manual(values = c(
+    "cavia_p" = "#052935",
+    "outras_especies" = "#00525b",
+    "coelhos" = "#007e72",
+    "hamsters" = "#45ab79",
+    "primatas_nao_humanos" = "#98d574",
+    "caes" = "#d0db5e",
+    "porcos" = "#face4b", 
+    "animais_de_fazenda" = "#f7b22d",
+    "gatos" = "#ee7014",
+    "ovelhas" = "#e64a19"
+  ), labels = c(
+    "cavia_p" = "C. porcellus",
+    "outras_especies" = "Outras espécies",
+    "coelhos" = "Coelhos",
+    "hamsters" = "Hamsters",
+    "primatas_nao_humanos" = "Primatas não humanos",
+    "caes" = "Cães",
+    "porcos" = "Porcos",
+    "animais_de_fazenda" = "Animais de fazenda",
+    "gatos" = "Gatos",
+    "ovelhas" = "Ovelhas")) +
+  coord_flip() +
+  labs(y = "Nº de animais", 
+       x = "Estado", 
+       fill = "Espécie")+
+  theme_minimal()+
+  theme(text = element_text(size = 12, hjust = 0.5, face = "bold"))
+```
+
+```{r Onde são localizadas as experimentações com dor}
+dataDor%>% 
+  ggplot(aes(x = reorder(State_Name, n_animais),  y = n_animais, fill = droga))+
+  geom_col(position="stack")+
+  scale_fill_manual(values = c("não" = "#e64a19", "sim" = "#052935"))+
+  labs(x = "Espécies",
+       y = "Nº de Animais",
+       fill = "Terapia")+
+  coord_flip()+
+  theme_minimal()+
+  theme(text = element_text(size = 18, face = "bold"))
+P15_FreqDorEst
+ggsave(filename = "Figuras/P15_FreqDorEst.png", plot = P15_FreqDorEst)
+```
+
 
 # 4. Discussão
+```{r}
+library(circlepackeR)
+library(data.tree)
+
+RESUMO <- totais%>%
+  group_by(especie,utilizado,dor,droga)%>%
+  summarise(Nanimais = sum(n_animais))
+
+
+# Renomeação das observações
+for(i in 1:nrow(RESUMO)) {
+  if(RESUMO$utilizado[i] == "sim") {
+    RESUMO$utilizado[i] <- "Utilizado"
+  } else {
+    RESUMO$utilizado[i] <- "Não utilizado"
+  }
+}
+
+for(i in 1:nrow(RESUMO)) {
+  if(RESUMO$dor[i] == "sim") {
+    RESUMO$dor[i] <- "Dor envolvida"
+  } else {
+    RESUMO$dor[i] <- "Sem envolvimento de dor"
+  }
+}
+
+for(i in 1:nrow(RESUMO)) {
+  if(RESUMO$droga[i] == "sim") {
+    RESUMO$droga[i] <- "Recebeu anestesia/analgesia"
+  } else {
+    RESUMO$droga[i] <- "Não recebeu anestesia/analgesia"
+  }
+}
+
+RESUMO$especie <- stringr::str_to_title(RESUMO$especie)
+
+RESUMO$pathString <- paste("world", RESUMO$utilizado,
+                           RESUMO$dor,
+                           RESUMO$droga,
+                           RESUMO$especie, sep = "/")
+
+population <- as.Node(RESUMO)
+
+circlepackeR(population, size = "Nanimais")
+
+circlepackeR(population, size = "Nanimais",
+             color_min = "white",
+             color_max = "#052935")
+```
+
 
 # 5. Considerações finais
 
 # 6. Recursos adicionais
 
 ## 6.1. Lista de figuras
-
-![Figura 1 - Densidade](images/01_Densidade.png)\
-![Figura 2 - Boxplot total de animais para uso em pesquisa](images/02_BoxplotMantidos.png)\
-![Figura 3 - Boxplot Animais mantidos e não utilizados em pesquisa](images/02_BoxplotMantidos.png)\
-![Figura 4 - Boxplot total de animais utilizados em pesquisa](images/02_BoxplotUtilizados.png)\
-![Figura 5 - Histograma total de animais utilizados em pesquisa](images/03_HistTotais.png)\
-![Figura 6 - Histograma Animais mantidos e não utilizados em pesquisa](images/03_HistMantidos.png)\
-![Figura 7 - Histograma total de animais utilizados em pesquisa](images/03_HistUtilizados.png)\
-![Figura 8 - Densidade total de animais utilizados em pesquisa](images/04_DensTotais.png)\
-![Figura 9 - Densidade Animais mantidos e não utilizados em pesquisa](images/04_DensMantidos.png)\
-![Figura 10 - Densidade total de animais utilizados em pesquisa](images/04_DensUtilizados.png)\
-![Figura 11 - Densidade total de animais utilizados em pesquisa](images/05_ViolinoTotais.png)\
-![Figura 12 - Densidade Animais mantidos e não utilizados em pesquisa](images/05_ViolinoMantidos.png)\
-![Figura 13 - Densidade total de animais utilizados em pesquisa](images/05_ViolinoUtilizados.png)\
-![Figura 14 - Frequências por categoria](images/06_Frequencias.png)\
-![Figura 15 - Frequência por espécie](images/07_FreqUtiSp.png)\
-![Figura 16 - Frequência de submissão a dor por espécie](images/08_FreqDor.png)\
-![Figura 17 - Dispersão total x espécie](images/09_Dispersao.png)\
-![Figura 18 - Dispersão total x espécie](images/10_Dispersao.png)\
-![Figura 19 - Mapa - Utilização por estado](images/11_MapaUtilizados.png)\
-![Figura 20 - Mapa - Utilização por estado](images/12_MapaUtilizadosSP.png)\
-![Figura 21 - Frequência de utilização por espécie e estado](images/13_FreqUtilizadosEstSP.png)\
-![Figura 22 - Frequência de espécies submetidas a dor por estado](images/14_FreqDorEst.png)
 
 ## 6.2. Aplicativo
 
