@@ -29,6 +29,7 @@ editor: visual
 ---
 
 # Resumo
+
 Anualmente o USDA (Departamento de Agricultura dos Estados Unidos) coleta as informações de animais empregados em pesquisas utilizadas em diferentes instâncias de experimentação. Esta prática vai de encontro ao", em('Animal Welfare Act.'),"Este aplicativo foi realizado a partir da análise das observações coletadas pelo USDA no ano de 2016.
 
 # 1. Introdução

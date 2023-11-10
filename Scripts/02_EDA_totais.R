@@ -23,8 +23,7 @@ totais <- read_csv(file = "Dados/Processados/dados_processados.csv")
 sapply(totais, class)
 totais$estado <- as.factor(totais$estado)
 totais$especie <- as.factor(totais$especie)
-totais$classes <- as.factor(totais$classes)
-totais$classes_N <- as.factor(totais$classes_N)
+
 
 # Variáveis:
 # 1 - Estado - Qualitativa nominal
@@ -482,7 +481,7 @@ NanimaisDor_Total <- NanimaisDor_Total$NanimaisDor_Total
 
 # 8º - Tabelas de frequencia (Gerais)-------------------------------------------
 
-FreqUtilizacao_copy <- totais%>%
+FreqUtilizacao <- totais%>%
   group_by(utilizado)%>%
   summarise(freqAbs = sum(n_animais),
             freqRel = (sum(n_animais)/Nanimais_Total),
@@ -780,7 +779,7 @@ P7_FreqUtiSp <- (P7_FreqTotal/P7_FreqUtilizadoT/P7_FreqUtilizadoU/
        P7_FreqMantidoT/P7_FreqMantidoM)+plot_annotation(tag_levels = "A")
 P7_FreqUtiSp
 
-ggsave(filename = "Figuras/07_FreqUtiSp.png", plot = P7_FreqUtiSp)
+ggsave(filename = "Figuras/P7_FreqUtiSp.png", plot = P7_FreqUtiSp)
 
 # 12º - Gráfico de frequencia de dor  e terapia por espécie----------------------
 # Ranking das espécies que experenciam dor
@@ -811,7 +810,7 @@ P8_FreqDor <- totais%>%
   theme_minimal()+
   theme(text = element_text(size = 18, face = "bold"))
 
-ggsave(filename = "Figuras/08_FreqDor.png", plot = P8_FreqDor)
+ggsave(filename = "Figuras/P8_FreqDor.png", plot = P8_FreqDor)
 
 # ! Avaliar a composição das espécies dentro do grupo submetido a dor
 # ! Avaliar a composição das espécies dentro do grupo que recebe tratamento
@@ -854,7 +853,7 @@ P9_Dispersao <- totais%>%
   theme_light() +
   theme(text = element_text(size = 12, hjust = 0.5, face = "bold"))
 P9_Dispersao
-ggsave(filename = "Figuras/09_Dispersao.png", plot = P9_Dispersao)
+ggsave(filename = "Figuras/P9_Dispersao.png", plot = P9_Dispersao)
 
 P10_Dispersao <- totais%>%
   mutate(especie = factor(especie,levels = c("cavia_p", "outras_especies",
@@ -881,7 +880,7 @@ P10_Dispersao <- totais%>%
   theme_bw()+
   theme(text = element_text(size = 12, hjust = 0.5, face = "bold"))
 P10_Dispersao
-ggsave(filename = "Figuras/10_Dispersao.png", plot = P10_Dispersao)
+ggsave(filename = "Figuras/P10_Dispersao.png", plot = P10_Dispersao)
 
 # 14º - Adição das geometrias --------------------------------------------------
 
@@ -925,7 +924,7 @@ N_animais_estado$classes <- as.factor(N_animais_estado$classes)
 
 P11_MapaUtilizados <- N_animais_estado%>%
   ggplot() +
-  geom_sf(aes(geometry = geometry, fill = classes), color = "gray")+
+  geom_sf(aes(geometry = geometry, fill = classes, label = State_Name), color = "gray")+
   scale_fill_manual(values = colorRampPalette(c("white", "#052935"))(7), 
                     name = "Nº de animais utilizados")+
   theme_void()+
@@ -934,7 +933,7 @@ P11_MapaUtilizados <- N_animais_estado%>%
 
 
 P11_MapaUtilizados
-ggsave(filename = "Figuras/11_MapaUtilizados.png", plot = P11_MapaUtilizados)
+ggsave(filename = "Figuras/P11_MapaUtilizados.png", plot = P11_MapaUtilizados)
 
 MAPA1 <- ggplotly(P11_MapaUtilizados)
 
@@ -1006,7 +1005,7 @@ P12_MapaUtilizadosSP <- N_animais_estado_sp%>%
 P12_MapaUtilizadosSP
 
 P12_MapaUtilizadosSP
-ggsave(filename = "Figuras/12_MapaUtilizadosSP.png", plot = P12_MapaUtilizadosSP)
+ggsave(filename = "Figuras/P12_MapaUtilizadosSP.png", plot = P12_MapaUtilizadosSP)
 
 MAPA2 <- ggplotly(MAPA2)
 
@@ -1063,14 +1062,43 @@ P13_FreqUtilizadosEstSP <- totais %>%
 
 P13_FreqUtilizadosEstSP
 
-ggsave(filename = "Figuras/13_FreqUtilizadosEstSP.png", plot = P13_FreqUtilizadosEstSP)
+ggsave(filename = "Figuras/P13_FreqUtilizadosEstSP.png", plot = P13_FreqUtilizadosEstSP)
 
 # 17º - Gráfico frequencia de dor por espécie-----------------------------------
+# Ranking das espécies por experenciam dor
+P14_FreqDorSP <- totais%>%
+  filter(dor == "sim")%>%
+  group_by(especie)%>%
+  ggplot(aes(x = especie,  y = n_animais, fill = droga))+
+  geom_col(position="stack")+
+  scale_fill_manual(values = c("não" = "#e64a19", "sim" = "#052935"))+
+  scale_x_discrete(limits = c("gatos","ovelhas","animais_de_fazenda",
+                              "caes","primatas_nao_humanos","porcos",
+                              "outras_especies","hamsters", "cavia_p", 
+                              "coelhos"),
+                   labels = c("cavia_p" = "C. porcellus",
+                              "outras_especies" = "Outras espécies",
+                              "coelhos" = "Coelhos",
+                              "hamsters" = "Hamsters",
+                              "primatas_nao_humanos" = "Primatas não humanos",
+                              "caes" = "Cães",
+                              "porcos" = "Porcos",
+                              "animais_de_fazenda" = "Animais de fazenda",
+                              "gatos" = "Gatos",
+                              "ovelhas" = "Ovelhas"))+
+  labs(x = "Espécies",
+       y = "Nº de Animais",
+       fill = "Terapia")+
+  coord_flip()+
+  theme_minimal()+
+  theme(text = element_text(size = 18, face = "bold"))
+
+P14_FreqDorSP
+ggsave(filename = "Figuras/P14_FreqDorSP.png", plot = P14_FreqDorSP)
 
 # Onde são realizadas as experimentações com dor?
 
-P14_FreqDorEst <- totais%>%
-  filter(dor == "sim")%>%
+P15_FreqDorEst <- dataDor%>% 
   ggplot(aes(x = reorder(State_Name, n_animais),  y = n_animais, fill = droga))+
   geom_col(position="stack")+
   scale_fill_manual(values = c("não" = "#e64a19", "sim" = "#052935"))+
@@ -1080,16 +1108,17 @@ P14_FreqDorEst <- totais%>%
   coord_flip()+
   theme_minimal()+
   theme(text = element_text(size = 18, face = "bold"))
-P14_FreqDorEst
-ggsave(filename = "Figuras/14_FreqDorEst.png", plot = P14_FreqDorEst)
+P15_FreqDorEst
+ggsave(filename = "Figuras/P15_FreqDorEst.png", plot = P15_FreqDorEst)
 
-# 18º - Resumo da composição - Dados aninhados ---------------------------------------
+# Resumo da composição - Dados aninhados ---------------------------------------
 library(circlepackeR)
 library(data.tree)
 
 RESUMO <- totais%>%
   group_by(especie,utilizado,dor,droga)%>%
   summarise(Nanimais = sum(n_animais))
+
 
 # Renomeação das observações
 for(i in 1:nrow(RESUMO)) {
@@ -1136,12 +1165,10 @@ RESUMO2 <- totais%>%
   group_by(State_Name, especie)%>%
   summarise(Nanimais = sum(n_animais))
 
-colnames(RESUMO2) <- c("Estado","especie","Nanimais")
-
 RESUMO2$especie <- stringr::str_to_title(RESUMO2$especie)
 
-RESUMO2$pathString <- paste("world", RESUMO2$Estado,
-                           RESUMO2$especie, sep = "/")
+RESUMO2$pathString <- paste("world", RESUMO2$State_Name,
+                            RESUMO2$especie, sep = "/")
 
 population <- as.Node(RESUMO2)
 
@@ -1149,7 +1176,8 @@ circlepackeR(population, size = "Nanimais")
 
 circlepackeR(population, size = "Nanimais",
              color_min = "#052935",
-             color_max = "#d0db5e")
+             color_max = "white")
+
 
 #Paleta-------------------------------------------------------------------------
 
