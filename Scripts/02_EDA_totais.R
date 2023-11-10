@@ -13,7 +13,8 @@ library(sf)
 source("Funcoes/02_AnimalSum.R")
 
 # Dados-------------------------------------------------------------------------
-totais <- read_csv(file = "Dados/Processados/dados_processados.csv")
+totais <- read_csv(file = "Dados/Processados/dados_processados.csv",
+                   show_col_types = F)
 
 # Obs: Neste conjunto de dados estão contabilizados todos os animais utilizados
 # em pesquisas em 2016, independentemente do tipo de dor associada ao 
@@ -489,10 +490,13 @@ FreqUtilizacao <- totais%>%
             x = ".")
 
 FreqDor <- totais%>%
+  filter(utilizado == "sim")%>%
   group_by(dor)%>%
-  summarise(freqAbs = sum(n_animais),
-            freqRel = (sum(n_animais)/Nanimais_Total),
-            freqRelPer = (sum(n_animais)/Nanimais_Total)*100, 
+  summarise(freqAbsT = sum(n_animais),
+            freqRelT = (sum(n_animais)/Nanimais_Total),
+            freqRelPerT = (sum(n_animais)/Nanimais_Total)*100,
+            freqRel = (sum(n_animais)/Nanimais_Utilizados),
+            freqRelPer = (sum(n_animais)/Nanimais_Utilizados)*100, 
             x = ".")
 
 FreqDroga <- totais%>%    # Analgesia/anestesia - dos que experenciam dor o
@@ -1112,7 +1116,7 @@ P15_FreqDorEst <- dataDor%>%
 P15_FreqDorEst
 ggsave(filename = "Figuras/P15_FreqDorEst.png", plot = P15_FreqDorEst)
 
-# Resumo da composição - Dados aninhados ---------------------------------------
+# 18º - Resumo da composição - Dados aninhados ---------------------------------------
 library(circlepackeR)
 library(data.tree)
 
@@ -1179,6 +1183,56 @@ circlepackeR(population, size = "Nanimais",
              color_min = "#052935",
              color_max = "white")
 
+
+# 19º - Sunburst----------------------------------------------------------------
+plot_ly(labels = c("Utilizados", "Não utilizados", 
+                   "Submetidos a dor", "Não submetidos a dor",
+                   "Receberam terapia", "Não receberam terapia"),
+        parents = c("","","Utilizados","Utilizados",
+            "Submetidos a dor", "Submetidos a dor"),
+        values = c(85.65,14.34,33.31,52.34,25.86,7.44),
+        type = "sunburst",
+        branchvalues = "total",
+        hoverinfo = list("label+value+percent entry",
+                         "label+value+percent entry",
+                         "label+value+percent entry",
+                         "label+value+percent entry",
+                         "label+value+percent entry",
+                         "label+value+percent entry"), 
+        hovertemplate = list("<b>%{label}</b><br>Percentual: %{value}(%)<br>Composição: %{percentEntry}<extra></extra>",
+                             "<b>%{label}</b><br>Percentual: %{value}(%)<br>Composição: %{percentEntry}<extra></extra>",
+                             "<b>%{label}</b><br>Percentual: %{value}(%)<br>Composição: %{percentEntry}<extra></extra>",
+                             "<b>%{label}</b><br>Percentual: %{value}(%)<br>Composição: %{percentEntry}<extra></extra>",
+                             "<b>%{label}</b><br>Percentual: %{value}(%)<br>Composição: %{percentEntry}<extra></extra>",
+                             "<b>%{label}</b><br>Percentual: %{value}(%)<br>Composição: %{percentEntry}<extra></extra>",
+                             "<b>%{label}</b><br>Percentual: %{value}(%)<br>Composição: %{percentEntry}<extra></extra>"),
+        marker = list(colors = c("#e64a19", "#052935",
+                                 "#ee7014", "#00525b",
+                                 "#45ab79", "#f7b22d")))%>%
+  layout(font = list(size = 18))
+
+
+# FreqUtilizacao[2,4],
+# FreqUtilizacao[1,4],
+# FreqDor[2,4],
+# FreqDor[1,4],
+# FreqDroga[2,4],
+# FreqDroga[1,4]
+  
+# # TESTE 1
+# "#052935","#e64a19", 
+# "#00525b", "#45ab79",
+# "#98d574","#d0db5e"
+# 
+# # TESTE2
+# "#e64a19", "#052935",
+# "#ee7014", "#00525b",
+# "#45ab79", "#f7b22d"
+# 
+# 
+# "#f7b22d","#45ab79",
+# "#ee7014", "#00525b",
+# "#052935","#e64a19"
 
 #Paleta-------------------------------------------------------------------------
 
