@@ -1,7 +1,10 @@
 library(tidyverse)
 library(magrittr)
+library(jsonlite)
 
-# Organização de dados
+# Organização de dados originais ----------------------------------------------
+# Dados originais são referentes aos disponibilidados no kaggle para realização 
+# da análise 
  
 dados_A <- read.csv("Dados/Brutos/ALL_PAINTYPES_2016.csv")     # Todos os tipos de dor (C, D e E)
 dados_B <- read.csv("Dados/Brutos/COLUMNB_ANYU_ALL_2016.csv")  # Animais mantidos para este fim mas não utilizados
@@ -78,7 +81,7 @@ dados_C <- as.data.frame(dados[[3]])
 dados_D <- as.data.frame(dados[[4]])
 dados_E <- as.data.frame(dados[[5]])
 
-# Criação de variáveis
+# Criação de variáveis qualitativas para descrição dos dados
 
 dados_B$utilizado <- "não"
 dados_B$dor <- "não"
@@ -99,7 +102,42 @@ dados_E$droga <- "não"
 # União dos bancos de dados 
 dados_full <- rbind(dados_B,dados_C,dados_D, dados_E)
 
-# Salvamento dos dados
+# Salvamento dos dados originais
 write_csv(dados_full, file = "Dados/Processados/dados_processados.csv")
-write_csv(dados_A, file = "Dados/Processados/dados_simplificado.csv")
+# Não utilizarei os dados_A uma vez que as informações são redundantes
+# e não possuem os dados relativos a utilização, submissão a dor e tratamento
 
+# Dados adicionais - Informações das espécies ----------------------------------
+
+dadosAdc1 <- read_csv(file = "Dados/Brutos/dados_adicionais.csv",
+                     show_col_types = F)
+
+dadosT<- dados_full%<>%
+  group_by(especie)%>%
+  summarise(Nanimais = sum(n_animais))
+
+dadosT <- left_join(dados_full, dadosAdc1, by = "especie")
+
+# Salvamento
+write_csv(dadosT, file = "Dados/Processados/dados_processados_adc1.csv")
+
+# Dados adicionais - Informações dos estados -----------------------------------
+
+dadosJSON <- fromJSON("Dados/Brutos/us-colleges-and-universities.json")
+nome <- dadosJSON$name
+estado <- dadosJSON$state
+dadosAdc2 <- data.frame(nome, estado)
+
+dadosAdc2%<>%
+  group_by(estado)%>%
+  summarise(NUniversidades = n())
+
+dadosProc <- dados_full%>%
+  group_by(estado)%>%
+  summarise(Nanimais = sum(n_animais))
+
+dadosT <- left_join(dadosProc, dadosAdc2, by = "estado")
+
+# Salvamento
+
+write_csv(dadosT, file = "Dados/Processados/dados_processados_adc2.csv")

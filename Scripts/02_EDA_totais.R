@@ -902,6 +902,7 @@ PR <- totais%>%
 
 totais <- totais[!(totais$estado %in% c("HI", "AK", "PR")), ]
 
+write_csv(totais, file = "Dados/Processados/dados_processados_US.csv")
 # 15º - Mapas ------------------------------------------------------------------
 
 N_animais_estado <- totais%>%

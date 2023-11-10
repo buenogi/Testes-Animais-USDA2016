@@ -1,22 +1,65 @@
 # Análises adicionais
 library(tidyverse)
 library(magrittr)
+library(GGally)
 
-dadosProc <- read_csv(file = "Dados/Processados/dados_processados.csv")
-dadosAdc <- read_csv(file = "Dados/Brutos/dados_adicionais.csv")
+dadosT <- read_csv(file = "Dados/Processados/dados_processados_adc1.csv",
+                      show_col_types = F)
 
-dadosProc%<>%
-  group_by(especie)%>%
-  summarise(Nanimais = sum(n_animais))
+cores_sp <- c(
+  "cavia_p" = "#052935",
+  "outras_especies" = "#00525b",
+  "coelhos" = "#007e72",
+  "hamsters" = "#45ab79",
+  "primatas_nao_humanos" = "#98d574",
+  "caes" = "#d0db5e",
+  "porcos" = "#face4b", 
+  "animais_de_fazenda" = "#f7b22d",
+  "gatos" = "#ee7014",
+  "ovelhas" = "#e64a19")
+rotulos <- c(
+  "cavia_p" = "C. porcellus",
+  "outras_especies" = "Outras espécies",
+  "coelhos" = "Coelhos",
+  "hamsters" = "Hamsters",
+  "primatas_nao_humanos" = "Primatas não humanos",
+  "caes" = "Cães",
+  "porcos" = "Porcos",
+  "animais_de_fazenda" = "Animais de fazenda",
+  "gatos" = "Gatos",
+  "ovelhas" = "Ovelhas")
 
-dadosT <- left_join(dadosProc, dadosAdc, by = "especie")
 
+
+# Coeficientes de correlação
+dadosT_NAOM <- na.omit(dadosT)
+cor(dadosT_NAOM$Nanimais, dadosT_NAOM$exp_vida_anos)
+cor(dadosT_NAOM$Nanimais, dadosT_NAOM$maturidade_sexual)
+cor(dadosT_NAOM$Nanimais, dadosT_NAOM$tempo_gestacao)
+cor(dadosT_NAOM$Nanimais, dadosT_NAOM$peso)
+cor(dadosT_NAOM$Nanimais, dadosT_NAOM$custo_man_unidade)
+cor(dadosT_NAOM$Nanimais, dadosT_NAOM$custo_total)
+
+# Correlogramas ----------------------------------------------------------------
 dadosT%>%
-  select(Nanimais,exp_vida_anos,maturidade_sexual,tempo_gestacao,peso, custo_man_unidade)%>%
+  select(Nanimais,exp_vida_anos,maturidade_sexual,
+         tempo_gestacao,peso, custo_man_unidade, custo_total)%>%
   plot(pch=20 , cex=1.5 , col="#69b3a2")
 
-library(GGally)
-  ggpairs(dadosT) 
+ggpairs(dadosT) 
+
+# Gráficos separados  ----------------------------------------------------------
+
+variaveis <- c("exp_vida_anos", "maturidade_sexual", "tempo_gestacao",
+               "peso", "custo_man_unidade", "custo_total")
+
+source(file = "Funcoes/04_plots_disp.R")
+
+
+graficos <- lapply(variaveis, plots_disp, dados = dadosT, var1 = "Nanimais", 
+       especie = "especie")
+
+
 
 dadosT%>%
   ggplot(aes(x = exp_vida_anos , y = Nanimais , 
