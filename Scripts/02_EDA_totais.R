@@ -1234,6 +1234,57 @@ plot_ly(labels = c("Utilizados", "Não utilizados",
 # "#ee7014", "#00525b",
 # "#052935","#e64a19"
 
+# 20º  - Teste chi - quadrado --------------------------------------------------
+
+# Com relação a utilização
+df_contingencia <- totais%>%
+  group_by(especie,utilizado)%>%
+  summarise(freq_sp  = sum(n_animais))%>%
+  pivot_wider(names_from = especie, values_from = freq_sp)
+
+matriz <- as.matrix(df_contingencia)
+tabela_contingencia <- as.table(matriz)
+tabela_contingencia <- tabela_contingencia[,-1]
+conversao <- as.matrix(tabela_contingencia)
+tabela_contingencia <- as.table(as.integer(conversao))
+tabela_contingencia <- ftable(tabela_contingencia)
+chisq.test(tabela_contingencia)
+
+# Com relação a dor
+df_contingencia <- totais%>%
+  filter(utilizado == "sim")%>%
+  group_by(especie,dor)%>%
+  summarise(freq_sp  = sum(n_animais))%>%
+  pivot_wider(names_from = especie, values_from = freq_sp)
+
+df_contingencia <- df_contingencia[,-1]
+
+matriz <- as.matrix(df_contingencia)
+tabela_contingencia <- as.table(matriz)
+# tabela_contingencia <- tabela_contingencia[,-1]
+# conversao <- as.matrix(tabela_contingencia)
+# tabela_contingencia <- as.table(as.numeric(conversao))
+tabela_contingencia <- ftable(tabela_contingencia)
+chisq.test(tabela_contingencia)
+
+# Com relação a droga
+
+df_contingencia <- totais%>%
+  filter(droga == "sim")%>%
+  group_by(especie)%>%
+  summarise(freq_sp  = sum(n_animais))%>%
+  pivot_wider(names_from = especie, values_from = freq_sp)
+
+df_contingencia <- df_contingencia[,-1]
+
+matriz <- as.matrix(df_contingencia)
+tabela_contingencia <- as.table(matriz)
+# tabela_contingencia <- tabela_contingencia[,-1]
+# conversao <- as.matrix(tabela_contingencia)
+# tabela_contingencia <- as.table(as.numeric(conversao))
+tabela_contingencia <- ftable(tabela_contingencia)
+chisq.test(tabela_contingencia)
+
 #Paleta-------------------------------------------------------------------------
 
 Principal = c("cavia_p" = "#052935",
