@@ -7,8 +7,8 @@ date-format: long # date-format: dddd MMM D, YYYY
 lang: pt
 
 fig-align: center
-fig-width: 10
-fig-height: 12
+fig-width: 12
+fig-height: 8
 
 toc: true
 toc-depth: 3
@@ -27,34 +27,37 @@ format:
   docx: default
 editor: visual
 ---
-```{r Pacotes}
+
+```{r Pacotes, message=FALSE, warning=FALSE, include=FALSE}
 # Pacotes
 
 library(tidyverse)
 library(magrittr)
 library(plotly)
-library(patchwork)
 library(sf)
+library(circlepackeR)
+library(data.tree)
+library(kableExtra)
 
 ```
 
-```{r Funções}
+```{r Funções,message=FALSE, warning=FALSE, include=FALSE}
 source(file ="../Funcoes/02_AnimalSum.R")
 source(file = "../Funcoes/03_Frequencia.R")
 source(file = "../Funcoes/04_plots_disp.R")
 ```
 
-```{r Carregamento dos dados principais}
-totais <- read_csv(file = "Dados/Processados/dados_processados.csv",
+```{r Carregamento dos dados principais,message=FALSE, warning=FALSE, include=FALSE}
+totais <- read_csv(file = "../Dados/Processados/dados_processados.csv",
                    show_col_types = F)
 ```
 
-```{r Conversão das variáveis}
+```{r Conversão das variáveis, message=FALSE, warning=FALSE, include=FALSE}
 totais$estado <- as.factor(totais$estado)
 totais$especie <- as.factor(totais$especie)
 ```
 
-# Resumo 
+# Resumo
 
 Anualmente o USDA (Departamento de Agricultura dos Estados Unidos) coleta as informações de animais empregados em pesquisas utilizadas em diferentes instâncias de experimentação. Esta prática vai de encontro ao", em('Animal Welfare Act.'),"Este aplicativo foi realizado a partir da análise das observações coletadas pelo USDA no ano de 2016.
 
@@ -80,10 +83,12 @@ Anualmente o USDA (Departamento de Agricultura dos Estados Unidos) coleta as inf
 # 2. Material e métodos
 
 # 3. Resultados
+
 ## 3.1. Composição
 
 Composição geral
-```{r Sunburst}
+
+```{r Sunburst, message=FALSE, warning=FALSE, echo = FALSE}
 plot_ly(labels = c("Utilizados", "Não utilizados", 
                    "Submetidos a dor", "Não submetidos a dor",
                    "Receberam terapia", "Não receberam terapia"),
@@ -97,7 +102,7 @@ plot_ly(labels = c("Utilizados", "Não utilizados",
                          "label+value+percent entry",
                          "label+value+percent entry",
                          "label+value+percent entry",
-                         "label+value+percent entry"), 
+                         "label+value+percent entry"),
         hovertemplate = list("<b>%{label}</b><br>Percentual: %{value}(%)<br>Composição: %{percentEntry}<extra></extra>",
                              "<b>%{label}</b><br>Percentual: %{value}(%)<br>Composição: %{percentEntry}<extra></extra>",
                              "<b>%{label}</b><br>Percentual: %{value}(%)<br>Composição: %{percentEntry}<extra></extra>",
@@ -114,13 +119,23 @@ plot_ly(labels = c("Utilizados", "Não utilizados",
 
 Estatística descritiva - Medidas resumo com relação ao total
 
-```{r - Medidas resumo com relação ao total}
-Total_SUM <- AnimalSum(totais,especie,n_animais)
+```{r , Medidas resumo por espécie com relação ao total, echo = F}
+Total_SUM <- totais%>%
+              summarise("Média" = mean(n_animais),
+              "Desvio padrão" = sd(n_animais),
+              "Mínimo" = min(n_animais),
+              "1º Quartil" = quantile(n_animais, 0.25),
+              "Mediana" = quantile(n_animais, 0.5),
+              "3º Quartil" = quantile(n_animais, 0.75),
+              "Máximo" = max(n_animais))
+kbl(Total_SUM)%>%
+  kable_styling()
 ```
+
 Distribuição - total dos animais utilizados
 
-```{r}
-P1_Total <- totais %>%
+```{r, Densidade, message=FALSE, warning=FALSE, echo  = F}
+totais %>%
   ggplot(aes(x = total, y = 1, fill = "#052935")) +
   geom_violin(color = "#052935", size = 1) +
   geom_boxplot(color = "gray",width = 0.10) +
@@ -136,21 +151,51 @@ P1_Total <- totais %>%
 ```
 
 ## 3.2. Utilização de animais pela espécie
-Estatística descritiva - Medidas resumo por espécie
 
-```{r Medidas resumo por espécie}
+```{r Medidas resumo por espécie,message=FALSE, warning=FALSE,echo = F}
+
 Utilizados_SUM  <- totais%>%
   filter(utilizado == "sim")%>%
   AnimalSum(especie = especie, n_animais = n_animais)
 
+Utilizados_SUM$especie <- stringr::str_to_title(Utilizados_SUM$especie)
+
+Utilizados_SUM%<>%mutate(especie = stringr::str_replace_all(especie, "_", " "))%>%mutate(especie = stringr::str_replace_all(especie, "nao", "não "))%>%
+  mutate(especie = stringr::str_replace_all(especie, "especies", "espécies "))%>%mutate(especie = stringr::str_replace_all(especie, "Caes", " Cães"))%>%
+  mutate(especie = stringr::str_replace_all(especie, "Cavia p", " Porquinho-da-índia"))
+
+colnames(Utilizados_SUM)[1] <- c("Espécie")
+
+kbl(Utilizados_SUM)%>%
+  kable_styling()
+
+```
+
+```{r}
 Mantidos_SUM  <- totais%>%
   filter(utilizado != "sim")%>%
   AnimalSum(especie = especie, n_animais = n_animais)
+Mantidos_SUM
+
+Mantidos_SUM$especie <- stringr::str_to_title(Mantidos_SUM$especie)
+
+Mantidos_SUM%<>%mutate(especie = stringr::str_replace_all(especie, "_", " "))%>%mutate(especie = stringr::str_replace_all(especie, "nao", "não "))%>%
+  mutate(especie = stringr::str_replace_all(especie, "especies", "espécies "))%>%mutate(especie = stringr::str_replace_all(especie, "Caes", " Cães"))%>%
+  mutate(especie = stringr::str_replace_all(especie, "Cavia p", " Porquinho-da-índia"))
+
+colnames(Mantidos_SUM)[1] <- c("Espécie")
+
+kbl(Mantidos_SUM)%>%
+  kable_styling()
 ```
 
-```{r Frequencia de utilização por espécie}
+```{r Frequencia de utilização por espécie, message=FALSE, warning=FALSE,echo = F}
 # Nº total de animais
 Nanimais_Total <- sum(totais$n_animais)
+
+Nanimais_Utilizados <- totais%>%
+  filter(utilizado == "sim")
+Nanimais_Utilizados <-sum(Nanimais_Utilizados$n_animais)
 
 Frequencia_Utilizados <- totais%>%
   filter(utilizado == "sim")%>%
@@ -166,7 +211,7 @@ Frequencia_Utilizados <- totais%>%
 
 ## 3.3. Exposição a dor
 
-```{r Frequencia de exposição a dor}
+```{r Frequencia de exposição a dor, message=FALSE, warning=FALSE,echo = F}
 FreqDor <- totais%>%
   filter(utilizado == "sim")%>%
   group_by(dor)%>%
@@ -176,7 +221,10 @@ FreqDor <- totais%>%
             freqRel = (sum(n_animais)/Nanimais_Utilizados),
             freqRelPer = (sum(n_animais)/Nanimais_Utilizados)*100, 
             x = ".")
-P8_FreqDor <- totais%>%
+```
+
+```{r Grafico de exposição a dor, message=FALSE, warning=FALSE, echo = F}
+totais%>%
   filter(dor == "sim")%>% 
   ggplot(aes(x = especie,  y = n_animais, fill = droga))+
   geom_col(position="stack")+
@@ -203,14 +251,10 @@ P8_FreqDor <- totais%>%
   theme(text = element_text(size = 18, face = "bold"))
 ```
 
-
-
-
-
 ## 3.4. Utilização de animais por Estado
 
-```{r Adição das geometrias}
-US <- read_sf("Dados/Brutos/mapa/States_shapefile.shx")
+```{r Adição das geometrias, message=FALSE, warning=FALSE, echo = F}
+US <- read_sf("../Dados/Brutos/mapa/States_shapefile.shx")
 totais <- full_join(totais, US, by = c("estado"= "State_Code"))
 totais$State_Name <- str_to_title(totais$State_Name)
 totais%<>%
@@ -230,7 +274,7 @@ totais <- totais[!(totais$estado %in% c("HI", "AK", "PR")), ]
 
 ```
 
-```{r Mapa 1 - Utilização de animais por estado }
+```{r Mapa 1 - Utilização de animais por estado,  message=FALSE, warning=FALSE, echo  = F }
 
 N_animais_estado <- totais%>%
   filter(utilizado == "sim")%>%
@@ -259,12 +303,7 @@ P11_MapaUtilizados <- N_animais_estado%>%
   theme(legend.position = "bottom",
         legend.title = element_text(size = 12, face = "bold"))
 
-
-P11_MapaUtilizados
-ggsave(filename = "Figuras/P11_MapaUtilizados.png", plot = P11_MapaUtilizados)
-
 MAPA1 <- ggplotly(P11_MapaUtilizados)
-
 
 custom_text <- paste("Estado: ", totais$State_Name, "<br>Nº de animais utilizados: ", totais$total)
 
@@ -284,7 +323,7 @@ MAPA1%>%
   )
 ```
 
-```{r Ranking dos estados que mais utilizam animais em pesquisa}
+```{r Ranking dos estados que mais utilizam animais em pesquisa por espécie,  message=FALSE, warning=FALSE, echo = F}
 totais %>%
   mutate(State_Name = reorder(State_Name, n_animais),
          especie = reorder(especie, n_animais)) %>%
@@ -320,8 +359,9 @@ totais %>%
   theme(text = element_text(size = 12, hjust = 0.5, face = "bold"))
 ```
 
-```{r Onde são localizadas as experimentações com dor}
-dataDor%>% 
+```{r Onde são localizadas as experimentações com dor, message=FALSE, warning=FALSE, echo = F}
+totais%>%
+  filter(dor == "sim")%>%
   ggplot(aes(x = reorder(State_Name, n_animais),  y = n_animais, fill = droga))+
   geom_col(position="stack")+
   scale_fill_manual(values = c("não" = "#e64a19", "sim" = "#052935"))+
@@ -331,16 +371,11 @@ dataDor%>%
   coord_flip()+
   theme_minimal()+
   theme(text = element_text(size = 18, face = "bold"))
-P15_FreqDorEst
-ggsave(filename = "Figuras/P15_FreqDorEst.png", plot = P15_FreqDorEst)
 ```
 
-
 # 4. Discussão
-```{r}
-library(circlepackeR)
-library(data.tree)
 
+```{r, Resumo, message=FALSE, warning=FALSE, echo = F}
 RESUMO <- totais%>%
   group_by(especie,utilizado,dor,droga)%>%
   summarise(Nanimais = sum(n_animais))
@@ -380,13 +415,10 @@ RESUMO$pathString <- paste("world", RESUMO$utilizado,
 
 population <- as.Node(RESUMO)
 
-circlepackeR(population, size = "Nanimais")
-
 circlepackeR(population, size = "Nanimais",
              color_min = "white",
              color_max = "#052935")
 ```
-
 
 # 5. Considerações finais
 
