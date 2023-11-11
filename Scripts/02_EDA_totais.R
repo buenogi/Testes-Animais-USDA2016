@@ -1104,7 +1104,8 @@ ggsave(filename = "Figuras/P14_FreqDorSP.png", plot = P14_FreqDorSP)
 
 # Onde são realizadas as experimentações com dor?
 
-P15_FreqDorEst <- dataDor%>% 
+P15_FreqDorEst <-totais%>%
+  filter(dor == "sim")%>%
   ggplot(aes(x = reorder(State_Name, n_animais),  y = n_animais, fill = droga))+
   geom_col(position="stack")+
   scale_fill_manual(values = c("não" = "#e64a19", "sim" = "#052935"))+
@@ -1235,19 +1236,20 @@ plot_ly(labels = c("Utilizados", "Não utilizados",
 # "#ee7014", "#00525b",
 # "#052935","#e64a19"
 
-# 20º  - Teste chi - quadrado --------------------------------------------------
+# 20º - Teste chi - quadrado --------------------------------------------------
 
 # Com relação a utilização
 df_contingencia <- totais%>%
   group_by(especie,utilizado)%>%
   summarise(freq_sp  = sum(n_animais))%>%
   pivot_wider(names_from = especie, values_from = freq_sp)
+df_contingencia <- df_contingencia[,-1]
 
 matriz <- as.matrix(df_contingencia)
 tabela_contingencia <- as.table(matriz)
-tabela_contingencia <- tabela_contingencia[,-1]
-conversao <- as.matrix(tabela_contingencia)
-tabela_contingencia <- as.table(as.integer(conversao))
+# tabela_contingencia <- tabela_contingencia[,-1]
+# conversao <- as.matrix(tabela_contingencia)
+# tabela_contingencia <- as.table(as.numeric(conversao))
 tabela_contingencia <- ftable(tabela_contingencia)
 chisq.test(tabela_contingencia)
 
@@ -1286,6 +1288,52 @@ tabela_contingencia <- as.table(matriz)
 tabela_contingencia <- ftable(tabela_contingencia)
 chisq.test(tabela_contingencia)
 
+# 21º - Coordenadas paralelas --------------------------------------------------
+
+library(GGally)
+
+Utilizados_SUM  <- totais%>%
+  filter(utilizado == "sim")%>%
+  AnimalSum(especie = especie, n_animais = n_animais)
+
+N_total <- totais%>%
+  filter(utilizado == "sim")%>%
+  group_by(especie)%>%
+  summarise( N_total = sum(n_animais))
+
+Utilizados_SUM <- left_join(Utilizados_SUM, N_total, by  = "especie")
+
+Mantidos_SUM  <- totais%>%
+  filter(utilizado != "sim")%>%
+  AnimalSum(especie = especie, n_animais = n_animais)
+
+N_total <- totais%>%
+  filter(utilizado != "sim")%>%
+  group_by(especie)%>%
+  summarise(N_total = sum(n_animais))
+
+Mantidos_SUM <- left_join(Mantidos_SUM, N_total, by  = "especie")
+
+Utilizados_SUM$utilizado <- "sim"
+Mantidos_SUM$utilizado <- "não"
+SUM_bind <- rbind(Utilizados_SUM, Mantidos_SUM)
+
+SUM_bind$especie <- as.factor(SUM_bind$especie)
+SUM_bind$utilizado <- as.factor(SUM_bind$utilizado)
+
+SUM_bind%>%
+  ggplot(aes(x = utilizado, y = N_total, group = especie))+
+  geom_line(aes(color = especie), size = 1.5)+
+  geom_point(aes(color = especie),size = 5)+
+  scale_color_manual(values = Principal, 
+                     labels = rotulos)+
+  labs(x = "Utilização em experimentação ao longo de 2016.",
+       y = "Nº total", 
+       color = "Espécie")+
+  theme_minimal()+
+  theme(text = element_text(size = 18, face = "bold"))
+theme(text = element_text(size = 18, face = "bold"))
+  
 #Paleta-------------------------------------------------------------------------
 
 Principal = c("cavia_p" = "#052935",
@@ -1299,6 +1347,20 @@ Principal = c("cavia_p" = "#052935",
               "gatos" = "#ee7014",
               "ovelhas" = "#e64a19")
 
+  
+  
+  rotulos <- c(
+    "cavia_p" = "C. porcellus",
+    "outras_especies" = "Outras espécies",
+    "coelhos" = "Coelhos",
+    "hamsters" = "Hamsters",
+    "primatas_nao_humanos" = "Primatas não humanos",
+    "caes" = "Cães",
+    "porcos" = "Porcos",
+    "animais_de_fazenda" = "Animais de fazenda",
+    "gatos" = "Gatos",
+    "ovelhas" = "Ovelhas")
+  
 c("#052935" , "#00c6aa", "#2a8476", "#344b46")
 
 

@@ -57,6 +57,45 @@ totais$estado <- as.factor(totais$estado)
 totais$especie <- as.factor(totais$especie)
 ```
 
+```{r Paleta,  message=FALSE, warning=FALSE, include=FALSE}
+Principal = c("cavia_p" = "#052935",
+              "outras_especies" = "#00525b",
+              "coelhos" = "#007e72",
+              "hamsters" = "#45ab79",
+              "primatas_nao_humanos" = "#98d574",
+              "caes" = "#d0db5e",
+              "porcos" = "#face4b", 
+              "animais_de_fazenda" = "#f7b22d",
+              "gatos" = "#ee7014",
+              "ovelhas" = "#e64a19")
+
+
+Principal_2 = c("Porquinho-da-índia" = "#052935",
+              "Outras espécies" = "#00525b",
+              "Coelhos" = "#007e72",
+              "Hamsters" = "#45ab79",
+              "Primatas não humanos" = "#98d574",
+              "Cães" = "#d0db5e",
+              "Porcos" = "#face4b", 
+              "Animais de fazenda" = "#f7b22d",
+              "Gatos" = "#ee7014",
+              "Ovelhas" = "#e64a19")
+
+
+
+rotulos <- c(
+  "cavia_p" = "C. porcellus",
+  "outras_especies" = "Outras espécies",
+  "coelhos" = "Coelhos",
+  "hamsters" = "Hamsters",
+  "primatas_nao_humanos" = "Primatas não humanos",
+  "caes" = "Cães",
+  "porcos" = "Porcos",
+  "animais_de_fazenda" = "Animais de fazenda",
+  "gatos" = "Gatos",
+  "ovelhas" = "Ovelhas")
+```
+
 # Resumo
 
 Anualmente o USDA (Departamento de Agricultura dos Estados Unidos) coleta as informações de animais empregados em pesquisas utilizadas em diferentes instâncias de experimentação. Esta prática vai de encontro ao", em('Animal Welfare Act.'),"Este aplicativo foi realizado a partir da análise das observações coletadas pelo USDA no ano de 2016.
@@ -89,7 +128,7 @@ Anualmente o USDA (Departamento de Agricultura dos Estados Unidos) coleta as inf
 Composição geral
 
 ```{r Sunburst, message=FALSE, warning=FALSE, echo = FALSE}
-plot_ly(labels = c("Utilizados", "Não utilizados", 
+Figura_1 <- plot_ly(labels = c("Utilizados", "Não utilizados", 
                    "Submetidos a dor", "Não submetidos a dor",
                    "Receberam terapia", "Não receberam terapia"),
         parents = c("","","Utilizados","Utilizados",
@@ -114,12 +153,12 @@ plot_ly(labels = c("Utilizados", "Não utilizados",
                                  "#ee7014", "#00525b",
                                  "#45ab79", "#f7b22d")))%>%
   layout(font = list(size = 18))
-
+print(Figura_1)
 ```
 
 Estatística descritiva - Medidas resumo com relação ao total
 
-```{r , Medidas resumo por espécie com relação ao total, echo = F}
+```{r Medidas resumo por espécie com relação ao total, echo = F}
 Total_SUM <- totais%>%
               summarise("Média" = mean(n_animais),
               "Desvio padrão" = sd(n_animais),
@@ -134,8 +173,8 @@ kbl(Total_SUM)%>%
 
 Distribuição - total dos animais utilizados
 
-```{r, Densidade, message=FALSE, warning=FALSE, echo  = F}
-totais %>%
+```{r Densidade, message=FALSE, warning=FALSE, echo  = F}
+Figura_2 <- totais %>%
   ggplot(aes(x = total, y = 1, fill = "#052935")) +
   geom_violin(color = "#052935", size = 1) +
   geom_boxplot(color = "gray",width = 0.10) +
@@ -148,11 +187,13 @@ totais %>%
   theme_minimal() +
   theme(plot.title = element_text(size = 14, hjust = 0.0, face = "bold"),
         text = element_text(size = 12))
+
+print(Figura_2)
 ```
 
 ## 3.2. Utilização de animais pela espécie
 
-```{r Medidas resumo por espécie,message=FALSE, warning=FALSE,echo = F}
+```{r Medidas resumo por espécie utilizada,message=FALSE, warning=FALSE,echo = F}
 
 Utilizados_SUM  <- totais%>%
   filter(utilizado == "sim")%>%
@@ -171,11 +212,10 @@ kbl(Utilizados_SUM)%>%
 
 ```
 
-```{r}
+```{r Medidas resumo por espécie mantida,message=FALSE, warning=FALSE,echo = F}
 Mantidos_SUM  <- totais%>%
   filter(utilizado != "sim")%>%
   AnimalSum(especie = especie, n_animais = n_animais)
-Mantidos_SUM
 
 Mantidos_SUM$especie <- stringr::str_to_title(Mantidos_SUM$especie)
 
@@ -209,6 +249,99 @@ Frequencia_Utilizados <- totais%>%
 
 ```
 
+```{r Frequencia mantidos, message=FALSE, warning=FALSE, incluse = F, echo  = F}
+#Nº de animais mantidos não utilizados
+Nanimais_Mantidos <- totais%>%
+  filter(utilizado != "sim")
+Nanimais_Mantidos <-sum(Nanimais_Mantidos$n_animais)
+
+Frequencia_Mantidos <- totais%>%
+  filter(utilizado != "sim")%>%
+  group_by(especie)%>%
+  summarise(FreqAbsT = sum(n_animais), 
+            FreqRelT = sum(n_animais)/Nanimais_Total, 
+            FreqRelPerT =  (sum(n_animais)/Nanimais_Total)*100,
+            FreqRelM = sum(n_animais)/Nanimais_Mantidos, 
+            FreqRelPerM =  (sum(n_animais)/Nanimais_Mantidos)*100,
+            x = ".")
+```
+
+```{r Gráfico de linhas - Frequencia de utilização por espécie, message=FALSE, warning=FALSE,echo = F}
+Utilizados_SUM  <- totais%>%
+  filter(utilizado == "sim")%>%
+  AnimalSum(especie = especie, n_animais = n_animais)
+
+FreqRel_Grupo <- Frequencia_Utilizados%>%
+                   select(especie,FreqAbsT,FreqRelU)
+
+Utilizados_SUM <- left_join(Utilizados_SUM ,FreqRel_Grupo, by  = "especie")
+
+colnames(Utilizados_SUM)[10] <- "FreqRel_Grupo"
+
+Mantidos_SUM  <- totais%>%
+  filter(utilizado != "sim")%>%
+  AnimalSum(especie = especie, n_animais = n_animais)
+
+FreqRel_Grupo <- Frequencia_Mantidos%>%
+  select(especie,FreqAbsT,FreqRelM)
+
+Mantidos_SUM <- left_join(Mantidos_SUM, FreqRel_Grupo, by  = "especie")
+
+colnames(Mantidos_SUM)[10] <- "FreqRel_Grupo"
+
+Utilizados_SUM$utilizado <- "sim"
+Mantidos_SUM$utilizado <- "não"
+SUM_bind <- rbind(Utilizados_SUM, Mantidos_SUM)
+
+SUM_bind$especie <- as.factor(SUM_bind$especie)
+SUM_bind$utilizado <- as.factor(SUM_bind$utilizado)
+
+Figura_3 <- SUM_bind%>%
+  ggplot(aes(x = utilizado, y = FreqRel_Grupo*100, group = especie))+
+  geom_line(aes(color = especie), size = 1.5)+
+  geom_point(aes(color = especie),size = 3)+
+  scale_color_manual(values = Principal, 
+                     labels = rotulos)+
+  labs(x = "Utilização",
+       y = "Frequencia por grupo (%)", 
+       color = "Espécie")+
+  theme_minimal()+
+  theme(text = element_text(size = 14, face = "bold"))
+print(Figura_3)
+```
+
+```{r  Gráfico de Barras - Frequencia de utilização por espécie, , message=FALSE, warning=FALSE,echo = F}
+library(stringr)
+
+Frequencia_Utilizados_copia <- Frequencia_Utilizados
+
+Frequencia_Utilizados_copia <- Frequencia_Utilizados_copia %>%
+  mutate(especie = str_to_title(especie) %>%
+           str_replace_all("_", " ") %>%
+           str_replace_all("nao", "não") %>%
+           str_replace_all("especies", "espécies") %>%
+           str_replace_all("Caes", "Cães") %>%
+           str_replace_all("Cavia p", "Porquinho-da-índia"))
+
+
+Figura_4 <- Frequencia_Utilizados_copia%>%
+  ggplot(aes( y = FreqRelU,x = x, fill = reorder(especie,FreqRelU),
+              text = paste0("Espécie: ", especie,"\nPercentual: ",
+                            round(FreqRelU*100,2), "%" )))+
+  geom_bar(position = "stack", stat = "identity",width = 0.5)+
+  scale_fill_manual(values = Principal_2)+
+  labs(x = "Animais",
+       y = "(%)",
+       fill = "Espécie",
+       title = "Frequencia de cada espécie com relação aos utilizados\n em exprimentos ao longo de 2016")+
+  scale_y_continuous(labels = scales::label_percent())+
+                      coord_flip()+
+                      theme_minimal()+
+                       theme(text = element_text(size = 14, hjust = 0.5, face = "bold"))
+
+ ggplotly(Figura_4, tooltip = c("text"))
+```
+
 ## 3.3. Exposição a dor
 
 ```{r Frequencia de exposição a dor, message=FALSE, warning=FALSE,echo = F}
@@ -224,9 +357,12 @@ FreqDor <- totais%>%
 ```
 
 ```{r Grafico de exposição a dor, message=FALSE, warning=FALSE, echo = F}
-totais%>%
+Figura_5 <- totais%>%
   filter(dor == "sim")%>% 
-  ggplot(aes(x = especie,  y = n_animais, fill = droga))+
+  group_by(dor, especie, droga)%>%
+  summarise(N_animais = sum(n_animais))%>%
+  ggplot(aes(x = especie,  y = N_animais, fill = droga,
+             text = paste0("Nº de animais: ", N_animais)))+
   geom_col(position="stack")+
   scale_fill_manual(values = c("não" = "#e64a19", "sim" = "#052935"))+
   scale_x_discrete(limits = c("gatos","ovelhas","animais_de_fazenda",
@@ -249,6 +385,8 @@ totais%>%
   coord_flip()+
   theme_minimal()+
   theme(text = element_text(size = 18, face = "bold"))
+
+ggplotly(Figura_5, tooltip = "text")
 ```
 
 ## 3.4. Utilização de animais por Estado
