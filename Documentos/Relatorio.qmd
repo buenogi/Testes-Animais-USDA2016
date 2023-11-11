@@ -418,10 +418,11 @@ N_animais_estado <- totais%>%
   filter(utilizado == "sim")%>%
   group_by(estado, geometry, State_Name)%>%
   summarise(Nanimais = sum(n_animais))
-# Discretização da variável
 
+# Discretização da variável
 N_animais_estado$classes <- cut(N_animais_estado$Nanimais,
-                                breaks = c(0,500,1000,5000,10000,25000,50000,Inf),
+                                breaks = c(0,500,1000,5000,10000,
+                                           25000,50000,Inf),
                                 labels = c("< 500", 
                                            "500 - 1.000",
                                            "1.000 - 5.000",
@@ -432,17 +433,21 @@ N_animais_estado$classes <- cut(N_animais_estado$Nanimais,
 
 N_animais_estado$classes <- as.factor(N_animais_estado$classes)
 
-P11_MapaUtilizados <- N_animais_estado%>%
-  ggplot() +
-  geom_sf(aes(geometry = geometry, fill = classes, label = State_Name), color = "gray")+
+MAPA1 <- N_animais_estado%>%
+        ggplot() +
+        geom_sf(aes(geometry = geometry,fill = classes,
+                    label = State_Name, text = paste0("Estado: ", State_Name,
+                                                      "\nNº de animais:", N_animais_estado$Nanimais)), color = "gray")+
   scale_fill_manual(values = colorRampPalette(c("white", "#052935"))(7), 
                     name = "Nº de animais utilizados")+
   theme_void()+
   theme(legend.position = "bottom",
         legend.title = element_text(size = 12, face = "bold"))
 
-MAPA1 <- ggplotly(P11_MapaUtilizados)
+MAPA1 <- ggplotly(P11_MapaUtilizados, tooltip = "text")
 
+
+MAPA1
 custom_text <- paste("Estado: ", totais$State_Name, "<br>Nº de animais utilizados: ", totais$total)
 
 MAPA1%>%
