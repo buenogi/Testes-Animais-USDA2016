@@ -444,14 +444,7 @@ MAPA1 <- N_animais_estado%>%
   theme(legend.position = "bottom",
         legend.title = element_text(size = 12, face = "bold"))
 
-MAPA1 <- ggplotly(P11_MapaUtilizados, tooltip = "text")
-
-
-MAPA1
-custom_text <- paste("Estado: ", totais$State_Name, "<br>Nº de animais utilizados: ", totais$total)
-
-MAPA1%>%
-  plotly::style(text = custom_text, hoverinfo = "text")%>%
+MAPA1 <- ggplotly(MAPA1, tooltip = "text")%>%
   layout( xaxis = list( linecolor = 'white'), 
           yaxis = list( linecolor = 'white'),
           legend = list(
@@ -462,8 +455,26 @@ MAPA1%>%
             orientation = "h",
             itemsizing = "constant",  # Define o tamanho da amostra de cor
             itemwidth = 30
-          )
-  )
+          ))
+  
+
+MAPA1
+# custom_text <- paste("Estado: ", totais$State_Name, "<br>Nº de animais utilizados: ", totais$total)
+
+# MAPA1%>%
+#   plotly::style(text = custom_text, hoverinfo = "text")%>%
+#   layout( xaxis = list( linecolor = 'white'), 
+#           yaxis = list( linecolor = 'white'),
+#           legend = list(
+#             x = 0.1, 
+#             y = -0.1, 
+#             bgcolor = "transparent", 
+#             bordercolor = "transparent",  
+#             orientation = "h",
+#             itemsizing = "constant",  # Define o tamanho da amostra de cor
+#             itemwidth = 30
+#           )
+#   )
 ```
 
 ```{r Ranking dos estados que mais utilizam animais em pesquisa por espécie,  message=FALSE, warning=FALSE, echo = F}

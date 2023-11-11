@@ -37,6 +37,34 @@ totais$especie <- as.factor(totais$especie)
 # 8 - Classes - Quantitativa discreta - nº de animais no total
 # 9 - Classes N - Quantitativa discreta  -  nº de animais por espécie
 
+#Paleta-------------------------------------------------------------------------
+
+Principal = c("cavia_p" = "#052935",
+              "outras_especies" = "#00525b",
+              "coelhos" = "#007e72",
+              "hamsters" = "#45ab79",
+              "primatas_nao_humanos" = "#98d574",
+              "caes" = "#d0db5e",
+              "porcos" = "#face4b", 
+              "animais_de_fazenda" = "#f7b22d",
+              "gatos" = "#ee7014",
+              "ovelhas" = "#e64a19")
+
+
+
+rotulos <- c(
+  "cavia_p" = "C. porcellus",
+  "outras_especies" = "Outras espécies",
+  "coelhos" = "Coelhos",
+  "hamsters" = "Hamsters",
+  "primatas_nao_humanos" = "Primatas não humanos",
+  "caes" = "Cães",
+  "porcos" = "Porcos",
+  "animais_de_fazenda" = "Animais de fazenda",
+  "gatos" = "Gatos",
+  "ovelhas" = "Ovelhas")
+
+c("#052935" , "#00c6aa", "#2a8476", "#344b46")
 # 1º - Medidas resumo  geral e por espécie----------------------------------------------
 
 Total_SUM <- AnimalSum(totais,especie,n_animais)
@@ -1290,29 +1318,27 @@ chisq.test(tabela_contingencia)
 
 # 21º - Coordenadas paralelas --------------------------------------------------
 
-library(GGally)
-
 Utilizados_SUM  <- totais%>%
   filter(utilizado == "sim")%>%
   AnimalSum(especie = especie, n_animais = n_animais)
 
-N_total <- totais%>%
-  filter(utilizado == "sim")%>%
-  group_by(especie)%>%
-  summarise( N_total = sum(n_animais))
+FreqRel_Grupo <- Frequencia_Utilizados%>%
+                   select(especie,FreqAbsT,FreqRelU)
 
-Utilizados_SUM <- left_join(Utilizados_SUM, N_total, by  = "especie")
+Utilizados_SUM <- left_join(Utilizados_SUM ,FreqRel_Grupo, by  = "especie")
+
+colnames(Utilizados_SUM)[10] <- "FreqRel_Grupo"
 
 Mantidos_SUM  <- totais%>%
   filter(utilizado != "sim")%>%
   AnimalSum(especie = especie, n_animais = n_animais)
 
-N_total <- totais%>%
-  filter(utilizado != "sim")%>%
-  group_by(especie)%>%
-  summarise(N_total = sum(n_animais))
+FreqRel_Grupo <- Frequencia_Mantidos%>%
+  select(especie,FreqAbsT,FreqRelM)
 
-Mantidos_SUM <- left_join(Mantidos_SUM, N_total, by  = "especie")
+Mantidos_SUM <- left_join(Mantidos_SUM, FreqRel_Grupo, by  = "especie")
+
+colnames(Mantidos_SUM)[10] <- "FreqRel_Grupo"
 
 Utilizados_SUM$utilizado <- "sim"
 Mantidos_SUM$utilizado <- "não"
@@ -1322,48 +1348,18 @@ SUM_bind$especie <- as.factor(SUM_bind$especie)
 SUM_bind$utilizado <- as.factor(SUM_bind$utilizado)
 
 SUM_bind%>%
-  ggplot(aes(x = utilizado, y = N_total, group = especie))+
+  ggplot(aes(x = utilizado, y = FreqRel_Grupo*100, group = especie))+
   geom_line(aes(color = especie), size = 1.5)+
   geom_point(aes(color = especie),size = 5)+
   scale_color_manual(values = Principal, 
                      labels = rotulos)+
-  labs(x = "Utilização em experimentação ao longo de 2016.",
-       y = "Nº total", 
+  labs(x = "Utilização",
+       y = "Frequencia por grupo (%)", 
        color = "Espécie")+
   theme_minimal()+
   theme(text = element_text(size = 18, face = "bold"))
 theme(text = element_text(size = 18, face = "bold"))
   
-#Paleta-------------------------------------------------------------------------
-
-Principal = c("cavia_p" = "#052935",
-              "outras_especies" = "#00525b",
-              "coelhos" = "#007e72",
-              "hamsters" = "#45ab79",
-              "primatas_nao_humanos" = "#98d574",
-              "caes" = "#d0db5e",
-              "porcos" = "#face4b", 
-              "animais_de_fazenda" = "#f7b22d",
-              "gatos" = "#ee7014",
-              "ovelhas" = "#e64a19")
-
-  
-  
-  rotulos <- c(
-    "cavia_p" = "C. porcellus",
-    "outras_especies" = "Outras espécies",
-    "coelhos" = "Coelhos",
-    "hamsters" = "Hamsters",
-    "primatas_nao_humanos" = "Primatas não humanos",
-    "caes" = "Cães",
-    "porcos" = "Porcos",
-    "animais_de_fazenda" = "Animais de fazenda",
-    "gatos" = "Gatos",
-    "ovelhas" = "Ovelhas")
-  
-c("#052935" , "#00c6aa", "#2a8476", "#344b46")
-
-
 #LEMBRETES ---------------------------------------------------------------------
 # ! Avaliar a composição das espécies dentro do grupo submetido a dor
 # ! Avaliar a composição das espécies dentro do grupo que recebe tratamento
