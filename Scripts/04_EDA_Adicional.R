@@ -41,12 +41,30 @@ cor(dadosT_NAOM$Nanimais, dadosT_NAOM$custo_man_unidade)
 cor(dadosT_NAOM$Nanimais, dadosT_NAOM$custo_total)
 
 # Correlogramas ----------------------------------------------------------------
+
 dadosT%>%
   select(Nanimais,exp_vida_anos,maturidade_sexual,
-         tempo_gestacao,peso, custo_man_unidade, custo_total)%>%
+         tempo_gestacao,peso, custo_man_unidade)%>%
   plot(pch=20 , cex=1.5 , col="#69b3a2")
 
 ggpairs(dadosT) 
+
+# Heatmap
+dadosT_NAOM <- na.omit(dadosT)
+titulos <- c("Nº animais", "Expectativa\n de vida", 
+             "Maturidade\nsexual","Tempo de\n gestação",
+             "Peso", "Custo de manutenção")
+
+dadosHM <- select_if(dadosT_NAOM, is.numeric)
+colnames(dadosHM) <- titulos
+matriz_correlacao <- cor(dadosHM)
+
+Paleta_3 <- c("#cbffa4","#98d574","#45ab79", "#007e72","#00525b","#052935" )
+corrplot::corrplot(matriz_correlacao, method = "color", 
+                         type = "upper", tl.cex = 1.0,tl.srt=45, 
+                         addCoef.col = "black", 
+                         tl.col = "black", addgrid.col = "darkgray", 
+                         col = Paleta_3)
 
 # Gráficos separados  ----------------------------------------------------------
 
@@ -57,17 +75,19 @@ source(file = "Funcoes/04_plots_disp.R")
 
 
 graficos <- lapply(variaveis, plots_disp, dados = dadosT, var1 = "Nanimais", 
-       especie = "especie")
+                   especie = "especie")
 
 
 
-dadosT%>%
-  ggplot(aes(x = exp_vida_anos , y = Nanimais , 
-             color = especie, size = peso)) +
-  geom_point(alpha = 0.7) +
+dadosT_NAOM%>%
+  ggplot(aes(x = custo_man_unidade, y = Nanimais , 
+             color = especie, size = peso/1000)) +
+  geom_point() +
   labs(y = "Nº de animais", 
-       x = "Expectativa de vida",
-       color = "Espécie") +
+       x = "Custo de manutenção (un)",
+       color = "Espécie",
+       size = "Peso (Kg)") +
+  scale_size_continuous(range = c(2,15))+
   scale_color_manual(values = c(
     "cavia_p" = "#052935",
     "outras_especies" = "#00525b",
@@ -80,7 +100,7 @@ dadosT%>%
     "gatos" = "#ee7014",
     "ovelhas" = "#e64a19"
   ), labels = c(
-    "cavia_p" = "C. porcellus",
+    "cavia_p" = "Porquinho-da-índia",
     "outras_especies" = "Outras espécies",
     "coelhos" = "Coelhos",
     "hamsters" = "Hamsters",
@@ -93,5 +113,6 @@ dadosT%>%
   )) +
   theme_light() +
   theme(text = element_text(size = 12, hjust = 0.5, face = "bold"))
-P9_Dispersao
-ggsave(filename = "Figuras/P9_Dispersao.png", plot = P9_Dispersao)
+
+
+

@@ -192,6 +192,63 @@ Figura_2 <- totais %>%
 print(Figura_2)
 ```
 
+Teste chi quadrado
+
+
+```{r - Teste Chi quadrado, message=FALSE, warning=FALSE, echo  = F }
+# Com relação a utilização
+df_contingencia <- totais%>%
+  group_by(especie,utilizado)%>%
+  summarise(freq_sp  = sum(n_animais))%>%
+  pivot_wider(names_from = especie, values_from = freq_sp)
+df_contingencia <- df_contingencia[,-1]
+
+matriz <- as.matrix(df_contingencia)
+tabela_contingencia <- as.table(matriz)
+# tabela_contingencia <- tabela_contingencia[,-1]
+# conversao <- as.matrix(tabela_contingencia)
+# tabela_contingencia <- as.table(as.numeric(conversao))
+tabela_contingencia <- ftable(tabela_contingencia)
+R1 <- chisq.test(tabela_contingencia)
+print(R1)
+# Com relação a dor
+df_contingencia <- totais%>%
+  filter(utilizado == "sim")%>%
+  group_by(especie,dor)%>%
+  summarise(freq_sp  = sum(n_animais))%>%
+  pivot_wider(names_from = especie, values_from = freq_sp)
+
+df_contingencia <- df_contingencia[,-1]
+
+matriz <- as.matrix(df_contingencia)
+tabela_contingencia <- as.table(matriz)
+# tabela_contingencia <- tabela_contingencia[,-1]
+# conversao <- as.matrix(tabela_contingencia)
+# tabela_contingencia <- as.table(as.numeric(conversao))
+tabela_contingencia <- ftable(tabela_contingencia)
+R2 <- chisq.test(tabela_contingencia)
+print(R2)
+
+# Com relação a droga
+
+df_contingencia <- totais%>%
+  filter(droga == "sim")%>%
+  group_by(especie)%>%
+  summarise(freq_sp  = sum(n_animais))%>%
+  pivot_wider(names_from = especie, values_from = freq_sp)
+
+df_contingencia <- df_contingencia[,-1]
+
+matriz <- as.matrix(df_contingencia)
+tabela_contingencia <- as.table(matriz)
+# tabela_contingencia <- tabela_contingencia[,-1]
+# conversao <- as.matrix(tabela_contingencia)
+# tabela_contingencia <- as.table(as.numeric(conversao))
+tabela_contingencia <- ftable(tabela_contingencia)
+R3 <- chisq.test(tabela_contingencia)
+print(R3)
+```
+
 ## 3.2. Utilização de animais pela espécie
 
 ```{r Medidas resumo por espécie utilizada,message=FALSE, warning=FALSE,echo = F}
@@ -643,6 +700,87 @@ totais%>%
   coord_flip()+
   theme_minimal()+
   theme(text = element_text(size = 18, face = "bold"))
+```
+
+```{r - Dados adicionais - Universidades por estado,  message=FALSE, warning=FALSE, echo = F}
+dadosT <- read_csv(file = "../Dados/Processados/dados_processados_adc2.csv",
+                      show_col_types = F)
+
+coef_correlacao <- cor(dadosT$Nanimais,dadosT$NUniversidades)
+
+Figura_8 <- dadosT%>%
+  ggplot(aes(x = NUniversidades, y = Nanimais))+
+  geom_smooth(color = "gray" )+
+  geom_point(aes(text = paste0("Estado: ", estado, "\nNº de animais: ", Nanimais, "\nNº de Universidades: ", NUniversidades)),size = 5, alpha = 0.7, color = "#052935")+
+  geom_text(x = max(dadosT$NUniversidades), y = max(dadosT$Nanimais),
+            label = paste("Correlação =\n", round(coef_correlacao, 2)),
+            hjust = 1.7, vjust = 1, color = "#052935") +
+  labs(x = "Nº de Universidades por estado",
+       y = "Nº de animais\nutilizados por estado")+
+  theme_minimal()+
+  theme(text = element_text(size = 12, face = "bold"))
+
+ggplotly(Figura_8, tooltip = "all")
+```
+
+## 3.5. Investigação de variáveis explicativas
+
+```{r, Heatmap para avaliar correlacao, message=FALSE, warning=FALSE, echo = F}
+dadosT <- read_csv(file = "../Dados/Processados/dados_processados_adc1.csv",
+                      show_col_types = F)
+# Heatmap
+dadosT_NAOM <- na.omit(dadosT)
+titulos <- c("Nº animais", "Expectativa\n de vida", 
+             "Maturidade\nsexual","Tempo de\n gestação",
+             "Peso", "Custo de manutenção")
+
+dadosHM <- select_if(dadosT_NAOM, is.numeric)
+colnames(dadosHM) <- titulos
+matriz_correlacao <- cor(dadosHM)
+
+Paleta_3 <- c("#cbffa4","#98d574","#45ab79", "#007e72","#00525b","#052935" )
+corrplot::corrplot(matriz_correlacao, method = "color", 
+                         type = "upper", tl.cex = 1.0,tl.srt=45, 
+                         addCoef.col = "black", 
+                         tl.col = "black", addgrid.col = "darkgray", 
+                         col = Paleta_3)
+```
+
+```{r,Possiveis explicativas,  message=FALSE, warning=FALSE, echo = F}
+dadosT_NAOM%>%
+  ggplot(aes(x = custo_man_unidade, y = Nanimais , 
+             color = especie, size = peso/1000)) +
+  geom_point() +
+  labs(y = "Nº de animais", 
+       x = "Custo de manutenção (un)",
+       color = "Espécie",
+       size = "Peso (Kg)") +
+  scale_size_continuous(range = c(2,15))+
+  scale_color_manual(values = c(
+    "cavia_p" = "#052935",
+    "outras_especies" = "#00525b",
+    "coelhos" = "#007e72",
+    "hamsters" = "#45ab79",
+    "primatas_nao_humanos" = "#98d574",
+    "caes" = "#d0db5e",
+    "porcos" = "#face4b", 
+    "animais_de_fazenda" = "#f7b22d",
+    "gatos" = "#ee7014",
+    "ovelhas" = "#e64a19"
+  ), labels = c(
+    "cavia_p" = "Porquinho-da-índia",
+    "outras_especies" = "Outras espécies",
+    "coelhos" = "Coelhos",
+    "hamsters" = "Hamsters",
+    "primatas_nao_humanos" = "Primatas não humanos",
+    "caes" = "Cães",
+    "porcos" = "Porcos",
+    "animais_de_fazenda" = "Animais de fazenda",
+    "gatos" = "Gatos",
+    "ovelhas" = "Ovelhas"
+  )) +
+  theme_light() +
+  theme(text = element_text(size = 12, hjust = 0.5, face = "bold"))
 ```
 
 # 4. Discussão

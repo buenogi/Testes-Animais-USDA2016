@@ -116,15 +116,15 @@ dadosT<- dados_full%>%
   group_by(especie)%>%
   summarise(Nanimais = sum(n_animais))
 
-dadosT <- left_join(dados_full, dadosAdc1, by = "especie")
+dadosT_Adc1 <- left_join(dadosT, dadosAdc1, by = "especie")
 
 # Salvamento
-write_csv(dadosT, file = "Dados/Processados/dados_processados_adc1.csv")
+write_csv(dadosT_Adc1 , file = "Dados/Processados/dados_processados_adc1.csv")
 
 # Dados adicionais - Informações dos estados -----------------------------------
 
 dadosJSON <- fromJSON("Dados/Brutos/us-colleges-and-universities.json")
-nome <- dadosJSON$results$name
+nome <- dadosJSON$name
 estado <- dadosJSON$state
 dadosAdc2 <- data.frame(nome, estado)
 
