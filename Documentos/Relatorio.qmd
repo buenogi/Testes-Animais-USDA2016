@@ -38,6 +38,8 @@ library(sf)
 library(circlepackeR)
 library(data.tree)
 library(kableExtra)
+library(rnaturalearth)
+library(jsonlite)
 
 ```
 
@@ -128,7 +130,7 @@ Anualmente o USDA (Departamento de Agricultura dos Estados Unidos) coleta as inf
 Composição geral
 
 ```{r Sunburst, message=FALSE, warning=FALSE, echo = FALSE}
-Figura_1 <- plot_ly(labels = c("Utilizados", "Não utilizados", 
+plot_ly(labels = c("Utilizados", "Não utilizados", 
                    "Submetidos a dor", "Não submetidos a dor",
                    "Receberam terapia", "Não receberam terapia"),
         parents = c("","","Utilizados","Utilizados",
@@ -153,7 +155,6 @@ Figura_1 <- plot_ly(labels = c("Utilizados", "Não utilizados",
                                  "#ee7014", "#00525b",
                                  "#45ab79", "#f7b22d")))%>%
   layout(font = list(size = 18))
-print(Figura_1)
 ```
 
 Estatística descritiva - Medidas resumo com relação ao total
@@ -356,6 +357,22 @@ FreqDor <- totais%>%
             x = ".")
 ```
 
+```{r Gráfico de freq de exposição a dor,message=FALSE, warning=FALSE,echo = F}
+FreqDor%>%
+  ggplot(aes(x = x,  y = freqRel, fill = dor))+
+  geom_col(position="stack", width = 0.15)+
+  scale_fill_manual(values = c("não" = "#e64a19", "sim" = "#052935"))+
+  scale_y_continuous(labels = scales::label_percent())+
+  labs(x = "Total",
+       y = "Nº de Animais",
+       fill = "Dor",
+       title = "Dor")+
+  coord_flip()+
+  theme_minimal()+
+  theme(text = element_text(size = 18, face = "bold"))
+```
+
+
 ```{r Grafico de exposição a dor, message=FALSE, warning=FALSE, echo = F}
 Figura_5 <- totais%>%
   filter(dor == "sim")%>% 
@@ -437,23 +454,23 @@ MAPA1 <- N_animais_estado%>%
         ggplot() +
         geom_sf(aes(geometry = geometry,fill = classes,
                     label = State_Name, text = paste0("Estado: ", State_Name,
-                                                      "\nNº de animais:", N_animais_estado$Nanimais)), color = "gray")+
+                                                      "\nNº de animais:",
+                                                      N_animais_estado$Nanimais)),
+                color = "gray")+
   scale_fill_manual(values = colorRampPalette(c("white", "#052935"))(7), 
                     name = "Nº de animais utilizados")+
   theme_void()+
   theme(legend.position = "bottom",
-        legend.title = element_text(size = 12, face = "bold"))
+        legend.title = element_text(size = 12, face = "bold"))+
+  coord_sf(xlim = c(-125, -66), ylim = c(25, 49))
 
 MAPA1 <- ggplotly(MAPA1, tooltip = "text")%>%
   layout( xaxis = list( linecolor = 'white'), 
           yaxis = list( linecolor = 'white'),
           legend = list(
-            x = 0.1, 
-            y = -0.1, 
             bgcolor = "transparent", 
             bordercolor = "transparent",  
-            orientation = "h",
-            itemsizing = "constant",  # Define o tamanho da amostra de cor
+            itemsizing = "constant", 
             itemwidth = 30
           ))
   
@@ -511,6 +528,107 @@ totais %>%
        fill = "Espécie")+
   theme_minimal()+
   theme(text = element_text(size = 12, hjust = 0.5, face = "bold"))
+```
+
+```{r Mapa 2 - de utilização das espécies por estado,message=FALSE, warning=FALSE, echo = F}
+usa <- ne_states(country = "United States of America", returnclass = "sf")
+dados_latlongUS <-read_csv("../Dados/Processados/USA_latlong.csv")
+
+N_animais_estado_sp <- totais%>%
+  filter(utilizado == "sim")%>%
+  group_by(estado,State_Name,especie)%>%
+  summarise(Nanimais = sum(n_animais))
+
+N_animais_estado_sp <- left_join(N_animais_estado_sp,
+                                 dados_latlongUS , 
+                                 by = c("estado" = "estado"))
+
+convert <- N_animais_estado_sp%>%
+  group_by(estado,especie) %>%
+  mutate(longitude = longitude + runif(1, -1, 1),  
+         latitude = latitude + runif(1, -1, 1)) %>%
+  ungroup() %>%
+  st_as_sf(coords = c("longitude", "latitude"), crs = st_crs(4326))
+
+convert <- convert[!(convert$estado %in% c("HI", "AK", "PR")), ]
+
+convert <- convert%>%
+  mutate(especie = str_to_title(especie) %>%
+           str_replace_all("_", " ") %>%
+           str_replace_all("nao", "não") %>%
+           str_replace_all("especies", "espécies") %>%
+           str_replace_all("Caes", "Cães") %>%
+           str_replace_all("Cavia p", "Porquinho-da-índia"))
+
+
+MAPA2 <- ggplot() +
+  geom_sf(data = usa, color = "white", fill = "gray") +
+  geom_sf(data = convert, aes(size = Nanimais,
+                              color = especie, 
+                              text = paste0("Estado: ",State_Name,"\nEspécie: ", especie,
+                                            "\n Nº de animais: ", Nanimais)), alpha = 0.7)+
+  scale_size_continuous(range = c(2, 10), name = "") +
+  scale_color_manual(values = Principal_2,
+                     label = rotulos)+
+  labs(color = "Espécie",
+       size = " ")+
+  theme_void()+
+  coord_sf(xlim = c(-125, -66), ylim = c(25, 49))
+
+ggplotly(MAPA2, tooltip = "text")%>%
+  layout( xaxis = list( linecolor = 'white'), 
+          yaxis = list( linecolor = 'white'),
+          legend = list(
+            bgcolor = "transparent", 
+            bordercolor = "transparent",  
+            itemsizing = "constant", 
+            itemwidth = 30
+          ))
+```
+
+```{r Mapa 3, message=FALSE, warning=FALSE,echo = F}
+
+Dor_estado <- totais%>%
+  filter(utilizado == "sim")%>%
+  group_by(estado,State_Name,dor)%>%
+  summarise(Nanimais = sum(n_animais))
+
+Dor_estado_geo <- left_join(Dor_estado,
+                        dados_latlongUS , 
+                        by = c("estado" = "estado"))
+
+Dor_estado_geo_convert <- Dor_estado_geo%>%
+  group_by(estado,dor) %>%
+  mutate(longitude = longitude + runif(1, -1, 1),  
+         latitude = latitude + runif(1, -1, 1)) %>%
+  ungroup() %>%
+  st_as_sf(coords = c("longitude", "latitude"), crs = st_crs(4326))
+
+Dor_estado_geo_convert  <- Dor_estado_geo_convert [!(Dor_estado_geo_convert $estado %in% c("HI", "AK", "PR")), ]
+
+MAPA3 <- ggplot() +
+  geom_sf(data = usa, color = "white", fill = "gray") +
+  geom_sf(data = Dor_estado_geo_convert, aes(size = Nanimais,
+                              color = dor, 
+                              text = paste0("Estado: ",State_Name,"\nExposição a dor: ", dor,
+                                            "\n Nº de animais: ", Nanimais)), alpha = 0.7)+
+  scale_size_continuous(range = c(2, 10), name = "") +
+  scale_color_manual(values = c("não" = "#e64a19", "sim" = "#052935"),
+                     label = c("sim"="Sim", "nao" = "não"))+
+  labs(color = "Exposição a dor",
+       size = " ")+
+  theme_void()+
+  coord_sf(xlim = c(-125, -66), ylim = c(25, 49))
+
+ggplotly(MAPA3, tooltip = "text")%>%
+  layout( xaxis = list( linecolor = 'white'), 
+          yaxis = list( linecolor = 'white'),
+          legend = list(
+            bgcolor = "transparent", 
+            bordercolor = "transparent",  
+            itemsizing = "constant", 
+            itemwidth = 30
+          ))
 ```
 
 ```{r Onde são localizadas as experimentações com dor, message=FALSE, warning=FALSE, echo = F}

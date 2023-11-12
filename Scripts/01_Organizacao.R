@@ -112,7 +112,7 @@ write_csv(dados_full, file = "Dados/Processados/dados_processados.csv")
 dadosAdc1 <- read_csv(file = "Dados/Brutos/dados_adicionais.csv",
                      show_col_types = F)
 
-dadosT<- dados_full%<>%
+dadosT<- dados_full%>%
   group_by(especie)%>%
   summarise(Nanimais = sum(n_animais))
 
@@ -124,7 +124,7 @@ write_csv(dadosT, file = "Dados/Processados/dados_processados_adc1.csv")
 # Dados adicionais - Informações dos estados -----------------------------------
 
 dadosJSON <- fromJSON("Dados/Brutos/us-colleges-and-universities.json")
-nome <- dadosJSON$name
+nome <- dadosJSON$results$name
 estado <- dadosJSON$state
 dadosAdc2 <- data.frame(nome, estado)
 
@@ -138,6 +138,20 @@ dadosProc <- dados_full%>%
 
 dadosT <- left_join(dadosProc, dadosAdc2, by = "estado")
 
+# dadosT <- left_join(dadosT, dados_latlongUS, by = "estado")
+
 # Salvamento
 
 write_csv(dadosT, file = "Dados/Processados/dados_processados_adc2.csv")
+
+# Dados adicionais  - Latitude e longitude dos EUA -----------------------------
+
+dadosJSON <- fromJSON("Dados/Brutos/mapa/mapa.json")
+dadosJSON <- dadosJSON$results
+
+nome <- dadosJSON$name
+longitude <- dadosJSON$centlon
+latitude <- dadosJSON$centlat
+estado <- dadosJSON$stusab
+dados_latlongUS <- data.frame(estado,latitude,longitude)
+write_csv(dados_latlongUS, file = "Dados/Processados/USA_latlong.csv")

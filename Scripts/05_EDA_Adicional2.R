@@ -6,7 +6,6 @@ library(jsonlite)
 dadosT <- read_csv(file = "Dados/Processados/dados_processados_adc2.csv",
                       show_col_types = F)
 
-
 coef_correlacao <- cor(dadosT$Nanimais,dadosT$NUniversidades)
 
 P15_CorNuniNani<- dadosT%>%

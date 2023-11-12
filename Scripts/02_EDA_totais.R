@@ -49,6 +49,17 @@ Principal = c("cavia_p" = "#052935",
               "animais_de_fazenda" = "#f7b22d",
               "gatos" = "#ee7014",
               "ovelhas" = "#e64a19")
+Principal_2 = c("Porquinho-da-índia" = "#052935",
+                "Outras espécies" = "#00525b",
+                "Coelhos" = "#007e72",
+                "Hamsters" = "#45ab79",
+                "Primatas não humanos" = "#98d574",
+                "Cães" = "#d0db5e",
+                "Porcos" = "#face4b", 
+                "Animais de fazenda" = "#f7b22d",
+                "Gatos" = "#ee7014",
+                "Ovelhas" = "#e64a19")
+
 
 
 
@@ -933,8 +944,8 @@ PR <- totais%>%
   filter(estado == "PR") 
 
 totais <- totais[!(totais$estado %in% c("HI", "AK", "PR")), ]
-
-write_csv(totais, file = "Dados/Processados/dados_processados_US.csv")
+# 
+# write_csv(totais, file = "Dados/Processados/dados_processados_US.csv")
 # 15º - Mapas ------------------------------------------------------------------
 
 N_animais_estado <- totais%>%
@@ -988,12 +999,72 @@ MAPA1%>%
           )
   )
 
-# Mapa por espécie
+# Mapa por espécie -------------------------------------------------------------
+library(jsonlite)
+library(sf)
+library(rnaturalearth)
+
+usa <- ne_states(country = "United States of America", returnclass = "sf")
+# dadosJSON <- fromJSON("Dados/Brutos/mapa/mapa.json")
+# dadosJSON <- dadosJSON$results
+# 
+# nome <- dadosJSON$name
+# longitude <- dadosJSON$centlon
+# latitude <- dadosJSON$centlat
+# estado <- dadosJSON$stusab
+# dados_latlongUS <- data.frame(estado,latitude,longitude)
+dados_latlongUS <-read_csv("Dados/Processados/USA_latlong.csv")
 
 N_animais_estado_sp <- totais%>%
   filter(utilizado == "sim")%>%
-  group_by(estado, geometry, State_Name,especie)%>%
+  group_by(estado,State_Name,especie)%>%
   summarise(Nanimais = sum(n_animais))
+
+N_animais_estado_sp <- left_join(N_animais_estado_sp,
+                                 dados_latlongUS , 
+                                 by = c("estado" = "estado"))
+
+convert <- N_animais_estado_sp%>%
+  group_by(estado,especie) %>%
+  mutate(longitude = longitude + runif(1, -1, 1),  
+         latitude = latitude + runif(1, -1, 1)) %>%
+  ungroup() %>%
+  st_as_sf(coords = c("longitude", "latitude"), crs = st_crs(4326))
+
+convert <- convert[!(convert$estado %in% c("HI", "AK", "PR")), ]
+
+convert <- convert%>%
+  mutate(especie = str_to_title(especie) %>%
+           str_replace_all("_", " ") %>%
+           str_replace_all("nao", "não") %>%
+           str_replace_all("especies", "espécies") %>%
+           str_replace_all("Caes", "Cães") %>%
+           str_replace_all("Cavia p", "Porquinho-da-índia"))
+
+
+MAPA2 <- ggplot() +
+  geom_sf(data = usa, color = "white", fill = "gray") +
+  geom_sf(data = convert, aes(size = Nanimais,
+                              color = especie, 
+                              text = paste0("Estado: ",State_Name,"\nEspécie: ", especie,
+                                            "\n Nº de animais: ", Nanimais)), alpha = 0.7)+
+  scale_size_continuous(range = c(3, 15)) +
+  scale_color_manual(values = Principal_2,
+                     label = rotulos)+
+  labs(color = "Espécie",
+       size = "Nº de animais")+
+  theme_void()+
+  coord_sf(xlim = c(-125, -66), ylim = c(25, 49))
+
+ggplotly(MAPA2, tooltip = "text")
+
+# for (i in 1:nrow(N_animais_estado_sp)) {
+#   if (is.na(N_animais_estado_sp$latitude[i])  &
+#       is.na(N_animais_estado_sp$longitude[i])) {
+#     N_animais_estado_sp$latitude[i] <- "38.889805"
+#     N_animais_estado_sp$longitude[i] <- "-77.009056"
+#   }
+# }
 
 # Discretização da variável
 
@@ -1015,30 +1086,29 @@ for (i in 1:nrow(N_animais_estado_sp)) {
   }
 }
 
-P12_MapaUtilizadosSP <- N_animais_estado_sp%>%
-  ggplot() +
-  geom_sf(aes(geometry = geometry, fill = classes), color = "gray") +
-  scale_fill_manual(values = colorRampPalette(c("white", "#052935"))(7), 
-                    name = "Nº de animais utilizados") +
-  facet_wrap(~especie,nrow = 5, labeller = labeller(especie = 
-                                             c("cavia_p" = "C. porcellus",
-                                               "outras_especies" = "Outras espécies",
-                                               "coelhos" = "Coelhos",
-                                               "hamsters" = "Hamsters",
-                                               "primatas_nao_humanos" = "Primatas não humanos",
-                                               "caes" = "Cães",
-                                               "porcos" = "Porcos",
-                                               "animais_de_fazenda" = "Animais de fazenda",
-                                               "gatos" = "Gatos",
-                                               "ovelhas" = "Ovelhas")))+
-  theme_void()+
-  theme(legend.position = "bottom",
-        legend.text = element_text(size = 18),
-        legend.title = element_text(size = 18, face = "bold"))
-P12_MapaUtilizadosSP
+# P12_MapaUtilizadosSP <- N_animais_estado_sp%>%
+#   ggplot() +
+#   geom_sf(aes(geometry = geometry, fill = classes), color = "gray") +
+#   scale_fill_manual(values = colorRampPalette(c("white", "#052935"))(7), 
+#                     name = "Nº de animais utilizados") +
+#   facet_wrap(~especie,nrow = 5, labeller = labeller(especie = 
+#                                              c("cavia_p" = "C. porcellus",
+#                                                "outras_especies" = "Outras espécies",
+#                                                "coelhos" = "Coelhos",
+#                                                "hamsters" = "Hamsters",
+#                                                "primatas_nao_humanos" = "Primatas não humanos",
+#                                                "caes" = "Cães",
+#                                                "porcos" = "Porcos",
+#                                                "animais_de_fazenda" = "Animais de fazenda",
+#                                                "gatos" = "Gatos",
+#                                                "ovelhas" = "Ovelhas")))+
+#   theme_void()+
+#   theme(legend.position = "bottom",
+#         legend.text = element_text(size = 18),
+#         legend.title = element_text(size = 18, face = "bold"))
+# 
+# ggsave(filename = "Figuras/P12_MapaUtilizadosSP.png", plot = P12_MapaUtilizadosSP)
 
-P12_MapaUtilizadosSP
-ggsave(filename = "Figuras/P12_MapaUtilizadosSP.png", plot = P12_MapaUtilizadosSP)
 
 MAPA2 <- ggplotly(MAPA2)
 
@@ -1360,6 +1430,53 @@ SUM_bind%>%
   theme(text = element_text(size = 18, face = "bold"))
 theme(text = element_text(size = 18, face = "bold"))
   
+# 22º - Mapa 3 -----------------------------------------------------------------
+
+usa <- ne_states(country = "United States of America", returnclass = "sf")
+dados_latlongUS <-read_csv("../Dados/Processados/USA_latlong.csv")
+
+Dor_estado <- totais%>%
+  filter(utilizado == "sim")%>%
+  group_by(estado,State_Name,dor)%>%
+  summarise(Nanimais = sum(n_animais))
+
+Dor_estado_geo <- left_join(Dor_estado,
+                            dados_latlongUS , 
+                            by = c("estado" = "estado"))
+
+Dor_estado_geo_convert <- Dor_estado_geo%>%
+  group_by(estado,dor) %>%
+  mutate(longitude = longitude + runif(1, -1, 1),  
+         latitude = latitude + runif(1, -1, 1)) %>%
+  ungroup() %>%
+  st_as_sf(coords = c("longitude", "latitude"), crs = st_crs(4326))
+
+Dor_estado_geo_convert  <- Dor_estado_geo_convert [!(Dor_estado_geo_convert $estado %in% c("HI", "AK", "PR")), ]
+
+MAPA3 <- ggplot() +
+  geom_sf(data = usa, color = "white", fill = "gray") +
+  geom_sf(data = Dor_estado_geo_convert, aes(size = Nanimais,
+                                             color = dor, 
+                                             text = paste0("Estado: ",State_Name,"\nExposição a dor: ", dor,
+                                                           "\n Nº de animais: ", Nanimais)), alpha = 0.7)+
+  scale_size_continuous(range = c(2, 10), name = "") +
+  scale_color_manual(values = c("não" = "#e64a19", "sim" = "#052935"),
+                     label = c("sim"="Sim", "nao" = "não"))+
+  labs(color = "Exposição a dor",
+       size = " ")+
+  theme_void()+
+  coord_sf(xlim = c(-125, -66), ylim = c(25, 49))
+
+ggplotly(MAPA3, tooltip = "text")%>%
+  layout( xaxis = list( linecolor = 'white'), 
+          yaxis = list( linecolor = 'white'),
+          legend = list(
+            bgcolor = "transparent", 
+            bordercolor = "transparent",  
+            itemsizing = "constant", 
+            itemwidth = 30
+          ))
+
 #LEMBRETES ---------------------------------------------------------------------
 # ! Avaliar a composição das espécies dentro do grupo submetido a dor
 # ! Avaliar a composição das espécies dentro do grupo que recebe tratamento
