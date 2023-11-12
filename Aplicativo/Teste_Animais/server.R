@@ -18,15 +18,37 @@ source("03_Frequencia.R")
 function(input, output, session) {
 
     output$freqPlot <- plotly::renderPlotly({
-      x <- dados %>%
-        filter(utilizado == input$utilizado) %>%
-        filter(dor == input$dor) %>%
-        filter(droga == input$droga)%>%
-        filter(especie %in% input$especie)
+     
+      if(input$utilizado == "não"){
+        x <- dados%>%
+          filter(utilizado == "não")%>%
+          filter(especie %in% input$especie)
+        }else if(input$utilizado == "sim" & input$dor == "não"){
+          x <- dados %>%
+          filter(utilizado == "sim")%>%
+          filter(dor == "não")%>%
+          filter(especie %in% input$especie)
+          }else if(input$utilizado == "sim" & input$dor == "sim"){
+          x <- dados %>%
+          filter(utilizado == "sim")%>%
+          filter(dor == "sim")%>%
+          filter(droga == input$droga)%>%
+          filter(especie %in% input$especie)
+          }else{
+            x <- dados %>%
+              filter(utilizado == "sim")%>%
+              filter(especie %in% input$especie)
+      }
       
+      NAnimaistotal <- sum(dados$n_animais)
+      FreqSP <- Frequencia(dados,NAnimaistotal,var = "especie")%>%
+        filter(especie %in% input$especie)
+  
+        if(input$denominador == "Comparativa"){
         NAnimaistotal <- sum(x$n_animais)
         FreqSP <- Frequencia(x,NAnimaistotal,var = "especie")
-          
+        }
+
         P1 <- FreqSP%>%
           ggplot(aes( y = freqRel,x = foo, fill = reorder(especie, freqRel)))+
           geom_bar(position = "stack", stat = "identity",width = 0.5)+
