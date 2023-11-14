@@ -16,7 +16,11 @@ for(coluna in colunas){
 source("03_Frequencia.R")
 # Server -----------------------------------------------------------------------
 function(input, output, session) {
-  FILTRADOS <- reactiveValues()
+  
+  library(dplyr)
+  
+  dadosReact <- reactiveVal(dados)
+  FILTRADOS <- reactiveValues(R1 = NULL)
   
   observe({
     uti <- input$utilizado
@@ -25,47 +29,41 @@ function(input, output, session) {
     sp <- input$especie
     
     if (uti == "todos") {
-      FILTRADOS$x <- dados %>% filter(especie %in% sp)
-    } else if (uti == "nao") {
-      FILTRADOS$x <- dados %>% 
-        filter(utilizado == "não") %>%
+      R1 <- dadosReact() %>%
         filter(especie %in% sp)
-    } else if (pain == "todos") {
-      FILTRADOS$x <- dados %>% 
+    } else if (uti == "nao") {
+      R1 <- dadosReact() %>%
+        filter(dor == "não") %>%
+        filter(especie %in% sp)
+    } else if (uti == "sim") {
+      R1 <- dadosReact() %>%
         filter(utilizado == "sim") %>%
         filter(especie %in% sp)
-    } else if (pain == "nao") {
-      FILTRADOS$x <- dados %>% 
-        filter(utilizado == "sim" & dor == "não") %>%
-        filter(especie %in% sp)
-    } else if (drug == "todos") {
-      FILTRADOS$x <- dados %>% 
-        filter(utilizado == "sim" & dor == "sim") %>%
-        filter(especie %in% sp)
-    } else if (drug == "sim") {
-      FILTRADOS$x <- dados %>% 
-        filter(utilizado == "sim" & dor == "sim" & droga == "sim") %>%
-        filter(especie %in% sp)
-    } else if (drug == "nao") {
-      FILTRADOS$x <- dados %>% 
-        filter(utilizado == "sim" & dor == "sim" & droga == "não") %>%
-        filter(especie %in% sp)
     }
+    
+    print(R1)
+    
+    FILTRADOS$R1 <- R1
   })
   
-  FreqFiltrados <- reactiveValues()
+  
+  FreqFiltrados <- reactiveValues(resultado = NULL)
   
   observe({
     sp <- input$especie
+    
     if (input$denominador == "Comparativa") {
-      NAnimaistotal <- sum(FILTRADOS$x$n_animais)
-      FreqFiltrados$resultado <- Frequencia(FILTRADOS$x, NAnimaistotal, var = "especie")
+      NAnimaistotal <- sum(FILTRADOS$R1$n_animais)
+      FreqFiltrados$resultado <- Frequencia(FILTRADOS$R1, NAnimaistotal, var = "especie")
     } else {
       NAnimaistotal <- sum(dados$n_animais)
-      FreqFiltrados$resultado <- Frequencia(dados, NAnimaistotal, var = "especie") %>%
+      FreqFiltrados$resultado <- Frequencia(FILTRADOS$R1, NAnimaistotal, var = "especie") %>%
         filter(especie %in% sp)
     }
+    print(FreqFiltrados$resultado)
   })
+  
+  
   
   output$freqPlot <- plotly::renderPlotly({
     
