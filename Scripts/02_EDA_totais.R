@@ -1008,7 +1008,7 @@ usa <- ne_states(country = "United States of America", returnclass = "sf")
 # dadosJSON <- fromJSON("Dados/Brutos/mapa/mapa.json")
 # dadosJSON <- dadosJSON$results
 # 
-# nome <- dadosJSON$name
+nome <- dadosJSON$name
 # longitude <- dadosJSON$centlon
 # latitude <- dadosJSON$centlat
 # estado <- dadosJSON$stusab

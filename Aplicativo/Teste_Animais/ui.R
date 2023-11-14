@@ -5,8 +5,8 @@ navbarPage(title = "Animal test insights",
            # Painel 1 ---------------
            tabPanel(title = "Home", 
                     "content 1"),
-           tabPanel(title = "Espécies ",
            # Painel 2 -----------------------
+           tabPanel(title = "Espécies ",
                     fluidPage(
                       theme = shinytheme("journal"),
                       titlePanel("Testagem em animais - USDA 2016"),
@@ -55,14 +55,14 @@ navbarPage(title = "Animal test insights",
                         ),
                         mainPanel(tabsetPanel(type = "tabs",
                                   tabPanel("Gráfico", plotly::plotlyOutput("freqPlot")),
-                                  tabPanel("Sumário", tableOutput("resumo")),
+                                  tabPanel("Sumário", tableOutput("summary")),
                                   tabPanel("Tabela", tableOutput("table"))
                         )
                       )
-                    )),
+                    ))),
            # Painel 3 ---------------
            tabPanel(title = "Estados"),
+           # Painel 4 --------------------
            tabPanel(title = "Sobre")
-)
 )
 

@@ -153,5 +153,19 @@ nome <- dadosJSON$name
 longitude <- dadosJSON$centlon
 latitude <- dadosJSON$centlat
 estado <- dadosJSON$stusab
-dados_latlongUS <- data.frame(estado,latitude,longitude)
+dados_latlongUS <- data.frame(nome,estado,latitude,longitude)
+# Separação do Alaska, Hawaii e Porto Rico
+HI <- dados_latlongUS %>%
+  filter(estado == "HI")
+
+AK <- dados_latlongUS%>%
+  filter(estado == "AK")
+
+PR <- dados_latlongUS%>%
+  filter(estado == "PR") 
+
+dados_latlongUS <- dados_latlongUS[!(dados_latlongUS$estado %in% c("HI", "AK", "PR")), ]
+
+
 write_csv(dados_latlongUS, file = "Dados/Processados/USA_latlong.csv")
+
