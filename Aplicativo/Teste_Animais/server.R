@@ -16,59 +16,66 @@ for(coluna in colunas){
 source("03_Frequencia.R")
 # Server -----------------------------------------------------------------------
 function(input, output, session) {
-  FILTRADOS <- reactiveValues()
-  
+  # Grupos utilizados------------------------------
+  dadosReact <- reactiveVal(dados)
+  FILTRADOS <- reactiveValues(R1 = NULL)
   observe({
     uti <- input$utilizado
     pain <- input$dor
     drug <- input$droga
     sp <- input$especie
     
+    dados_filtrados <- dadosReact()
+    
     if (uti == "todos") {
-      FILTRADOS$x <- dados %>% filter(especie %in% sp)
+      R1 <- dados_filtrados %>%
+        filter(especie %in% sp)
     } else if (uti == "nao") {
-      FILTRADOS$x <- dados %>% 
-        filter(utilizado == "não") %>%
+      R1 <- dados_filtrados %>%
+        filter(dor == "não") %>%
         filter(especie %in% sp)
     } else if (pain == "todos") {
-      FILTRADOS$x <- dados %>% 
+      R1 <- dados_filtrados %>%
         filter(utilizado == "sim") %>%
         filter(especie %in% sp)
     } else if (pain == "nao") {
-      FILTRADOS$x <- dados %>% 
+      R1 <- dados_filtrados %>%
         filter(utilizado == "sim" & dor == "não") %>%
         filter(especie %in% sp)
-    } else if (drug == "todos") {
-      FILTRADOS$x <- dados %>% 
+    } else if (uti == "sim" & pain == "sim" & drug == "todos") {
+      R1 <- dados_filtrados %>%
         filter(utilizado == "sim" & dor == "sim") %>%
         filter(especie %in% sp)
-    } else if (drug == "sim") {
-      FILTRADOS$x <- dados %>% 
-        filter(utilizado == "sim" & dor == "sim" & droga == "sim") %>%
-        filter(especie %in% sp)
-    } else if (drug == "nao") {
-      FILTRADOS$x <- dados %>% 
+    } else if (uti == "sim" & pain == "sim" & drug == "nao") {
+      R1 <- dados_filtrados %>%
         filter(utilizado == "sim" & dor == "sim" & droga == "não") %>%
         filter(especie %in% sp)
-    }
-  })
-  
-  FreqFiltrados <- reactiveValues()
-  
-  observe({
-    sp <- input$especie
-    if (input$denominador == "Comparativa") {
-      NAnimaistotal <- sum(FILTRADOS$x$n_animais)
-      FreqFiltrados$resultado <- Frequencia(FILTRADOS$x, NAnimaistotal, var = "especie")
     } else {
-      NAnimaistotal <- sum(dados$n_animais)
-      FreqFiltrados$resultado <- Frequencia(dados, NAnimaistotal, var = "especie") %>%
+      R1 <- dados_filtrados %>%
+        filter(utilizado == "sim" & dor == "sim" & droga == "sim") %>%
         filter(especie %in% sp)
     }
+    
+    print(R1)
+    
+    FILTRADOS$R1 <- R1
+  })
+  FreqFiltrados <- reactiveValues(resultado = NULL)
+  observe({
+    sp <- input$especie
+    
+    if (input$denominador == "Comparativa") {
+      NAnimaistotal <- sum(FILTRADOS$R1$n_animais)
+      FreqFiltrados$resultado <- Frequencia(FILTRADOS$R1, NAnimaistotal, var = "especie")
+    } else {
+      NAnimaistotal <- sum(dados$n_animais)
+      FreqFiltrados$resultado <- Frequencia(FILTRADOS$R1, NAnimaistotal, var = "especie") %>%
+        filter(especie %in% sp)
+    }
+    print(FreqFiltrados$resultado)
   })
   
   output$freqPlot <- plotly::renderPlotly({
-    
     P1 <- FreqFiltrados$resultado%>%
       ggplot(aes( y = freqRel,x = foo, fill = reorder(especie, freqRel)))+
       geom_bar(position = "stack", stat = "identity",width = 0.5)+
@@ -100,7 +107,15 @@ function(input, output, session) {
       coord_flip()+
       theme_minimal()+
       theme(text = element_text(size = 12, hjust = 0.5, face = "bold"))
-    plotly::ggplotly(P1)
-  })
+    plotly::ggplotly(P1)})
+    
+    output$resumo <- renderTable({
+      AnimalSum(FILTRADOS$R1)})
+      
+      output$table <- renderTable({
+        FreqFiltrados$resultado
+      })
+    
   
+ 
 }
