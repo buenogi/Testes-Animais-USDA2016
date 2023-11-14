@@ -16,9 +16,7 @@ for(coluna in colunas){
 source("03_Frequencia.R")
 # Server -----------------------------------------------------------------------
 function(input, output, session) {
-  
-  library(dplyr)
-  
+
   dadosReact <- reactiveVal(dados)
   FILTRADOS <- reactiveValues(R1 = NULL)
   
@@ -28,16 +26,34 @@ function(input, output, session) {
     drug <- input$droga
     sp <- input$especie
     
+    dados_filtrados <- dadosReact()
+    
     if (uti == "todos") {
-      R1 <- dadosReact() %>%
+      R1 <- dados_filtrados %>%
         filter(especie %in% sp)
     } else if (uti == "nao") {
-      R1 <- dadosReact() %>%
+      R1 <- dados_filtrados %>%
         filter(dor == "não") %>%
         filter(especie %in% sp)
-    } else if (uti == "sim") {
-      R1 <- dadosReact() %>%
+    } else if (pain == "todos") {
+      R1 <- dados_filtrados %>%
         filter(utilizado == "sim") %>%
+        filter(especie %in% sp)
+    } else if (pain == "nao") {
+      R1 <- dados_filtrados %>%
+        filter(utilizado == "sim" & dor == "não") %>%
+        filter(especie %in% sp)
+    } else if (uti == "sim" & pain == "sim" & drug == "todos") {
+      R1 <- dados_filtrados %>%
+        filter(utilizado == "sim" & dor == "sim") %>%
+        filter(especie %in% sp)
+    } else if (uti == "sim" & pain == "sim" & drug == "nao") {
+      R1 <- dados_filtrados %>%
+        filter(utilizado == "sim" & dor == "sim" & droga == "não") %>%
+        filter(especie %in% sp)
+    } else {
+      R1 <- dados_filtrados %>%
+        filter(utilizado == "sim" & dor == "sim" & droga == "sim") %>%
         filter(especie %in% sp)
     }
     
@@ -45,6 +61,7 @@ function(input, output, session) {
     
     FILTRADOS$R1 <- R1
   })
+  
   
   
   FreqFiltrados <- reactiveValues(resultado = NULL)
