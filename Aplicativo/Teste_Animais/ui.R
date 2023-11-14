@@ -14,10 +14,7 @@ fluidPage(
                              choices = c("Descritiva",
                                          "Comparativa"),
                              inline = T,
-                             selected = "Descritiva",
-                             choiceNames = c("Descritiva",
-                                             "Comparativa"),
-                             choiceValues = c("Descritiva","Comparativa")),
+                             selected = "Descritiva"),
           radioButtons("utilizado",
                                   "Utilizados em pesquisa:",
                                   choices = list("sim","nao"),
@@ -49,14 +46,14 @@ fluidPage(
                                              "Animais de fazenda" = "animais_de_fazenda",
                                              "Gatos" = "gatos",
                                              "Ovelhas" = "ovelhas"),
-                                 multiple = T)
-                    
-        ),
+                                 multiple = T,
+                                 selectize = T)
+          ),
 
         # Show a plot of the generated distribution
-        mainPanel(
-          plotly::plotlyOutput("freqPlot"),
+        mainPanel(plotly::plotlyOutput("freqPlot")
         )
     )
-)
+    )
+
 

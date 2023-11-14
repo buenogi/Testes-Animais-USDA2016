@@ -194,7 +194,6 @@ print(Figura_2)
 
 Teste chi quadrado
 
-
 ```{r - Teste Chi quadrado, message=FALSE, warning=FALSE, echo  = F }
 # Com relação a utilização
 df_contingencia <- totais%>%
@@ -428,7 +427,6 @@ FreqDor%>%
   theme_minimal()+
   theme(text = element_text(size = 18, face = "bold"))
 ```
-
 
 ```{r Grafico de exposição a dor, message=FALSE, warning=FALSE, echo = F}
 Figura_5 <- totais%>%

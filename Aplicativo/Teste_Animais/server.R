@@ -16,40 +16,45 @@ for(coluna in colunas){
 source("03_Frequencia.R")
 # Server -----------------------------------------------------------------------
 function(input, output, session) {
+  filtrados <- reactive({
+
+    x <- dados %>% filter(especie %in% input$especie)
+    
+    uti <- input$utilizado
+    dor <- input$dor
+    droga <- input$droga
+    
+    if(uti == "nao"){
+      y <- x %>% filter(utilizado == "não")
+    }else if( dor == "nao"){
+      y <- x %>% filter(utilizado == "sim" & dor == "não")
+    }else if(droga == "sim"){
+      y <- x %>% filter(utilizado == "sim" & dor == "sim" & droga == "sim")
+    }else if(droga == "nao"){
+      y <- x %>% filter(utilizado == "sim" & dor == "sim" & droga == "não")
+    }
+    return(y)
+  })
+  
+  
+  
+  den_selecionado <- reactive(input$denominador)
+    
+    FreqFiltrados <- reactive({if (den_selecionado() == "Comparativa") {
+      NAnimaistotal <- sum(filtrados()$n_animais)
+      FreqSP <- Frequencia(filtrados(), NAnimaistotal, var = "especie")
+    } else {
+      NAnimaistotal <- sum(dados$n_animais)
+      FreqSP <- Frequencia(dados, NAnimaistotal, var = "especie") %>%
+        filter(especie %in% input$especie)
+    }
+    return(FreqSP)
+      })
+
 
     output$freqPlot <- plotly::renderPlotly({
-     
-      if(input$utilizado == "não"){
-        x <- dados%>%
-          filter(utilizado == "não")%>%
-          filter(especie %in% input$especie)
-        }else if(input$utilizado == "sim" & input$dor == "não"){
-          x <- dados %>%
-          filter(utilizado == "sim")%>%
-          filter(dor == "não")%>%
-          filter(especie %in% input$especie)
-          }else if(input$utilizado == "sim" & input$dor == "sim"){
-          x <- dados %>%
-          filter(utilizado == "sim")%>%
-          filter(dor == "sim")%>%
-          filter(droga == input$droga)%>%
-          filter(especie %in% input$especie)
-          }else{
-            x <- dados %>%
-              filter(utilizado == "sim")%>%
-              filter(especie %in% input$especie)
-      }
-      
-      NAnimaistotal <- sum(dados$n_animais)
-      FreqSP <- Frequencia(dados,NAnimaistotal,var = "especie")%>%
-        filter(especie %in% input$especie)
-  
-        if(input$denominador == "Comparativa"){
-        NAnimaistotal <- sum(x$n_animais)
-        FreqSP <- Frequencia(x,NAnimaistotal,var = "especie")
-        }
 
-        P1 <- FreqSP%>%
+        P1 <- FreqFiltrados()%>%
           ggplot(aes( y = freqRel,x = foo, fill = reorder(especie, freqRel)))+
           geom_bar(position = "stack", stat = "identity",width = 0.5)+
           scale_fill_manual(values = c("cavia_p" = "#052935",
