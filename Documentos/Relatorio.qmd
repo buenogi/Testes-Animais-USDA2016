@@ -104,6 +104,10 @@ Anualmente o USDA (Departamento de Agricultura dos Estados Unidos) coleta as inf
 
 # 1. Introdução
 
+A realização de experimentos é um dos principais motores da ciência  pois permite o controle de condições e avaliação pormenorizada de aspectos relevantes a um contextos agronomicos e biomédicos, em contraste com estudos observacionais nos quais as intervenções são limitadas.  Contudo, apesar das vantagens da adoção de métodos experimentais, aspectos éticos, em diferentes escalas, cercam estas práticas uma vez que a ciencia não é construida com bases em verdades em absolutas mas na postulação e reavaliação de paradigmas que se acumular e são reavaliados ao longo do tempo.  
+ A realização de experimentos animais compõe as etapas de ensaios pré-clinicos par avaliação de toxicidade, teratogenicidade, estimação de dosagens e validação de protocolos vacinais. COntudo, a utilização de animais em pesquisa não se restringe a este fim, uma vez que há categorias específicas de animais utilizadas para testes cirúrgicos e comportamentais. Mediante a, cada vez mais evidente, senciencia dos animais, questões relacionadas ao bem estar emergem e se unem as discussões éticas abordando aspectos de especicismo. 
+ Eventos como a síndrome da Talidomida, do elixir de sulfonamida e da utilização de humanos como cobaias deixaram marcas no histórico da comunidade científica relacionadas a flexibilização em experimentação e ausencia de regulamentações. Estes eventos ocasionaram a necessidade de maior rigor em termos de justificativa e condução de estudos envolvendo experimentação e colocaram como prioridade, no contexto biomédico, a realização de experimentos em animais para o lançamento de produtos cosméticos e farmacêuticos. 
+
 ## Perguntas iniciais
 
 ### Abordar na introdução:

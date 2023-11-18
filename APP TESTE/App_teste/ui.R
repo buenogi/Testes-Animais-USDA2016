@@ -1,5 +1,6 @@
 library(shiny)
 library(shinythemes)
+library(leaflet)
 
 navbarPage(title = "Animal test insights",
            # Painel 1 ---------------
@@ -55,7 +56,7 @@ navbarPage(title = "Animal test insights",
                         ),
                         mainPanel(tabsetPanel(type = "tabs",
                                               tabPanel("Gráfico", plotly::plotlyOutput("freqPlot")),
-                                              tabPanel("Sumário", tableOutput("summary")),
+                                              tabPanel("Sumário", tableOutput("resumo")),
                                               tabPanel("Tabela", tableOutput("table"))
                         )
                         )
@@ -67,49 +68,17 @@ navbarPage(title = "Animal test insights",
                       titlePanel("Estados"),
                       sidebarLayout(
                         sidebarPanel(
-                          selectInput("especie",
-                                      "Selecione a espécie:",
-                                      choices = 
-                                        c("C. porcellus" = "cavia_p",
-                                          "Outras espécies" = "outras_especies",
-                                          "Coelhos" = "coelhos",
-                                          "Hamsters" = "hamsters",
-                                          "Primatas não humanos" = "primatas_nao_humanos",
-                                          "Cães" = "caes",
-                                          "Porcos" = "porcos",
-                                          "Animais de fazenda" = "animais_de_fazenda",
-                                          "Gatos" = "gatos",
-                                          "Ovelhas" = "ovelhas"),multiple = T,selectize = T),
                           sliderInput("n_animais",
                                       label = "Nº de animais",
                                       min = 0,
                                       max = 40000,
                                       step = 10,
                                       dragRange = T, 
-                                      value = c(0,40000)),
-                          radioButtons("utilizado",
-                                       "Utilizados em pesquisa:",
-                                       choices = list("sim","nao", "todos"),
-                                       selected = "sim", 
-                                       inline = T),
-                          conditionalPanel(
-                            condition = "input.utilizado == 'sim'",
-                            radioButtons("dor",
-                                         "Exposição a dor:",
-                                         choices = list("sim","nao", "todos"),
-                                         selected = "sim", 
-                                         inline = TRUE)),
-                          conditionalPanel(
-                            condition = "input.utilizado == 'sim'& input.dor == 'sim'",
-                            radioButtons("droga",
-                                         "Anestesia/analgesia:",
-                                         choices = list("sim","nao", "todos"),
-                                         selected = "sim", 
-                                         inline = T))
-                        ),
+                                      value = c(0,40000))),
                         mainPanel(
                           tabsetPanel(type = "tabs",
-                                               tabPanel("Gráfico", plotOutput("PlotPaises"))
+                                               tabPanel("Ranking", plotOutput("PlotEstados")),
+                                                tabPanel("Mapa", plotly::plotlyOutput("PlotEstadosMapa"))
                           #                     tabPanel("Sumário", tableOutput("summary")),
                           #                     tabPanel("Tabela", tableOutput("table")
                           )
@@ -118,7 +87,11 @@ navbarPage(title = "Animal test insights",
                       )
                     ),
            # Painel 4 --------------------
-           tabPanel(title = "Sobre")
+           tabPanel(title = "Sobre",
+                    mainPanel(
+                      # leafletOutput("map"),
+                              highchartOutput('mapa',height = "500px"))
+                    )
 )
 
 

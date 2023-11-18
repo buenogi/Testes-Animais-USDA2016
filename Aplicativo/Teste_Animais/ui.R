@@ -54,15 +54,39 @@ navbarPage(title = "Animal test insights",
                                       selectize = T)
                         ),
                         mainPanel(tabsetPanel(type = "tabs",
-                                  tabPanel("Gráfico", plotly::plotlyOutput("freqPlot")),
-                                  tabPanel("Sumário", tableOutput("summary")),
-                                  tabPanel("Tabela", tableOutput("table"))
+                                              tabPanel("Gráfico", plotly::plotlyOutput("freqPlot")),
+                                              tabPanel("Sumário", tableOutput("resumo")),
+                                              tabPanel("Tabela", tableOutput("table"))
+                        )
+                        )
+                      ))),
+           # Painel 3 ---------------
+           tabPanel(title = "Estados",
+                    fluidPage(
+                      theme = shinytheme("journal"),
+                      titlePanel("Estados"),
+                      sidebarLayout(
+                        sidebarPanel(
+                          sliderInput("n_animais",
+                                      label = "Nº de animais",
+                                      min = 0,
+                                      max = 40000,
+                                      step = 10,
+                                      dragRange = T, 
+                                      value = c(0,40000))),
+                        mainPanel(
+                          tabsetPanel(type = "tabs",
+                                      tabPanel("Ranking", plotOutput("PlotEstados")),
+                                      # tabPanel("Mapa", plotOutput("PlotEstadosMapa"))
+                                      #                     tabPanel("Sumário", tableOutput("summary")),
+                                      #                     tabPanel("Tabela", tableOutput("table")
+                          )
                         )
                       )
-                    ))),
-           # Painel 3 ---------------
-           tabPanel(title = "Estados"),
+                    )
+           ),
            # Painel 4 --------------------
            tabPanel(title = "Sobre")
 )
+
 

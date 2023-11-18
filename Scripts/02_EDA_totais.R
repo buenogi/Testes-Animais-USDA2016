@@ -79,6 +79,7 @@ c("#052935" , "#00c6aa", "#2a8476", "#344b46")
 # 1º - Medidas resumo  geral e por espécie----------------------------------------------
 
 Total_SUM <- AnimalSum(totais,especie,n_animais)
+Total_geral <- sum(totais$n_animais)
 
 Utilizados_SUM  <- totais%>%
   filter(utilizado == "sim")%>%
