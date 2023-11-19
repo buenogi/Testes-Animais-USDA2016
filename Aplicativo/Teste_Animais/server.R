@@ -4,6 +4,7 @@ library(tidyverse)
 library(jsonlite)
 library(sf)
 library(rnaturalearth)
+library(plotly)
 
 # Funções-----------------------------------------------------------------------
 source("03_Frequencia.R")
@@ -52,6 +53,43 @@ rotulos <- c(
 
 # Server -----------------------------------------------------------------------
 function(input, output, session) {
+  output$imagemprincipal <- renderImage({
+  # Imagem cabeçalho  
+    list(src = "www/01_img.png",
+         width = "80%",
+         height = 500)
+    
+  }, deleteFile = F)
+  
+  # Gŕafico de composição geral-------------------
+  output$composicaoGeral <- renderPlotly({
+    plot_ly(labels = c("Utilizados", "Não utilizados", 
+                       "Submetidos a dor", "Não submetidos a dor",
+                       "Receberam terapia", "Não receberam terapia"),
+            parents = c("","","Utilizados","Utilizados",
+                        "Submetidos a dor", "Submetidos a dor"),
+            values = c(85.65,14.34,33.31,52.34,25.86,7.44),
+            type = "sunburst",
+            branchvalues = "total",
+            hoverinfo = list("label+value+percent entry",
+                             "label+value+percent entry",
+                             "label+value+percent entry",
+                             "label+value+percent entry",
+                             "label+value+percent entry",
+                             "label+value+percent entry"),
+            hovertemplate = list("<b>%{label}</b><br>Percentual: %{value}(%)<br>Composição: %{percentEntry}<extra></extra>",
+                                 "<b>%{label}</b><br>Percentual: %{value}(%)<br>Composição: %{percentEntry}<extra></extra>",
+                                 "<b>%{label}</b><br>Percentual: %{value}(%)<br>Composição: %{percentEntry}<extra></extra>",
+                                 "<b>%{label}</b><br>Percentual: %{value}(%)<br>Composição: %{percentEntry}<extra></extra>",
+                                 "<b>%{label}</b><br>Percentual: %{value}(%)<br>Composição: %{percentEntry}<extra></extra>",
+                                 "<b>%{label}</b><br>Percentual: %{value}(%)<br>Composição: %{percentEntry}<extra></extra>",
+                                 "<b>%{label}</b><br>Percentual: %{value}(%)<br>Composição: %{percentEntry}<extra></extra>"),
+            marker = list(colors = c("#e64a19", "#052935",
+                                     "#ee7014", "#00525b",
+                                     "#45ab79", "#f7b22d")))
+  })
+  # Painel 1 ------------------------
+  
   
   dadosReact <- reactiveVal(dados)
   FILTRADOS <- reactiveValues(R1 = NULL)

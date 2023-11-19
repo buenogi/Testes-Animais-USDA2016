@@ -3,8 +3,37 @@ library(shinythemes)
 
 navbarPage(title = "Animal test insights",
            # Painel 1 ---------------
-           tabPanel(title = "Home", 
-                    "content 1"),
+           tabPanel(title = "Home",
+                    imageOutput("imagemprincipal"),
+                    h1("Descrição do projeto"),
+                    h4("Anualmente, desde 1971, o USDA (Departamento de Agricultura 
+                    dos Estados Unidos) coleta as informações de animais 
+                    empregados em diferentes instâncias de experimentação. 
+                    Esta prática vai de encontro ao Ato de Bem-estar Animal 
+                    (*Animal Welfare Act*). Este relatório foi realizado a partir
+                    da análise das observações coletadas pelo USDA referentes ao 
+                    ano de 2016. O relatório tem como objetivo descrever os dados
+                    reportados ao USDA a respeito da utilização de animais em 
+                    pesquisa nos EUA em 2016. Foram investigadas quais são as 
+                    espécies mais utilizadas por categoria de estudo e os estados
+                    nos quais cada espécie é mais utilizada. Adicionalmente 
+                    buscou-se avaliar se há diferença na composição dos grupos
+                    com relação aos tipos de estudo e investigar fatores que
+                    motivam a utilização de algumas espécies em detrimento de
+                    outras. A partir da utilização de metodologias de análise
+                    exploratória de dados e inferência básica foi evidenciado
+                    que no ano de 2016 os foram utilizados em média 460 animais
+                    por estado dos EUA sendo sua maioria no estado da California.
+                    A maior parte dos animais utilizados em experimentação não
+                    foram submetidos a dor. A composição dos grupos de animais
+                    e espécies varia de acordo com a categoria de estudo.
+                    Foi encontrada correlação positiva com relação ao uso de
+                    animais e número de universidades por estado. EM paralelo,
+                    foi encontrada correlação negativa com relação a escolha das
+                    espécies para utilização em pesquisa, o peso corporal e o custo
+                    de manutenção por unidade animal."),
+                    plotly::plotlyOutput("composicaoGeral")
+                    ),
            # Painel 2 -----------------------
            tabPanel(title = "Espécies ",
                     fluidPage(
