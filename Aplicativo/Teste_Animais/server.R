@@ -5,6 +5,10 @@ library(jsonlite)
 library(sf)
 library(rnaturalearth)
 library(plotly)
+library(shinythemes)
+library(bslib)
+library(bsicons)
+library(htmlwidgets)
 
 # Funções-----------------------------------------------------------------------
 source("03_Frequencia.R")
@@ -90,10 +94,9 @@ function(input, output, session) {
   })
   # Painel 1 ------------------------
   
-  
   dadosReact <- reactiveVal(dados)
   FILTRADOS <- reactiveValues(R1 = NULL)
-  FILTRADOSN <- reactiveValues(R2 = NULL) 
+  # FILTRADOSN <- reactiveValues(R2 = NULL) 
   
   observe({
     uti <- input$utilizado
@@ -153,16 +156,16 @@ function(input, output, session) {
     print(FreqFiltrados$resultado)
   })
   
-  observe({
-    N1 <- input$n_animais[1]
-    N2 <- input$n_animais[2]
-    
-    R2 <- FILTRADOS$R1%>%
-      filter(n_animais > N1 & n_animais < N2)
-    
-    print(R2)
-    FILTRADOSN$R2 <- R2
-  })
+  # observe({
+  #   N1 <- input$n_animais[1]
+  #   N2 <- input$n_animais[2]
+  #   
+  #   R2 <- FILTRADOS$R1%>%
+  #     filter(n_animais > N1 & n_animais < N2)
+  #   
+  #   print(R2)
+  #   FILTRADOSN$R2 <- R2
+  # })
   
   output$freqPlot <- plotly::renderPlotly({
     
@@ -215,6 +218,64 @@ function(input, output, session) {
   output$table <- renderTable({
     FreqFiltrados$resultado
   })
+   
+  
+  # Painel 2 -------------------------------------------------------------------
+   FILTRADOSP2 <- reactiveValues(R3 = NULL)
+   FILTRADOSN <- reactiveValues(R2 = NULL)
+
+   observe({
+     uti <- input$utilizado2
+     pain <- input$dor2
+     drug <- input$droga2
+     sp <- input$especie2
+     
+     dados_filtrados <- dadosReact()
+     
+     if (uti == "todos") {
+       R3 <- dados_filtrados %>%
+         filter(especie %in% sp)
+     } else if (uti == "nao") {
+       R3 <- dados_filtrados %>%
+         filter(dor == "não") %>%
+         filter(especie %in% sp)
+     } else if (pain == "todos") {
+       R3 <- dados_filtrados %>%
+         filter(utilizado == "sim") %>%
+         filter(especie %in% sp)
+     } else if (pain == "nao") {
+       R3 <- dados_filtrados %>%
+         filter(utilizado == "sim" & dor == "não") %>%
+         filter(especie %in% sp)
+     } else if (uti == "sim" & pain == "sim" & drug == "todos") {
+       R3 <- dados_filtrados %>%
+         filter(utilizado == "sim" & dor == "sim") %>%
+         filter(especie %in% sp)
+     } else if (uti == "sim" & pain == "sim" & drug == "nao") {
+       R3 <- dados_filtrados %>%
+         filter(utilizado == "sim" & dor == "sim" & droga == "não") %>%
+         filter(especie %in% sp)
+     } else {
+       R3 <- dados_filtrados %>%
+         filter(utilizado == "sim" & dor == "sim" & droga == "sim") %>%
+         filter(especie %in% sp)
+     }
+     
+     print(R3)
+     
+     FILTRADOSP2$R3 <- R3
+   })
+  
+  observe({
+    N1 <- input$n_animais[1]
+    N2 <- input$n_animais[2]
+
+    R2 <- FILTRADOSP2$R3%>%
+      filter(n_animais > N1 & n_animais < N2)
+
+    print(R2)
+    FILTRADOSN$R2 <- R2
+  })
   
   output$PlotEstados <- renderPlot({
     P2 <-  FILTRADOSN$R2 %>%
@@ -253,6 +314,8 @@ function(input, output, session) {
       theme(text = element_text(size = 18, hjust = 0.5, face = "bold"))
     P2
   }, height = 1000, width = 1200)
+  
+  
   
 }
 
