@@ -1,6 +1,7 @@
 #Server.R
 library(shiny)
 library(tidyverse)
+library(stringr)
 library(jsonlite)
 library(sf)
 library(rnaturalearth)
@@ -9,6 +10,8 @@ library(shinythemes)
 library(bslib)
 library(bsicons)
 library(htmlwidgets)
+library(leaflet)
+library(RColorBrewer) 
 
 # Funções-----------------------------------------------------------------------
 source("03_Frequencia.R")
@@ -20,6 +23,9 @@ US <- read_sf("data/USA_latlong.csv")
 dados <- left_join(dados, US, by = c("estado"= "estado")) 
 dados <- dados[!(dados$estado %in% c("HI", "AK", "PR")), ]
 dados$nome <- str_to_title(dados$nome)
+dados$latitude <- as.numeric(dados$latitude)
+dados$longitude <- as.numeric(dados$longitude)
+copia <- dados
 
 #Conversão de  variáveis--------------------------------------------------------
 
@@ -136,7 +142,7 @@ function(input, output, session) {
         filter(especie %in% sp)
     }
     
-    print(R1)
+    # print(R1)
     
     FILTRADOS$R1 <- R1
   })
@@ -154,7 +160,7 @@ function(input, output, session) {
       FreqFiltrados$resultado <- Frequencia(FILTRADOS$R1, NAnimaistotal, var = "especie") %>%
         filter(especie %in% sp)
     }
-    print(FreqFiltrados$resultado)
+    # print(FreqFiltrados$resultado)
   })
   
   # observe({
@@ -217,7 +223,8 @@ function(input, output, session) {
                 maximo = max(n_animais),
                 media = mean(n_animais),
                 desvio = sd(n_animais))
-    print(RESUMO)})
+    # print(RESUMO)
+    })
   
   output$table <- renderTable({
     FreqFiltrados$resultado
@@ -277,7 +284,7 @@ function(input, output, session) {
     R2 <- FILTRADOSP2$R3%>%
       filter(n_animais > N1 & n_animais < N2)
 
-    print(R2)
+    # print(R2)
     FILTRADOSN$R2 <- R2
   })
   
@@ -319,6 +326,45 @@ function(input, output, session) {
     P2
   }, height = 1000, width = 1200)
   
+  #cat(file = stderr(), "TÁ entrando no mapa?")
+  #browser()
+   output$mapa <- renderLeaflet({
+
+     Principal = c("cavia_p" = "#052935",
+                   "outras_especies" = "#00525b",
+                   "coelhos" = "#007e72",
+                   "hamsters" = "#45ab79",
+                   "primatas_nao_humanos" = "#98d574",
+                   "caes" = "#d0db5e",
+                   "porcos" = "#face4b", 
+                   "animais_de_fazenda" = "#f7b22d",
+                   "gatos" = "#ee7014",
+                   "ovelhas" = "#e64a19")
+     cores <- c("#052935","#00525b","#007e72","#45ab79","#98d574",
+                "#d0db5e","#face4b","#f7b22d","#ee7014","#e64a19")
+     especie <- c("cavia_p",
+                  "outras_especies" ,
+                  "coelhos",
+                  "hamsters" ,
+                  "primatas_nao_humanos",
+                  "caes" ,
+                  "porcos" ,
+                  "animais_de_fazenda" ,
+                  "gatos",
+                  "ovelhas")
+     FILTRADOSN$R2$especie <- factor(FILTRADOSN$R2$especie, levels = especie)
+     paletaFator <- colorFactor(cores,especie)
+    leaflet() %>%
+       addProviderTiles("CartoDB.Positron") %>%
+      addCircleMarkers(data = FILTRADOSN$R2, lat = ~latitude,
+                       lng = ~longitude, radius = ~sqrt(n_animais)/2,
+                       color = ~cores[as.integer(FILTRADOSN$R2$especie)],
+                       fillOpacity = 0.7)%>%
+      addLegend(position = "bottomright",
+                colors = cores,
+                labels = especie)
+    
+  })
   
   
 }

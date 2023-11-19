@@ -1,6 +1,7 @@
 library(shiny)
 library(shinythemes)
 library(bslib)
+library(leaflet)
 
   
 
@@ -175,7 +176,7 @@ navbarPage( bg = "#052935",
                         mainPanel(
                           tabsetPanel(type = "tabs",
                                       tabPanel("Ranking", plotOutput("PlotEstados")),
-                                      # tabPanel("Mapa", plotOutput("PlotEstadosMapa"))
+                                      tabPanel("Mapa", leafletOutput("mapa"))
                                       #                     tabPanel("Sumário", tableOutput("summary")),
                                       #                     tabPanel("Tabela", tableOutput("table")
                           )
