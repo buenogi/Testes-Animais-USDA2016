@@ -15,6 +15,7 @@ toc-depth: 3
 toc-title: "Sumário"
 
 bibliography: REFERENCIAS.bib
+prefer-html: true
 
 theme: 
   light: journal
@@ -98,41 +99,85 @@ rotulos <- c(
   "ovelhas" = "Ovelhas")
 ```
 
-# Resumo
+# Resumo {#sec-01}
 
-Anualmente o USDA (Departamento de Agricultura dos Estados Unidos) coleta as informações de animais empregados em pesquisas utilizadas em diferentes instâncias de experimentação. Esta prática vai de encontro ao", em('Animal Welfare Act.'),"Este aplicativo foi realizado a partir da análise das observações coletadas pelo USDA no ano de 2016.
+Anualmente DESDE 1971,  o USDA (Departamento de Agricultura dos Estados Unidos) coleta as informações de animais empregados em diferentes instâncias de experimentação. Esta prática vai de encontro ao Ato de Bem-estar Animal (*Animal Welfare Act*). Este relatório foi realizado a partir da análise das observações coletadas pelo USDA referentes ao ano de 2016. O relatório tem como objetivo descrever os dados reportados ao USDA a respeito da utilização de animais em pesquisa nos EUA em 2016. Foram investigadas quais são as espécies mais utilizadas por categoria de estudo e os estados nos quais cada espécie é mais utilizada. Adicionalmente buscou-se avaliar se há diferença na composição dos grupos com relação aos tipos de estudo e investigar fatores que motivam a utilização de algumas espécies em detrimento de outras. A partir da utilização de metodologias de análise exploratória de dados e inferência básica foi evidenciado que no ano de 2016 os foram utilizados em média 460 animais por estado dos EUA sendo sua maioria no estado da California. A maior parte dos animais utilizados em experimentação não foram submetidos a dor. A composição dos grupos de animais e espécies varia de acordo com a categoria de estudo. Foi encontrada correlação positiva com relação ao uso de animais e número de universidades por estado. EM paralelo, foi encontrada correlação negativa com relação a escolha das espécies para utilização em pesquisa, o peso corporal e o custo de manutenção por unidade animal.
 
-# 1. Introdução
+# 1. Introdução {#sec-02}
 
-A realização de experimentos é um dos principais motores da ciência  pois permite o controle de condições e avaliação pormenorizada de aspectos relevantes a um contextos agronomicos e biomédicos, em contraste com estudos observacionais nos quais as intervenções são limitadas.  Contudo, apesar das vantagens da adoção de métodos experimentais, aspectos éticos, em diferentes escalas, cercam estas práticas uma vez que a ciencia não é construida com bases em verdades em absolutas mas na postulação e reavaliação de paradigmas que se acumular e são reavaliados ao longo do tempo.  
- A realização de experimentos animais compõe as etapas de ensaios pré-clinicos par avaliação de toxicidade, teratogenicidade, estimação de dosagens e validação de protocolos vacinais. COntudo, a utilização de animais em pesquisa não se restringe a este fim, uma vez que há categorias específicas de animais utilizadas para testes cirúrgicos e comportamentais. Mediante a, cada vez mais evidente, senciencia dos animais, questões relacionadas ao bem estar emergem e se unem as discussões éticas abordando aspectos de especicismo. 
- Eventos como a síndrome da Talidomida, do elixir de sulfonamida e da utilização de humanos como cobaias deixaram marcas no histórico da comunidade científica relacionadas a flexibilização em experimentação e ausencia de regulamentações. Estes eventos ocasionaram a necessidade de maior rigor em termos de justificativa e condução de estudos envolvendo experimentação e colocaram como prioridade, no contexto biomédico, a realização de experimentos em animais para o lançamento de produtos cosméticos e farmacêuticos. 
+A realização de experimentos permite o controle de condições e avaliação pormenorizada de aspectos relevantes. A partir  de uma hipótese ou necessidade de descrição de um fenômeno replicável em condições específicas, os cientistas tentam descrever os efeitos de uma intervenção e descrevê-la com relação a grupos controle nos quais a intervenção não foi aplicada [@NAS-1992]. Esta ideia geral se aplica em diferentes escalas, reservadas algumas particularidades dependendo da área de pesquisa.  Na área biológica, em especial, a experimentação é amplamente utilizada em contextos ambientais, agronômicos, biomédicos e moleculares [@dominguez2023importance].  
+A experimentação envolvendo humanos pavimentou a trajetória de descobertas relevantes como identificação funcional de órgãos e sistemas. Contudo, o formato da realização de alguns estudos envolveram violação de direitos humanos e preceitos éticos, à exemplo dos experimentos realizados em campos de concentração na Alemanha Nazista  e do acompanhamento de pacientes infectados com Sífilis Tukesdee nos EUA. Estes eventos culminaram com a declaração bioética de Helsinque, na qual preceitos bioéticos regem a experimentação envolvendo humanos [@simmonds2018bioethics].  
+Adicionalmente, eventos como a síndrome da Talidomida e do elixir de sulfonamida deixaram marcas no histórico da comunidade científica relacionadas ao lançamento de fármacos e produtos sem as devidas avaliações de evidência e segurança. Estes eventos ocasionaram a necessidade de maior rigor em termos de justificativa e condução de estudos envolvendo experimentação e colocaram como prioridade no contexto biomédico, a realização de experimentos em animais para o lançamento de produtos cosméticos e farmacêuticos [@swaters2022history].
 
-## Perguntas iniciais
+Na atualidade, os modelos animais são utilizados para a busca de respostas questões que são prioriátias nas ciencias biomédicas e que representam ameaças a saúde humana e animal. Sendo assim, a realização de experimentos animais compõem,  a busca denovas terapias para desordens infecciosas, metabólicas, cardiovasculares e neurodegenerativas. Majoritariamente, as etapas de ensaios pré-clínicos para avaliação de toxicidade, teratogenicidade, estimação de dosagens e validação de protocolos vacinais com o pressuposto de que eventuais efeitos adversos fiquem evidenciados nesta etapa antes de passarem para os testes clínicos em humanos, e assim o risco para vidas humanas é reduzido [@robinson2019current]. Outras pesquisas conduzidas nestes indivíduos se baseiam na similaridade compartilhada por animais e seres humanos  investigam o efeito da ausência de genes específicos, mutações e outras alterações genéticas que possam ter relevância para a descrição de condições específicas [@dominguez2023importance] a nível celular, de tecidos ou a nível de indivíduo. Há ainda estudos que se destinam a validação de protocolos cirúrgicos e estudos comportamentais.  
+Alguns aspectos são, contudo, delicados em termos de bioética. O condicionamento de alguns indivíduos de algumas espécies, ainda que de forma reduzida a situações de estresse e dor é difícil de ser avaliado, em especial no caso de espécies para as quais a fisiologia do animal e seus instintos vão na direção oposta a demonstração de desconforto e em contextos de experimentos que não podem ser interferidos pela administração de analgésicos e anestésicos [@turner2019review]. Diante da, cada vez mais evidente, senciência dos animais, questões relacionadas ao bem estar emergiram, e se uniram às discussões éticas abordando aspectos de especismo e requeriram, em mesma medida ao que houve na experimentação com humanos, aperfeiçoamento e maior rigor das legislações que regem as práticas de experimentação com animais [@carbone2011pain]. A discussão a respeito começou a ser pautada na comunidade científica após a publicação do trabalho de Russell and Burch, em 1959, no qual são introduzidos três princípios que regem a experimentação animal até hoje, refinamento, redução e substituição, conhecidos como os 3R's, do inglês *Refinament*, *Reduction* e *Replacement*, respectivamente [@wange2021implementation]:  
+ 
+1. Refinamento dos procedimentos dos animais para que causem menos dor ou sofrimento;  
+2. Redução do número de animais sencientes em projetos que possam causar dor ou sofrimento;e  
+3. Substituição dos animais sencientes por animais não sencientes ou métodos alternativos  
 
-### Abordar na introdução:
+ A publicação deste trabalho reverberou na formação de novas medidas legislativas na condução de experimentação animal. Em 1966 foi assinado nos EUA o Tratado de bem estar Animal [@awa], o qual regulamenta o tratamento de animais na pesquisa, ensino, exibição e transporte . Hoje, estes princípios regem o julgamento de projetos por Comitês de Ética no uso de Animais, os quais avaliam o mérito científico de uma pesquisa durante a fase de projeto.
 
-1.  Qual é o posicionamento da população estadunidense com relação ao uso de animais em pesquisa?
-2.  Quais são as legislações a respeito?
-3.  Qual é a discussão do ponto de vista ético?
-4.  Qual é o ponto de vista científico a respeito?
+ A fim de controlar a utilização de animais em pesquisa, o USDA coleta anualmente, desde 1971, relatórios das instituições de pesquisa sediadas no país, com a descrição do número de animais utilizados de cada espécie e a categoria do estudo [@animal-use-alternatives],[@carbone2011pain].  Os estudos são caracterizados em quatro classes de acordo com a exposição a dor e ao estresse:  
+ 
+ * **Categoria B** - Animais foram criados mas não utilizados;   
+ * **Categoria C** - Animais foram utilizados mas não houve exposição a dor;  
+ * **Categoria D** - Animais foram utilizados e houve exposição a dor com terapia;  
+ * **Categoria E** - Animais foram utilizados e houve exposição a dor sem terapia.  
 
-### Pontos a serem avaliados a partir destes dados:
+O presente estudo tem como objetivo descrever os dados reportados ao USDA a respeito da utilização de animais em pesquisa nos EUA em 2016 e investigar quais são as espécies mais utilizadas por categoria de estudo e os estados nos quais cada espécie é mais utilizada. Adicionalmente buscou-se avaliar se há diferença na composição dos grupos com relação aos tipos de estudo e investigar fatores que motivam a utilização de algumas espécies em detrimento de outras. 
 
-5.  Há diferença com relação as espécies utilizadas em ensaios com exposição a dor?
-6.  Há informações a respeito do motivo pelo qual estes animais são empregados em pesquisa?Qual é a relevancia de cada espécie?
-7.  Qual são as espécies mais utilizadas?
-8.  Há diferença com relação as espécies utilizadas por tipo de ensaio?
-9.  Quais são os Estados que mais usam animais em pesquisa?
 
-# 2. Material e métodos
+# 2. Material e métodos  {#sec-03}
+  Os dados foram obtidos através da página [Kaggle](https://www.kaggle.com/datasets/mmsant/animals-testing-in-the-us-in-2016) no entanto, dados referentes a anuários de outroa anos podem ser obtidos no [site do USDA](https://www.aphis.usda.gov/aphis/ourfocus/animalwelfare/sa_obtain_research_facility_annual_report/ct_research_facility_annual_summary_reports).  Incicialmente foi realizada identiicação das variáveis disponíveis e tratamento dos dados de acordo com o formato mais adequado utilizando R, versão 4.3.1. Os dados por categoria de estudo estavam separados em diferentes conjuntos de dados. Foi realizada adequação dos nomes das variáveis e concatenação dos dados para a realização da análise exploratória de dados.Foram idenficadas variáveis categóricas (estado, espécie, utilização, exposição a dor e tratamento) e uma variável quantitativa (número de animais utilizados).  
+  
+  Adicionalmente foram obtidos dados a respeito da quantidade de universidades por estados dos EUA publicados na plataforma [OpenDataSoft](https://public.opendatasoft.com/explore/dataset/us-colleges-and-universities/) pela *Homeland Infrastructure Foundation-Level Data*,  estimativas de expectativa de vida, tempo de maturidade sexual,  tempo de gestação e  peso por espécie foram  extraídas do site da [plataforma  An Age](https://genomics.senescence.info/species/index.html) para o estudo da longevidade em Animais organizada pela Universidade de Birmingham e também foi obtido o custo estimado para de manutenção dos animais para experimentação  com base em estimativas da [Universidade de Iowa](https://animal.research.uiowa.edu/animal-maintenance-rates). 
+  A análise exploratória de dados foi conduzida investigando as frequencias por classe e as médias de números de animais utilizados em experimentação no contexto geral e de acordo com a categoria de estudo por espécie e estado. Afim de investigar se  quantidade de animais utilizados por espécie difere em cada uma das categorias de  experimentação. Uma vez que a maior parte das pesquisas são realizadas em Universidades, foi avaliada a correlação do número de animais utilizados por estado e o número de universidades afim de investigar esta associação. Por fim, também foi avaliada a correlação do uso de animais com estimativas relacionadas com a facilidade de procriação  e manutenção em cativeiro como expectativa de vida, maturidade sexual, tempo de gestação, peso e custo de manutenção. 
+  
+  
+# 3. Resultados {#sec-04}
 
-# 3. Resultados
+## 3.1. Composição {#sec-04.1}
 
-## 3.1. Composição
+  No ano de 2016 foram mantidos 958.256 animais em pesquisas conduzidas nos EUA
+considerando território de Porto Rico, sob domínio do governo Americano, e estados
+geograficamente separados como Alaska e Hawaii. A média de utilização no geral foi de 460 animais por estado e um máximo de 31.730 animais empregados  ao longo do ano em um único estado. Estas métricas [tabela 1](#sec-04.1.1) refletem a assimetria na distibuição do número de animais utilizados por estado como demonstrado na [figura 1](#sec-04.1.2). 
 
-Composição geral
+### **Tabela 1**  -  Medidas resumo com relação ao total {#sec-04.1.1}
+```{r Medidas resumo por espécie com relação ao total, echo = F}
+Total_SUM <- totais%>%
+              summarise("Média" = mean(n_animais),
+              "Desvio padrão" = sd(n_animais),
+              "Mínimo" = min(n_animais),
+              "1º Quartil" = quantile(n_animais, 0.25),
+              "Mediana" = quantile(n_animais, 0.5),
+              "3º Quartil" = quantile(n_animais, 0.75),
+              "Máximo" = max(n_animais))
+kbl(Total_SUM)%>%
+  kable_styling()
+```
 
+### **Figura 1** - Distribuição do total dos animais  destinados para pesquisa de acordo anuário do USDA 2016 {#sec-04.1.2}
+```{r Densidade, message=FALSE, warning=FALSE, echo  = F}
+Figura_1 <- totais %>%
+  ggplot(aes(x = total, y = 1, fill = "#052935")) +
+  geom_violin(color = "#052935", size = 1) +
+  geom_boxplot(color = "gray",width = 0.10) +
+  scale_fill_identity() + 
+  scale_x_continuous(limits = c(0, 50000),
+                     labels = scales::label_number())+
+  labs(x = "Nº de animais",
+       y = "") +
+  theme_minimal() +
+  theme(plot.title = element_text(size = 14, hjust = 0.0, face = "bold"),
+        text = element_text(size = 18))
+
+print(Figura_1)
+```
+
+A extratificação de composição por classes fica evidenciada na [figura 2](#sec-04.1.3). A maior (85,65%) parte foram utilizados. Com relação a exposição a dor, (33,31%) foram expostos a situações de desconforto, estresse e dor e apenas 7%. com relação ao total não receberam terapia nestas condições.  
+  
+### **Figura 2** - Composição geral por categoria de estudo{#sec-04.1.3}
 ```{r Sunburst, message=FALSE, warning=FALSE, echo = FALSE}
 plot_ly(labels = c("Utilizados", "Não utilizados", 
                    "Submetidos a dor", "Não submetidos a dor",
@@ -161,42 +206,165 @@ plot_ly(labels = c("Utilizados", "Não utilizados",
   layout(font = list(size = 18))
 ```
 
-Estatística descritiva - Medidas resumo com relação ao total
+## 3.2. Utilização de animais pela espécie {#sec-04.2}
+ As espécies empregadas em pesquisa repostadas ao USDA compreendem nove grupos: Porquinhos-da-Índia, Coelhos, Hamsters, Primatas não humanos, cães, porcos, gatos, ovelhas e grupos heterogêneos que comprrendem aniamis de fazenda e outros animais. Neste último grupo estão inclusos ratos, anfíbios, peixes, aves e espécies de invertebrados.  Nas tabelas [2](#sec-04.1.4)e [3](#sec-04.1.5) estão evidenciados, de forma ordenada, os grupos mais utilizados e os em maior número em termos de manutenção em cativeiro mas não utilizados. Porquinhos-da-índia, popularmente conhecidos como cobaias, compõe o grupo mais vastamente utilizado com uma média de 1174 animais  e responsáveis pelo maior número de animais com este destino. Em seguida os grupos mais utilizados são o de outras espécies, de coelhos e de Hamsters. 
 
-```{r Medidas resumo por espécie com relação ao total, echo = F}
-Total_SUM <- totais%>%
-              summarise("Média" = mean(n_animais),
-              "Desvio padrão" = sd(n_animais),
-              "Mínimo" = min(n_animais),
-              "1º Quartil" = quantile(n_animais, 0.25),
-              "Mediana" = quantile(n_animais, 0.5),
-              "3º Quartil" = quantile(n_animais, 0.75),
-              "Máximo" = max(n_animais))
-kbl(Total_SUM)%>%
+### **Tabela 2**  -  Medidas resumo com relação a utilização por espécie {#sec-04.1.4}
+```{r Medidas resumo por espécie utilizada,message=FALSE, warning=FALSE,echo = F}
+
+Utilizados_SUM  <- totais%>%
+  filter(utilizado == "sim")%>%
+  AnimalSum(especie = especie, n_animais = n_animais)
+
+Utilizados_SUM$especie <- stringr::str_to_title(Utilizados_SUM$especie)
+
+Utilizados_SUM%<>%mutate(especie = stringr::str_replace_all(especie, "_", " "))%>%mutate(especie = stringr::str_replace_all(especie, "nao", "não "))%>%
+  mutate(especie = stringr::str_replace_all(especie, "especies", "espécies "))%>%mutate(especie = stringr::str_replace_all(especie, "Caes", " Cães"))%>%
+  mutate(especie = stringr::str_replace_all(especie, "Cavia p", " Porquinho-da-índia"))
+
+colnames(Utilizados_SUM)[1] <- c("Espécie")
+
+kbl(Utilizados_SUM)%>%
+  kable_styling()
+
+```
+### **Tabela 3**  -  Medidas resumo com relação a utilização por espécie {#sec-04.1.5}
+```{r Medidas resumo por espécie mantida,message=FALSE, warning=FALSE,echo = F}
+Mantidos_SUM  <- totais%>%
+  filter(utilizado != "sim")%>%
+  AnimalSum(especie = especie, n_animais = n_animais)
+
+Mantidos_SUM$especie <- stringr::str_to_title(Mantidos_SUM$especie)
+
+Mantidos_SUM%<>%mutate(especie = stringr::str_replace_all(especie, "_", " "))%>%mutate(especie = stringr::str_replace_all(especie, "nao", "não "))%>%
+  mutate(especie = stringr::str_replace_all(especie, "especies", "espécies "))%>%mutate(especie = stringr::str_replace_all(especie, "Caes", " Cães"))%>%
+  mutate(especie = stringr::str_replace_all(especie, "Cavia p", " Porquinho-da-índia"))
+
+colnames(Mantidos_SUM)[1] <- c("Espécie")
+
+kbl(Mantidos_SUM)%>%
   kable_styling()
 ```
+A [figura 3](#sec-04.1.6) evidencia as disparidades com relação percentual de cada grupo mantido nos subgrupos de animais utilizados e no subgrupo de animais mantidos mas não utilizados. 
 
-Distribuição - total dos animais utilizados
+```{r Frequencia de utilização por espécie, message=FALSE, warning=FALSE,echo = F}
+# Nº total de animais
+Nanimais_Total <- sum(totais$n_animais)
 
-```{r Densidade, message=FALSE, warning=FALSE, echo  = F}
-Figura_2 <- totais %>%
-  ggplot(aes(x = total, y = 1, fill = "#052935")) +
-  geom_violin(color = "#052935", size = 1) +
-  geom_boxplot(color = "gray",width = 0.10) +
-  scale_fill_identity() + 
-  scale_x_continuous(limits = c(0, 50000),
-                     labels = scales::label_number())+
-  labs(x = "Nº de animais",
-       y = "",
-       title = "Total de animais para pesquisa") +
-  theme_minimal() +
-  theme(plot.title = element_text(size = 14, hjust = 0.0, face = "bold"),
-        text = element_text(size = 12))
+Nanimais_Utilizados <- totais%>%
+  filter(utilizado == "sim")
+Nanimais_Utilizados <-sum(Nanimais_Utilizados$n_animais)
 
-print(Figura_2)
+Frequencia_Utilizados <- totais%>%
+  filter(utilizado == "sim")%>%
+  group_by(especie)%>%
+  summarise(FreqAbsT = sum(n_animais), 
+            FreqRelT = sum(n_animais)/Nanimais_Total, 
+            FreqRelPerT =  (sum(n_animais)/Nanimais_Total)*100,
+            FreqRelU = sum(n_animais)/Nanimais_Utilizados, 
+            FreqRelPerU =  (sum(n_animais)/Nanimais_Utilizados)*100,
+            x = ".")
+
 ```
 
-Teste chi quadrado
+```{r Frequencia mantidos, message=FALSE, warning=FALSE, incluse = F, echo  = F}
+#Nº de animais mantidos não utilizados
+Nanimais_Mantidos <- totais%>%
+  filter(utilizado != "sim")
+Nanimais_Mantidos <-sum(Nanimais_Mantidos$n_animais)
+
+Frequencia_Mantidos <- totais%>%
+  filter(utilizado != "sim")%>%
+  group_by(especie)%>%
+  summarise(FreqAbsT = sum(n_animais), 
+            FreqRelT = sum(n_animais)/Nanimais_Total, 
+            FreqRelPerT =  (sum(n_animais)/Nanimais_Total)*100,
+            FreqRelM = sum(n_animais)/Nanimais_Mantidos, 
+            FreqRelPerM =  (sum(n_animais)/Nanimais_Mantidos)*100,
+            x = ".")
+```
+### **Figura 3**  -  Frequencia de utilização por espécie nos subgrupos de animais utilizados e não utilizados  {#sec-04.1.6}
+```{r Gráfico de linhas - Frequencia de utilização por espécie, message=FALSE, warning=FALSE,echo = F}
+Utilizados_SUM  <- totais%>%
+  filter(utilizado == "sim")%>%
+  AnimalSum(especie = especie, n_animais = n_animais)
+
+FreqRel_Grupo <- Frequencia_Utilizados%>%
+                   select(especie,FreqAbsT,FreqRelU)
+
+Utilizados_SUM <- left_join(Utilizados_SUM ,FreqRel_Grupo, by  = "especie")
+
+colnames(Utilizados_SUM)[10] <- "FreqRel_Grupo"
+
+Mantidos_SUM  <- totais%>%
+  filter(utilizado != "sim")%>%
+  AnimalSum(especie = especie, n_animais = n_animais)
+
+FreqRel_Grupo <- Frequencia_Mantidos%>%
+  select(especie,FreqAbsT,FreqRelM)
+
+Mantidos_SUM <- left_join(Mantidos_SUM, FreqRel_Grupo, by  = "especie")
+
+colnames(Mantidos_SUM)[10] <- "FreqRel_Grupo"
+
+Utilizados_SUM$utilizado <- "sim"
+Mantidos_SUM$utilizado <- "não"
+SUM_bind <- rbind(Utilizados_SUM, Mantidos_SUM)
+
+SUM_bind$especie <- as.factor(SUM_bind$especie)
+SUM_bind$utilizado <- as.factor(SUM_bind$utilizado)
+
+Figura_3 <- SUM_bind%>%
+  ggplot(aes(x = utilizado, y = FreqRel_Grupo*100, group = especie))+
+  geom_line(aes(color = especie), size = 1.5)+
+  geom_point(aes(color = especie),size = 3)+
+  scale_color_manual(values = Principal, 
+                     labels = rotulos)+
+  labs(x = "Utilização",
+       y = "Frequencia por grupo (%)", 
+       color = "Espécie")+
+  theme_minimal()+
+  theme(text = element_text(size = 20, face = "bold"))
+print(Figura_3)
+```
+
+ Juntos,Porquinhos-da-Índia, outras espécies(majoritariamente composto por ratos de acordo com referências anteriores [@swaters2022history], compõem), representam mais da metade dos animais utilizados em pesquisa, 54,49%,(figura 4). 
+ 
+### **Figura 4**  -  Percentual por espécie nos subgrupos de animais utilizados {#sec-04.1.7}
+```{r  Gráfico de Barras - Frequencia de utilização por espécie, , message=FALSE, warning=FALSE,echo = F}
+library(stringr)
+
+Frequencia_Utilizados_copia <- Frequencia_Utilizados
+
+Frequencia_Utilizados_copia <- Frequencia_Utilizados_copia %>%
+  mutate(especie = str_to_title(especie) %>%
+           str_replace_all("_", " ") %>%
+           str_replace_all("nao", "não") %>%
+           str_replace_all("especies", "espécies") %>%
+           str_replace_all("Caes", "Cães") %>%
+           str_replace_all("Cavia p", "Porquinho-da-índia"))
+
+
+Figura_4 <- Frequencia_Utilizados_copia%>%
+  ggplot(aes( y = FreqRelU,x = x, fill = reorder(especie,FreqRelU),
+              text = paste0("Espécie: ", especie,"\nPercentual: ",
+                            round(FreqRelU*100,2), "%" )))+
+  geom_bar(position = "stack", stat = "identity",width = 0.5)+
+  scale_fill_manual(values = Principal_2)+
+  labs(x = "Animais",
+       y = "(%)",
+       fill = "Espécie",
+       # title = "Frequencia de cada espécie com relação aos utilizados\n em exprimentos ao longo de 2016"
+       )+
+  scale_y_continuous(labels = scales::label_percent())+
+                      coord_flip()+
+                      theme_minimal()+
+                       theme(text = element_text(size = 14, hjust = 0.5, face = "bold"))
+
+ ggplotly(Figura_4, tooltip = c("text"))
+```
+
+Com o intuíto de avaliar se a composição dos grupos utilizado e não utilizado era distinta com relação as espécies ofi realizado um teste chi-quadrado.  O mesmo procedimento foi realizado com relação aos grupos expostos a dor e a terapia. A hipótese nula, de não diferença entre a composição dos grupos foi rejeitada em todas as situações
 
 ```{r - Teste Chi quadrado, message=FALSE, warning=FALSE, echo  = F }
 # Com relação a utilização
@@ -252,159 +420,12 @@ R3 <- chisq.test(tabela_contingencia)
 print(R3)
 ```
 
-## 3.2. Utilização de animais pela espécie
+## 3.3. Exposição a dor  {#sec-04.3}
 
-```{r Medidas resumo por espécie utilizada,message=FALSE, warning=FALSE,echo = F}
-
-Utilizados_SUM  <- totais%>%
-  filter(utilizado == "sim")%>%
-  AnimalSum(especie = especie, n_animais = n_animais)
-
-Utilizados_SUM$especie <- stringr::str_to_title(Utilizados_SUM$especie)
-
-Utilizados_SUM%<>%mutate(especie = stringr::str_replace_all(especie, "_", " "))%>%mutate(especie = stringr::str_replace_all(especie, "nao", "não "))%>%
-  mutate(especie = stringr::str_replace_all(especie, "especies", "espécies "))%>%mutate(especie = stringr::str_replace_all(especie, "Caes", " Cães"))%>%
-  mutate(especie = stringr::str_replace_all(especie, "Cavia p", " Porquinho-da-índia"))
-
-colnames(Utilizados_SUM)[1] <- c("Espécie")
-
-kbl(Utilizados_SUM)%>%
-  kable_styling()
-
-```
-
-```{r Medidas resumo por espécie mantida,message=FALSE, warning=FALSE,echo = F}
-Mantidos_SUM  <- totais%>%
-  filter(utilizado != "sim")%>%
-  AnimalSum(especie = especie, n_animais = n_animais)
-
-Mantidos_SUM$especie <- stringr::str_to_title(Mantidos_SUM$especie)
-
-Mantidos_SUM%<>%mutate(especie = stringr::str_replace_all(especie, "_", " "))%>%mutate(especie = stringr::str_replace_all(especie, "nao", "não "))%>%
-  mutate(especie = stringr::str_replace_all(especie, "especies", "espécies "))%>%mutate(especie = stringr::str_replace_all(especie, "Caes", " Cães"))%>%
-  mutate(especie = stringr::str_replace_all(especie, "Cavia p", " Porquinho-da-índia"))
-
-colnames(Mantidos_SUM)[1] <- c("Espécie")
-
-kbl(Mantidos_SUM)%>%
-  kable_styling()
-```
-
-```{r Frequencia de utilização por espécie, message=FALSE, warning=FALSE,echo = F}
-# Nº total de animais
-Nanimais_Total <- sum(totais$n_animais)
-
-Nanimais_Utilizados <- totais%>%
-  filter(utilizado == "sim")
-Nanimais_Utilizados <-sum(Nanimais_Utilizados$n_animais)
-
-Frequencia_Utilizados <- totais%>%
-  filter(utilizado == "sim")%>%
-  group_by(especie)%>%
-  summarise(FreqAbsT = sum(n_animais), 
-            FreqRelT = sum(n_animais)/Nanimais_Total, 
-            FreqRelPerT =  (sum(n_animais)/Nanimais_Total)*100,
-            FreqRelU = sum(n_animais)/Nanimais_Utilizados, 
-            FreqRelPerU =  (sum(n_animais)/Nanimais_Utilizados)*100,
-            x = ".")
-
-```
-
-```{r Frequencia mantidos, message=FALSE, warning=FALSE, incluse = F, echo  = F}
-#Nº de animais mantidos não utilizados
-Nanimais_Mantidos <- totais%>%
-  filter(utilizado != "sim")
-Nanimais_Mantidos <-sum(Nanimais_Mantidos$n_animais)
-
-Frequencia_Mantidos <- totais%>%
-  filter(utilizado != "sim")%>%
-  group_by(especie)%>%
-  summarise(FreqAbsT = sum(n_animais), 
-            FreqRelT = sum(n_animais)/Nanimais_Total, 
-            FreqRelPerT =  (sum(n_animais)/Nanimais_Total)*100,
-            FreqRelM = sum(n_animais)/Nanimais_Mantidos, 
-            FreqRelPerM =  (sum(n_animais)/Nanimais_Mantidos)*100,
-            x = ".")
-```
-
-```{r Gráfico de linhas - Frequencia de utilização por espécie, message=FALSE, warning=FALSE,echo = F}
-Utilizados_SUM  <- totais%>%
-  filter(utilizado == "sim")%>%
-  AnimalSum(especie = especie, n_animais = n_animais)
-
-FreqRel_Grupo <- Frequencia_Utilizados%>%
-                   select(especie,FreqAbsT,FreqRelU)
-
-Utilizados_SUM <- left_join(Utilizados_SUM ,FreqRel_Grupo, by  = "especie")
-
-colnames(Utilizados_SUM)[10] <- "FreqRel_Grupo"
-
-Mantidos_SUM  <- totais%>%
-  filter(utilizado != "sim")%>%
-  AnimalSum(especie = especie, n_animais = n_animais)
-
-FreqRel_Grupo <- Frequencia_Mantidos%>%
-  select(especie,FreqAbsT,FreqRelM)
-
-Mantidos_SUM <- left_join(Mantidos_SUM, FreqRel_Grupo, by  = "especie")
-
-colnames(Mantidos_SUM)[10] <- "FreqRel_Grupo"
-
-Utilizados_SUM$utilizado <- "sim"
-Mantidos_SUM$utilizado <- "não"
-SUM_bind <- rbind(Utilizados_SUM, Mantidos_SUM)
-
-SUM_bind$especie <- as.factor(SUM_bind$especie)
-SUM_bind$utilizado <- as.factor(SUM_bind$utilizado)
-
-Figura_3 <- SUM_bind%>%
-  ggplot(aes(x = utilizado, y = FreqRel_Grupo*100, group = especie))+
-  geom_line(aes(color = especie), size = 1.5)+
-  geom_point(aes(color = especie),size = 3)+
-  scale_color_manual(values = Principal, 
-                     labels = rotulos)+
-  labs(x = "Utilização",
-       y = "Frequencia por grupo (%)", 
-       color = "Espécie")+
-  theme_minimal()+
-  theme(text = element_text(size = 14, face = "bold"))
-print(Figura_3)
-```
-
-```{r  Gráfico de Barras - Frequencia de utilização por espécie, , message=FALSE, warning=FALSE,echo = F}
-library(stringr)
-
-Frequencia_Utilizados_copia <- Frequencia_Utilizados
-
-Frequencia_Utilizados_copia <- Frequencia_Utilizados_copia %>%
-  mutate(especie = str_to_title(especie) %>%
-           str_replace_all("_", " ") %>%
-           str_replace_all("nao", "não") %>%
-           str_replace_all("especies", "espécies") %>%
-           str_replace_all("Caes", "Cães") %>%
-           str_replace_all("Cavia p", "Porquinho-da-índia"))
-
-
-Figura_4 <- Frequencia_Utilizados_copia%>%
-  ggplot(aes( y = FreqRelU,x = x, fill = reorder(especie,FreqRelU),
-              text = paste0("Espécie: ", especie,"\nPercentual: ",
-                            round(FreqRelU*100,2), "%" )))+
-  geom_bar(position = "stack", stat = "identity",width = 0.5)+
-  scale_fill_manual(values = Principal_2)+
-  labs(x = "Animais",
-       y = "(%)",
-       fill = "Espécie",
-       title = "Frequencia de cada espécie com relação aos utilizados\n em exprimentos ao longo de 2016")+
-  scale_y_continuous(labels = scales::label_percent())+
-                      coord_flip()+
-                      theme_minimal()+
-                       theme(text = element_text(size = 14, hjust = 0.5, face = "bold"))
-
- ggplotly(Figura_4, tooltip = c("text"))
-```
-
-## 3.3. Exposição a dor
-
+ A maior parte dos animais utilizados em pesquisa  não são expostos a dor, conforme demonstrado na [figura 2](#sec-04.1.3) e detalhado na [figura 5](#sec-04.1.8). Realizando a estratificação por espécies é evidenciado que, dentre os animais utilizados, os  coelhos, porquinhos-da-índia e hamsteres são os mais submetidos a dor. A soma destes três grupos ultrapassa alcança 51% dos enquadrados em pesquisas de categoria D. 
+ (Análises percentuais destas métricas podem ser obtidas no aplicativo).
+ 
+### **Figura 5** - Percentual dos animais utilizados e que são expostos a dor  e tratados{#sec-04.1.8}
 ```{r Frequencia de exposição a dor, message=FALSE, warning=FALSE,echo = F}
 FreqDor <- totais%>%
   filter(utilizado == "sim")%>%
@@ -418,20 +439,26 @@ FreqDor <- totais%>%
 ```
 
 ```{r Gráfico de freq de exposição a dor,message=FALSE, warning=FALSE,echo = F}
-FreqDor%>%
-  ggplot(aes(x = x,  y = freqRel, fill = dor))+
+plotdor<- FreqDor%>%
+  ggplot(aes(x = x,  y = freqRel, fill = dor,
+             text = paste0("Percentual de animais: ", round(freqRel,2)*100,"%", 
+                           "\nExposição a dor: ", dor )))+
   geom_col(position="stack", width = 0.15)+
   scale_fill_manual(values = c("não" = "#e64a19", "sim" = "#052935"))+
   scale_y_continuous(labels = scales::label_percent())+
   labs(x = "Total",
        y = "Nº de Animais",
        fill = "Dor",
-       title = "Dor")+
+       # title = "Dor"
+       )+
   coord_flip()+
   theme_minimal()+
   theme(text = element_text(size = 18, face = "bold"))
+ggplotly(plotdor, tooltip = "text")
 ```
+Ainda assim,  na avaliação com relação a terapia,  77% dos dos animais expostos a dor recebem suporte. Na avaliação por espécies contudo, esta métrica se mostra reversa para os hamsters, para os quais apenas 36,20%  [figura 6](#sec-04.1.9) receberam terapia de suporte como anestesia e/ou analgesia.
 
+### **Figura 6** - Percentual dos animais utilizados e que são expostos a dor  e tratados{#sec-04.1.9}
 ```{r Grafico de exposição a dor, message=FALSE, warning=FALSE, echo = F}
 Figura_5 <- totais%>%
   filter(dor == "sim")%>% 
@@ -445,7 +472,7 @@ Figura_5 <- totais%>%
                               "caes","primatas_nao_humanos","porcos",
                               "outras_especies","hamsters", "cavia_p", 
                               "coelhos"),
-                   labels = c("cavia_p" = "C. porcellus",
+                   labels = c("cavia_p" = "Porquinho-da-índia",
                               "outras_especies" = "Outras espécies",
                               "coelhos" = "Coelhos",
                               "hamsters" = "Hamsters",
@@ -460,13 +487,15 @@ Figura_5 <- totais%>%
        fill = "Terapia")+
   coord_flip()+
   theme_minimal()+
-  theme(text = element_text(size = 18, face = "bold"))
+  theme(text = element_text(size = 14, face = "bold"))
 
 ggplotly(Figura_5, tooltip = "text")
 ```
 
-## 3.4. Utilização de animais por Estado
+## 3.4. Utilização de animais por Estado  {#sec-04.4}
 
+Os EUA é composto por 52 estados, sendo dois deles com fronteiras descontínuas com relação ao território principal. Além de controlar o uso de animais em pesquisa nos estados, o USDA recebe relatórios de Porto-Rico, território anexado localizado na América Latina. Para fins de visualização, as informações referentes a estes três estados foram removidas do conjunto de dados principal. 
+A [figura 7](#sec-04.1.10) indica quais são os territórios nos quais mais animais são empregados em pesquisas. 
 ```{r Adição das geometrias, message=FALSE, warning=FALSE, echo = F}
 US <- read_sf("../Dados/Brutos/mapa/States_shapefile.shx")
 totais <- full_join(totais, US, by = c("estado"= "State_Code"))
@@ -487,7 +516,7 @@ PR <- totais%>%
 totais <- totais[!(totais$estado %in% c("HI", "AK", "PR")), ]
 
 ```
-
+### **Figura 7** -Utilização de animais por estado {#sec-04.1.10}
 ```{r Mapa 1 - Utilização de animais por estado,  message=FALSE, warning=FALSE, echo  = F }
 
 N_animais_estado <- totais%>%
@@ -552,7 +581,10 @@ MAPA1
 #           )
 #   )
 ```
+A califórnia é responsável por 7% dos animais utilizados para este fim no país. 
+NO ranking demonstrado na [figura 8](#sec-04.1.11), a composição pro espécie e estado é detalhada para os 50 estados avaliados.  
 
+### **Figura 8** - Ranking dos estados que mais utilizam animais em pesquisa por espécie {#sec-04.1.11}
 ```{r Ranking dos estados que mais utilizam animais em pesquisa por espécie,  message=FALSE, warning=FALSE, echo = F}
 totais %>%
   mutate(State_Name = reorder(State_Name, n_animais),
@@ -589,6 +621,10 @@ totais %>%
   theme(text = element_text(size = 12, hjust = 0.5, face = "bold"))
 ```
 
+O Estado da California, além de ocupar a primeira posição, as figuras [9](#sec-04.1.12) e [10](#sec-04.1.13)
+que também é o principal estado no qual são realizados experimentos com dor sem realização de terapia. Apesar disso, as figuras também mostram que é na costa leste dos EUA que a maior parte dos experimentos com a utilização de animais são realizados, independentemente da espécie. 
+
+### **Figura 9** - Utilização das espécies por estado {#sec-04.1.12}
 ```{r Mapa 2 - de utilização das espécies por estado,message=FALSE, warning=FALSE, echo = F}
 usa <- ne_states(country = "United States of America", returnclass = "sf")
 dados_latlongUS <-read_csv("../Dados/Processados/USA_latlong.csv")
@@ -644,7 +680,7 @@ ggplotly(MAPA2, tooltip = "text")%>%
             itemwidth = 30
           ))
 ```
-
+### **Figura 10** - Experimentos com exposição a dor por estado {#sec-04.1.13}
 ```{r Mapa 3, message=FALSE, warning=FALSE,echo = F}
 
 Dor_estado <- totais%>%
@@ -689,7 +725,7 @@ ggplotly(MAPA3, tooltip = "text")%>%
             itemwidth = 30
           ))
 ```
-
+### **Figura 11** - Ranking dos locais em que são realizados experimentos com exposição a dor {#sec-04.1.13}
 ```{r Onde são localizadas as experimentações com dor, message=FALSE, warning=FALSE, echo = F}
 totais%>%
   filter(dor == "sim")%>%
@@ -704,9 +740,61 @@ totais%>%
   theme(text = element_text(size = 18, face = "bold"))
 ```
 
-```{r - Dados adicionais - Universidades por estado,  message=FALSE, warning=FALSE, echo = F}
+Buscando avaliar os fatores motivadores da maior utilização de animais nesses estados, foi utilizado um levantameno a respeito do número de universidades por estado dos EUA, uma vez que estas instituição são as principais responsáveis pela realização de pesquisas em geral no país. De acordo com o *Homeland Infrastructure Foundation-Level Data*, os EUA possuem 6.550 universidades registradas com uma média de
+125.6 por estado. De acordo com as métricas de utilização de animais em pesquisa de 2016 do USDA,  a razão e de 146,29 para cada instituição de ensino superior no País. Contudo, a distribuição não é homogênea, conforme demonstrado na [figura 12](#sec-04.1.13). Os estados que possuem o maior número de universidades são a Califórnia, Nova York, Texas e Flórida.  
+
+### **Figura 12** - Universidades por estado {#sec-04.1.13}
+```{r,Universidades por estado,  message=FALSE, warning=FALSE, echo = F}
+usa <- ne_states(country = "United States of America", returnclass = "sf")
+dados_latlongUS <-read_csv("../Dados/Processados/USA_latlong.csv")
 dadosT <- read_csv(file = "../Dados/Processados/dados_processados_adc2.csv",
                       show_col_types = F)
+
+
+dadosT_latlong <- left_join(dadosT, dados_latlongUS , 
+                                 by = c("estado" = "estado"))
+dadosT_latlong <- dadosT_latlong[!(dadosT_latlong$estado %in% c("HI", "AK", "PR")), ]
+
+convert <- dadosT_latlong%>%
+  group_by(estado) %>%
+  mutate(longitude = longitude + runif(1, -1, 1),  
+         latitude = latitude + runif(1, -1, 1)) %>%
+  ungroup() %>%
+  st_as_sf(coords = c("longitude", "latitude"), crs = st_crs(4326))
+
+ 
+UniversidadesMAPA <-  ggplot() +
+  geom_sf(data = usa, color = "white", fill = "gray") +
+  geom_sf(data = convert, aes(size = NUniversidades,
+                              text = paste0(
+                                 "Estado: ",nome,
+                                "\nNº de universidades: ", NUniversidades,
+                                "\nNº de animais: ", Nanimais
+                                )), alpha = 0.7, color= "#052935")+
+  scale_size_continuous(range = c(2, 10), name = "") +
+   # scale_color_manual(values =  "#052935")+
+  labs(color = "",
+       size = "Número de universidades por estado")+
+  theme_void()+
+  coord_sf(xlim = c(-125, -66), ylim = c(25, 49))
+
+ggplotly(UniversidadesMAPA, tooltip = "text")%>%
+  layout( xaxis = list( linecolor = 'white'),
+          yaxis = list( linecolor = 'white'),
+          legend = list(
+            bgcolor = "transparent",
+            bordercolor = "transparent",
+            itemsizing = "constant",
+            itemwidth = 30
+          ))
+```
+
+
+Em seguida, foi realizada comparação e cálculo do coeficiente linear de pearson para associação do número de animais utilizados  por estado com o número de universidades. A associação, embora positiva, foi baixa, estimada em 0.613, conforme indicado na [figura 13](#sec-04.1.14).
+
+
+### **Figura 13** -  Correlação do número de animais e número de universidades por estado {#sec-04.1.14}
+```{r - Dados adicionais - Universidades por estado,  message=FALSE, warning=FALSE, echo = F}
 
 coef_correlacao <- cor(dadosT$Nanimais,dadosT$NUniversidades)
 
@@ -725,8 +813,20 @@ Figura_8 <- dadosT%>%
 ggplotly(Figura_8, tooltip = "all")
 ```
 
-## 3.5. Investigação de variáveis explicativas
 
+```{r message=FALSE, warning=FALSE, include=FALSE}
+sum(dadosT$NUniversidades)
+summary(dadosT$NUniversidades)
+(sum(dadosT$Nanimais)/sum(dadosT$NUniversidades))
+
+```
+## 3.5. Investigação de variáveis explicativas {#sec-04.5}
+
+Os resultados demonstrados na seção na [seção 3.2](#sec-04.2) a respeito da utilização de roedores como grupo majoritário enquanto animais de experimentação direcionou questionamentos acerca das variáveis que podem contibuir para exmplicar a preferencia pela utilização destas espécies. Com base em dados compilados pelo projeto de estudo de genômica e longevidade em Animais organizada pela Universidade de Birmingham  foram reunidas informações a respeito de quatro variáveis que poderiam estar implicadas na preferência na utilização nestas espécies em detrimento de outras. Adicionalmente, foi coletada a  estimativa de o custo de manutenção por unidade animal calculada e publicada pela universidade de Iowa. 
+
+A matriz de correção indica o coeficiente de correlação de Pearson calculado para cada variável com relação ao número de animais utilizados. Foram encontradas correlações negativas mais evidentes em favor do peso e do custo de manutenção como possíveis variáveis associadas a utilização de animais [figura 14](#sec-04.1.15). 
+
+### **Figura 14** -  Correlação do número de animais e número de universidades por estado {#sec-04.1.15}
 ```{r, Heatmap para avaliar correlacao, message=FALSE, warning=FALSE, echo = F}
 dadosT <- read_csv(file = "../Dados/Processados/dados_processados_adc1.csv",
                       show_col_types = F)
@@ -747,7 +847,9 @@ corrplot::corrplot(matriz_correlacao, method = "color",
                          tl.col = "black", addgrid.col = "darkgray", 
                          col = Paleta_3)
 ```
+A relação entre estas variáveis foi demonstrada na [figura 15](#sec-04.1.16)
 
+### **Figura 15** -  Correlação do número de animais e número de universidades por estado {#sec-04.1.16}
 ```{r,Possiveis explicativas,  message=FALSE, warning=FALSE, echo = F}
 dadosT_NAOM%>%
   ggplot(aes(x = custo_man_unidade, y = Nanimais , 
@@ -782,10 +884,20 @@ dadosT_NAOM%>%
     "ovelhas" = "Ovelhas"
   )) +
   theme_light() +
-  theme(text = element_text(size = 12, hjust = 0.5, face = "bold"))
+  theme(text = element_text(size = 18, hjust = 0.5, face = "bold"))
 ```
 
-# 4. Discussão
+# 4. Discussão {#sec-05}
+
+O controle do número dea nimais empregados em experimentação é uma prática que favorece o estabelecimento de metas e o rigor em termos de busca e  aprimoramento de modelos que vão de encontro aos preconizados de acordo com os 3R's. Neste sentido, o acompanhamento realizado pelo USDA é visto como exemplo pela comunidade internacional em especial para países que começaram a desenvolver regulamentações a respeito de forma mais tardia, como é o caso do Brasil.  Atualmente, a classificação adotada a respeito das categorias de estudo e as espécies que continuam sendo acompanhadas são as mesmas, o que permite avaliação temporal a respeito das métricas aqui apresentadas. Contudo,  até os anos 2010, a categorização experimental com relação a submissão a dor e as especies acompanhadas era distinta, o que limita a avaliação destas métricas em termos retrospectivos para antes desta década. De acordo com estimativas de 2002 a 2009 apenas 8%, em média, eram submetidos a dor  e o máximo de animais utilizados eram de no mácimo 100.000 animais ao ano. Esta discrepancia com relação aos dados mais recentes, como os aqui demonstrados se deve a baixa cobertura de controle de pequenos mamíferos como camundongos e ratos, hoje considerados no grupo de "outras espécies".  
+A preponderancia do emprego de roedores nas pesquisas vai de encontro ao já relatado nos EUA anteriormente e em outras partes do globo [].
+Dentre os fatores investigados na condução deste trabaho, as principais justificativas para o uso de pequenos roedores se baseiam no baixo peso corporal, e baixo custo de manutenção pro unidade animal. Outros fatores, tais como similaridade genética com  humanos, e outros mais subjetivos como facilidade de manuseio, e possibilidade de manutenção por um período compatível com a realização de um estudo de curto, médio e longo prazo podem ser razoaveis na escolha destes modelos. Outro ponto é que a escolha do modelo deveria ser realizada com base na pesgunta biológica realizada uma vez que fatores em termos anatomicos, fisiolóficos e genéticos podem limitar a translação de achados em animais para humanos.   Contudo,revisões e meta-análises apontam haver há indícios, de que a utilização destes modelos na maioria dos casos se dá por motivos menos científicos, como pela simples facilidade de acesso e comodidade de utilização da condução em biotérios que requerem menores entraves em termos regulatórios. A adoção destas práticas, juntamente com a falta de detalhamento na submissão de trabalhos realizados com experimentação animal, juntamente com a execução de experimenots com mau delinemaneto experimental, baixo poder estatístico e pobre análise,  contribui para utilização de animais em pesquisa em contextos de intervenções com baixa evidência para as estapas pré-clínicas e  dificultam a translação de conhecimentos obtidos através de experimentos com animais para humanos, aumentando o número de resultados falso-positivos. 
+ 
+ A distribuição geogŕafica da realização de experimentos em animais parece pode ser considerada homogenea ao longo dos EUA. A correlação com as universidades parece ser coerente, contudo, a utilização de métricas atualizadas e a inclusão de outros institutos de pesquisa pode contibuir para uma análise mais rigorosa a respeito. informaçõe adicionais sobre a natureza de pesquisa desenvolvida e parâmetros de bem estar avaliados poderiam contribuir para investigação dos fatores motivadores para utilziação das espécies. 
+ 
+ A adoção de praticas de notificação anual de utilização de animais deveria ser aperfeiçoada e implementada em outros países afim de facilitar  a execução de práticas que vão de encontro aos preceitos de redução, refinamento e substituição do uso de animais e na caracterização de modelos mais adequados além da comparação com modelos alternativos. 
+ 
+
 
 ```{r, Resumo, message=FALSE, warning=FALSE, echo = F}
 RESUMO <- totais%>%
@@ -832,12 +944,13 @@ circlepackeR(population, size = "Nanimais",
              color_max = "#052935")
 ```
 
-# 5. Considerações finais
+# 5. Considerações finais {#sec-06}
 
-# 6. Recursos adicionais
+ A utilização de animais em pesquisa é cercada de descobertas cieníficas relevantes mas também muitas ressalvas éticas. O monitoramento anual realizado pelo USDA, apesar de ser cosiderado um exemplo requer maior aperfeiçoamento com relação ao detalhamento de outras espécies além de mamíferos. Melhorias também são necessárias com relação a descrição da motivação de escolha do modelo animal bem como maior rigor em termos de delineamento experimental, e análise estatítica na condução de experimentos utilizando animais. Comparações a nível temporal podem contibuir com avanços de redução, refinamento e substituição de modelos animais. 
 
-## 6.1. Lista de figuras
 
-## 6.2. Aplicativo
+# 6. Recursos adicionais {#sec-07}
+
+## 6.1. Aplicativo
 
 # Referências

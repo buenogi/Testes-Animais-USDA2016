@@ -77,8 +77,8 @@ navbarPage(title = "Animal test insights",
                                       value = c(0,40000))),
                         mainPanel(
                           tabsetPanel(type = "tabs",
-                                               tabPanel("Ranking", plotOutput("PlotEstados")),
-                                                tabPanel("Mapa", plotly::plotlyOutput("PlotEstadosMapa"))
+                                               tabPanel("Ranking", plotOutput("PlotEstados"))
+                                             #  ,tabPanel("Mapa", plotly::plotlyOutput("PlotEstadosMapa"))
                           #                     tabPanel("Sumário", tableOutput("summary")),
                           #                     tabPanel("Tabela", tableOutput("table")
                           )
@@ -90,7 +90,7 @@ navbarPage(title = "Animal test insights",
            tabPanel(title = "Sobre",
                     mainPanel(
                       # leafletOutput("map"),
-                              highchartOutput('mapa',height = "500px"))
+                             # highchartOutput('mapa',height = "500px"))
                     )
 )
 

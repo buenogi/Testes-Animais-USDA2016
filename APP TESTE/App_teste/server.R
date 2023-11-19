@@ -184,61 +184,64 @@ function(input, output, session) {
     FreqFiltrados$resultado
   })
   
-  output$PlotEstados <- renderPlot({
-    P2 <-  FILTRADOSN$R2 %>%
-      mutate(nome = reorder(nome, n_animais),
-             especie = reorder(especie, n_animais)) %>%
-      ggplot(aes(x = nome, y = n_animais, fill = especie)) +
-      geom_col(position = "stack") +
-      scale_fill_manual(values = c(
-        "cavia_p" = "#052935",
-        "outras_especies" = "#00525b",
-        "coelhos" = "#007e72",
-        "hamsters" = "#45ab79",
-        "primatas_nao_humanos" = "#98d574",
-        "caes" = "#d0db5e",
-        "porcos" = "#face4b", 
-        "animais_de_fazenda" = "#f7b22d",
-        "gatos" = "#ee7014",
-        "ovelhas" = "#e64a19"
-      ), labels = c(
-        "cavia_p" = "C. porcellus",
-        "outras_especies" = "Outras espécies",
-        "coelhos" = "Coelhos",
-        "hamsters" = "Hamsters",
-        "primatas_nao_humanos" = "Primatas não humanos",
-        "caes" = "Cães",
-        "porcos" = "Porcos",
-        "animais_de_fazenda" = "Animais de fazenda",
-        "gatos" = "Gatos",
-        "ovelhas" = "Ovelhas")) +
-      coord_flip() +
-      labs(y = "Nº de animais", 
-           x = "Estado", 
-           fill = "Espécie",
-           title = "Frequência por espécie e por estado")+
-      theme_minimal()+
-      theme(text = element_text(size = 18, hjust = 0.5, face = "bold"))
-    P2
-  }, height = 1000, width = 1200)
+}
 
-  output$mapa <- renderHighchart({
-  FILTRADOSN$R2$n_animais <- as.numeric(FILTRADOSN$R2$n_animais)
-  FILTRADOSN$R2$latitude <- as.numeric(FILTRADOSN$R2$latitude)
-  FILTRADOSN$R2$longitude <- as.numeric(FILTRADOSN$R2$longitude)
-  
-  if (any(is.na(FILTRADOSN$R2$n_animais))) {
-    
-    FILTRADOSN$R2$n_animais[is.na(FILTRADOSN$R2$n_animais)] <- 0
-  }
-
-    highchart() %>%
-    hc_add_series(type = "mapbubble", 
-                  data = FILTRADOSN$R2,
-                  maxSize = max(FILTRADOSN$R2$n_animais),
-                  name = "") %>%
-    hc_mapNavigation(enabled = TRUE)
-  })
+  # 
+  # output$PlotEstados <- renderPlot({
+  #   P2 <-  FILTRADOSN$R2 %>%
+  #     mutate(nome = reorder(nome, n_animais),
+  #            especie = reorder(especie, n_animais)) %>%
+  #     ggplot(aes(x = nome, y = n_animais, fill = especie)) +
+  #     geom_col(position = "stack") +
+  #     scale_fill_manual(values = c(
+  #       "cavia_p" = "#052935",
+  #       "outras_especies" = "#00525b",
+  #       "coelhos" = "#007e72",
+  #       "hamsters" = "#45ab79",
+  #       "primatas_nao_humanos" = "#98d574",
+  #       "caes" = "#d0db5e",
+  #       "porcos" = "#face4b", 
+  #       "animais_de_fazenda" = "#f7b22d",
+  #       "gatos" = "#ee7014",
+  #       "ovelhas" = "#e64a19"
+  #     ), labels = c(
+  #       "cavia_p" = "C. porcellus",
+  #       "outras_especies" = "Outras espécies",
+  #       "coelhos" = "Coelhos",
+  #       "hamsters" = "Hamsters",
+  #       "primatas_nao_humanos" = "Primatas não humanos",
+  #       "caes" = "Cães",
+  #       "porcos" = "Porcos",
+  #       "animais_de_fazenda" = "Animais de fazenda",
+  #       "gatos" = "Gatos",
+  #       "ovelhas" = "Ovelhas")) +
+  #     coord_flip() +
+  #     labs(y = "Nº de animais", 
+  #          x = "Estado", 
+  #          fill = "Espécie",
+  #          title = "Frequência por espécie e por estado")+
+  #     theme_minimal()+
+  #     theme(text = element_text(size = 18, hjust = 0.5, face = "bold"))
+  #   P2
+  # }, height = 1000, width = 1200)
+  # 
+  # output$mapa <- renderHighchart({
+  # FILTRADOSN$R2$n_animais <- as.numeric(FILTRADOSN$R2$n_animais)
+  # FILTRADOSN$R2$latitude <- as.numeric(FILTRADOSN$R2$latitude)
+  # FILTRADOSN$R2$longitude <- as.numeric(FILTRADOSN$R2$longitude)
+  # 
+  # if (any(is.na(FILTRADOSN$R2$n_animais))) {
+  #   
+  #   FILTRADOSN$R2$n_animais[is.na(FILTRADOSN$R2$n_animais)] <- 0
+  # }
+  # 
+  #   highchart() %>%
+  #   hc_add_series(type = "mapbubble", 
+  #                 data = FILTRADOSN$R2,
+  #                 maxSize = max(FILTRADOSN$R2$n_animais),
+  #                 name = "") %>%
+  #   hc_mapNavigation(enabled = TRUE)
+  # })
 
 
   
@@ -310,7 +313,6 @@ function(input, output, session) {
   # # })
   # 
   
-}
 
 
 
