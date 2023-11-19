@@ -59,8 +59,8 @@ rotulos <- c(
 function(input, output, session) {
   output$imagemprincipal <- renderImage({
   # Imagem cabeçalho  
-    list(src = "www/01_img.png",
-         width = "80%",
+    list(src = "www/Design sem nome(1).png",
+         width = "100%",
          height = 500)
     
   }, deleteFile = F)
@@ -90,7 +90,8 @@ function(input, output, session) {
                                  "<b>%{label}</b><br>Percentual: %{value}(%)<br>Composição: %{percentEntry}<extra></extra>"),
             marker = list(colors = c("#e64a19", "#052935",
                                      "#ee7014", "#00525b",
-                                     "#45ab79", "#f7b22d")))
+                                     "#45ab79", "#f7b22d")))%>%
+      layout(font = list(size = 22))
   })
   # Painel 1 ------------------------
   
@@ -170,8 +171,11 @@ function(input, output, session) {
   output$freqPlot <- plotly::renderPlotly({
     
     P1 <- FreqFiltrados$resultado%>%
-      ggplot(aes( y = freqRel,x = foo, fill = reorder(especie, freqRel)))+
-      geom_bar(position = "stack", stat = "identity",width = 0.5)+
+      ggplot(aes( y = freqRel,x = foo, fill = reorder(especie, freqRel),
+                  text =  paste0("Especie: ", FreqFiltrados$resultado$especie,
+                                 "\nPercentual: ", round((FreqFiltrados$resultado$freqRel*100),2))))+
+      geom_bar(position = "stack", stat = "identity",width = 0.5
+               )+
       scale_fill_manual(values = c("cavia_p" = "#052935",
                                    "outras_especies" = "#00525b",
                                    "coelhos" = "#007e72",
@@ -182,7 +186,7 @@ function(input, output, session) {
                                    "animais_de_fazenda" = "#f7b22d",
                                    "gatos" = "#ee7014",
                                    "ovelhas" = "#e64a19"),
-                        labels = c("cavia_p" = "C. porcellus",
+                        labels = c("cavia_p" = "Porquinho-da-índia",
                                    "outras_especies" = "Outras espécies",
                                    "coelhos" = "Coelhos",
                                    "hamsters" = "Hamsters",
@@ -195,12 +199,12 @@ function(input, output, session) {
       labs(x = "Animais",
            y = "(%)",
            fill = "Espécie",
-           title = "Frequencia de cada espécie da composição geral")+
+           title = "Frequencia por espécie")+
       scale_y_continuous(labels = scales::label_percent())+
       coord_flip()+
       theme_minimal()+
       theme(text = element_text(size = 12, hjust = 0.5, face = "bold"))
-    plotly::ggplotly(P1)
+    plotly::ggplotly(P1, tooltip = "text")
   })
   
   output$resumo <- renderTable({

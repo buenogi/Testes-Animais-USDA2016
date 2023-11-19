@@ -1,12 +1,38 @@
 library(shiny)
 library(shinythemes)
+library(bslib)
 
-navbarPage(title = "Animal test insights",
+  
+
+
+navbarPage( bg = "#052935",
+            tags$head(
+              tags$style(type="text/css", "body {fixed-top: 70px;}")
+            ),
+  title = "Animal test insights",
            # Painel 1 ---------------
            tabPanel(title = "Home",
+                    fluidPage(
+                    theme = bs_theme(version = 3, bootswatch = 'journal',
+                                     bg = "white",
+                                     fg = "#052935",
+                                     primary = "#e64a19",
+                                     font_scale = 1.5,
+                                     base_font = font_google("Poppins", local = TRUE)
+                                     ),
+                    # theme = shinytheme("journal"),
+                      column(1,""),
+                      column(10,
                     imageOutput("imagemprincipal"),
-                    h1("Descrição do projeto"),
-                    h4("Anualmente, desde 1971, o USDA (Departamento de Agricultura 
+                    br(),
+                    br(),
+                    br(),
+                    br(),
+                    br(),
+                    hr(),
+                    h2(strong("Descrição do projeto")),
+                              p(style="text-align: justify; font-size = 30px",
+                              "Anualmente, desde 1971, o USDA (Departamento de Agricultura 
                     dos Estados Unidos) coleta as informações de animais 
                     empregados em diferentes instâncias de experimentação. 
                     Esta prática vai de encontro ao Ato de Bem-estar Animal 
@@ -20,7 +46,9 @@ navbarPage(title = "Animal test insights",
                     buscou-se avaliar se há diferença na composição dos grupos
                     com relação aos tipos de estudo e investigar fatores que
                     motivam a utilização de algumas espécies em detrimento de
-                    outras. A partir da utilização de metodologias de análise
+                    outras."),  
+                    br(),
+                    p(style="text-align: justify; font-size = 30px","A partir da utilização de metodologias de análise
                     exploratória de dados e inferência básica foi evidenciado
                     que no ano de 2016 os foram utilizados em média 460 animais
                     por estado dos EUA sendo sua maioria no estado da California.
@@ -31,13 +59,15 @@ navbarPage(title = "Animal test insights",
                     animais e número de universidades por estado. EM paralelo,
                     foi encontrada correlação negativa com relação a escolha das
                     espécies para utilização em pesquisa, o peso corporal e o custo
-                    de manutenção por unidade animal."),
-                    plotly::plotlyOutput("composicaoGeral")
-                    ),
+                    de manutenção por unidade animal. O código e o relatório detalhado
+                    utilizado para as análises e construção deste aplicativo podem ser enontrados em",
+                              a(href ="https://github.com/buenogi"),"."),
+                    hr(),
+                              div(plotly::plotlyOutput("composicaoGeral", width = "800px", height = "800px"), align = "center"))
+                    )),
            # Painel 2 -----------------------
            tabPanel(title = "Espécies ",
                     fluidPage(
-                      theme = shinytheme("journal"),
                       titlePanel("Testagem em animais - USDA 2016"),
                       # Sidebar with a slider input for number of bins
                       sidebarLayout(
@@ -50,26 +80,29 @@ navbarPage(title = "Animal test insights",
                                        selected = "Descritiva"),
                           radioButtons("utilizado",
                                        "Utilizados em pesquisa:",
-                                       choices = list("sim","nao", "todos"),
+                                       choiceValues = list("sim","nao", "todos"),
+                                       choiceNames = list("Sim", "Não", "Todos"),
                                        selected = "sim", 
                                        inline = T),
                           conditionalPanel(
                             condition = "input.utilizado == 'sim'",
                             radioButtons("dor",
                                          "Exposição a dor:",
-                                         choices = list("sim","nao", "todos"),
+                                         choiceValues = list("sim","nao", "todos"),
+                                         choiceNames = list("Sim", "Não", "Todos"),
                                          selected = "sim", 
                                          inline = TRUE)),
                           conditionalPanel(
                             condition = "input.utilizado == 'sim'& input.dor == 'sim'",
                             radioButtons("droga",
                                          "Anestesia/analgesia:",
-                                         choices = list("sim","nao", "todos"),
+                                         choiceValues = list("sim","nao", "todos"),
+                                         choiceNames = list("Sim", "Não", "Todos"),
                                          selected = "sim", 
                                          inline = T)),
                           selectInput("especie",
                                       "Selecione a especie:",
-                                      choices = c("C. porcellus" = "cavia_p",
+                                      choices = c("Porquinho-da-índia" = "cavia_p",
                                                   "Outras espécies" = "outras_especies",
                                                   "Coelhos" = "coelhos",
                                                   "Hamsters" = "hamsters",
@@ -92,7 +125,7 @@ navbarPage(title = "Animal test insights",
            # Painel 3 ---------------
            tabPanel(title = "Estados",
                     fluidPage(
-                      theme = shinytheme("journal"),
+                      # theme = shinytheme("journal"),
                       titlePanel("Estados"),
                       sidebarLayout(
                         sidebarPanel(
@@ -105,26 +138,29 @@ navbarPage(title = "Animal test insights",
                                       value = c(0,40000)),
                           radioButtons("utilizado2",
                                        "Utilizados em pesquisa:",
-                                       choices = list("sim","nao", "todos"),
+                                       choiceValues = list("sim","nao", "todos"),
+                                       choiceNames = list("Sim", "Não", "Todos"),
                                        selected = "sim", 
                                        inline = T),
                           conditionalPanel(
                             condition = "input.utilizado2 == 'sim'",
                             radioButtons("dor2",
                                          "Exposição a dor:",
-                                         choices = list("sim","nao", "todos"),
+                                         choiceValues = list("sim","nao", "todos"),
+                                         choiceNames = list("Sim", "Não", "Todos"),
                                          selected = "sim", 
                                          inline = TRUE)),
                           conditionalPanel(
                             condition = "input.utilizado2 == 'sim'& input.dor2 == 'sim'",
                             radioButtons("droga2",
                                          "Anestesia/analgesia:",
-                                         choices = list("sim","nao", "todos"),
+                                         choiceValues = list("sim","nao", "todos"),
+                                         choiceNames = list("Sim", "Não", "Todos"),
                                          selected = "sim", 
                                          inline = T)),
                           selectInput("especie2",
                                       "Selecione a especie:",
-                                      choices = c("C. porcellus" = "cavia_p",
+                                      choices = c("Porquinho-da-índia" = "cavia_p",
                                                   "Outras espécies" = "outras_especies",
                                                   "Coelhos" = "coelhos",
                                                   "Hamsters" = "hamsters",
