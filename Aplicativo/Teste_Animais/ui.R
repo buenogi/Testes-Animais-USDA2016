@@ -51,7 +51,15 @@ navbarPage( bg = "#052935",
                     pesquisa nos EUA em 2016. Na barra de navegação é possível
                     encontrar abas para avaliação das frequencias de utilização 
                     dos animais por espécie em cada categoria de estudo e
-                    ranqueamento dos estados nos quais as espécies são mais utilizadas.")         
+                    ranqueamento dos estados nos quais as espécies são mais utilizadas.
+                    Os dados brutos e referentes aos anuários de outros anos
+                    podem ser encontrados na página do", 
+                    tags$a(href="https://www.aphis.usda.gov/aphis/ourfocus/animalwelfare/sa_obtain_research_facility_annual_report/ct_research_facility_annual_summary_reports", "USDA.")),
+                    br(),
+                    br(),
+                    br(),
+                    br(),
+                    br()
                     ))),
            # Painel 2 -----------------------
            tabPanel(title = "Espécies",
@@ -186,7 +194,8 @@ navbarPage( bg = "#052935",
                            br(),
                            h5("Gislayne de Paula Bueno"),
                            h6("Elementos de programação aplicados a estatística"),
-                           h6("Estatística - UFPR 2º semestre - 2023")
+                           h6("Estatística - UFPR 2º semestre - 2023"),
+                           tags$a(href="https://github.com/buenogi", "GitHub"),
                           )
                            
                                  )),
