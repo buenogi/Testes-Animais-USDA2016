@@ -73,9 +73,9 @@ function(input, output, session) {
   
   # Gŕafico de composição geral-------------------
   output$composicaoGeral <- renderPlotly({
-    plot_ly(labels = c("Utilizados", "Não utilizados", 
-                       "Submetidos a dor", "Não submetidos a dor",
-                       "Receberam terapia", "Não receberam terapia"),
+    plot_ly(labels = c("Utilizados", "Categoria B\nNão utilizados", 
+                       "Submetidos a dor", "Categoria C\nNão submetidos a dor",
+                       "Categoria D\nReceberam terapia", "Categoria E\nNão receberam terapia"),
             parents = c("","","Utilizados","Utilizados",
                         "Submetidos a dor", "Submetidos a dor"),
             values = c(85.65,14.34,33.31,52.34,25.86,7.44),
@@ -366,6 +366,22 @@ function(input, output, session) {
     
   })
   
+   output$imagemfinal <- renderImage({
+     # Imagem cabeçalho  
+       list(src = "www/logo.png",
+          width = "100%",
+          height = 500)
+     
+   }, deleteFile = F)
+   
+   output$logoufpr <- renderImage({
+     # Imagem cabeçalho  
+     list(src = "www/Logo_oficial_da_UFPR_(sem_fundo).png",
+          width = "70%",
+          height = 250)
+     
+   }, deleteFile = F)
+   
   
 }
 

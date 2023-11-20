@@ -3,14 +3,12 @@ library(shinythemes)
 library(bslib)
 library(leaflet)
 
-  
-
 
 navbarPage( bg = "#052935",
-            tags$head(
-              tags$style(type="text/css", "body {fixed-top: 70px;}")
-            ),
-  title = "Animal test insights",
+            # tags$head(
+            #   tags$style(type="text/css", "body {fixed-top: 70px;}")
+              
+  title = "Testagem em animais - USDA 2016",
            # Painel 1 ---------------
            tabPanel(title = "Home",
                     fluidPage(
@@ -32,44 +30,33 @@ navbarPage( bg = "#052935",
                     br(),
                     hr(),
                     h2(strong("Descrição do projeto")),
-                              p(style="text-align: justify; font-size = 30px",
-                              "Anualmente, desde 1971, o USDA (Departamento de Agricultura 
+                    p(style="text-align: justify; font-size = 30px",
+                      "Anualmente, desde 1971, o USDA (Departamento de Agricultura 
                     dos Estados Unidos) coleta as informações de animais 
                     empregados em diferentes instâncias de experimentação. 
                     Esta prática vai de encontro ao Ato de Bem-estar Animal 
-                    (*Animal Welfare Act*). Este relatório foi realizado a partir
-                    da análise das observações coletadas pelo USDA referentes ao 
-                    ano de 2016. O relatório tem como objetivo descrever os dados
-                    reportados ao USDA a respeito da utilização de animais em 
-                    pesquisa nos EUA em 2016. Foram investigadas quais são as 
-                    espécies mais utilizadas por categoria de estudo e os estados
-                    nos quais cada espécie é mais utilizada. Adicionalmente 
-                    buscou-se avaliar se há diferença na composição dos grupos
-                    com relação aos tipos de estudo e investigar fatores que
-                    motivam a utilização de algumas espécies em detrimento de
-                    outras."),  
-                    br(),
-                    p(style="text-align: justify; font-size = 30px","A partir da utilização de metodologias de análise
-                    exploratória de dados e inferência básica foi evidenciado
-                    que no ano de 2016 os foram utilizados em média 460 animais
-                    por estado dos EUA sendo sua maioria no estado da California.
-                    A maior parte dos animais utilizados em experimentação não
-                    foram submetidos a dor. A composição dos grupos de animais
-                    e espécies varia de acordo com a categoria de estudo.
-                    Foi encontrada correlação positiva com relação ao uso de
-                    animais e número de universidades por estado. EM paralelo,
-                    foi encontrada correlação negativa com relação a escolha das
-                    espécies para utilização em pesquisa, o peso corporal e o custo
-                    de manutenção por unidade animal. O código e o relatório detalhado
-                    utilizado para as análises e construção deste aplicativo podem ser enontrados em",
-                              a(href ="https://github.com/buenogi"),"."),
+                    (Animal Welfare Act).
+                    Os estudos são caracterizados em quatro classes de 
+                    acordo com a exposição a dor e ao estresse, conforme indicado abaixo:"),
+                    h6("Categoria B - Animais foram criados mas não utilizados;"),
+                    h6("Categoria C - Animais foram utilizados mas não houve exposição a dor;"),
+                    h6("Categoria D - Animais foram utilizados e houve exposição a dor com terapia;"),
+                    h6("Categoria E - Animais foram utilizados e houve exposição a dor sem terapia."),
                     hr(),
-                              div(plotly::plotlyOutput("composicaoGeral", width = "800px", height = "800px"), align = "center"))
-                    )),
+                    div(h5("Composição geral da utilização de animais para experimentação com base no anuário de 2016 do USDA"), align = "center"),
+                    div(plotly::plotlyOutput("composicaoGeral", width = "800px", height = "800px"), align = "center"),
+                    p(style="text-align: justify; font-size = 30px",
+                      "Este aplicativo tem como objetivo descrever os dados
+                    reportados ao USDA a respeito da utilização de animais em 
+                    pesquisa nos EUA em 2016. Na barra de navegação é possível
+                    encontrar abas para avaliação das frequencias de utilização 
+                    dos animais por espécie em cada categoria de estudo e
+                    ranqueamento dos estados nos quais as espécies são mais utilizadas.")         
+                    ))),
            # Painel 2 -----------------------
-           tabPanel(title = "Espécies ",
+           tabPanel(title = "Espécies",
                     fluidPage(
-                      titlePanel("Testagem em animais - USDA 2016"),
+                      titlePanel("Avaliação por espécie"),
                       # Sidebar with a slider input for number of bins
                       sidebarLayout(
                         sidebarPanel(
@@ -127,7 +114,7 @@ navbarPage( bg = "#052935",
            tabPanel(title = "Estados",
                     fluidPage(
                       # theme = shinytheme("journal"),
-                      titlePanel("Estados"),
+                      titlePanel("Utilização de animais em experimentação por estados"),
                       sidebarLayout(
                         sidebarPanel(
                           sliderInput("n_animais",
@@ -175,8 +162,10 @@ navbarPage( bg = "#052935",
                                       selectize = T)),
                         mainPanel(
                           tabsetPanel(type = "tabs",
-                                      tabPanel("Ranking", plotOutput("PlotEstados")),
-                                      tabPanel("Mapa", leafletOutput("mapa"))
+                                      tabPanel("Mapa", leafletOutput("mapa"),
+                                        "Ranking", plotOutput("PlotEstados"))
+                                      # ,
+                                      # tabPanel("Mapa", leafletOutput("mapa"))
                                       #                     tabPanel("Sumário", tableOutput("summary")),
                                       #                     tabPanel("Tabela", tableOutput("table")
                           )
@@ -185,7 +174,24 @@ navbarPage( bg = "#052935",
                     )
            ),
            # Painel 4 --------------------
-           tabPanel(title = "Sobre")
-)
+           tabPanel(title = "Sobre",
+                    fluidPage(
+                    column(3,imageOutput("imagemfinal"),
+                           br(),
+                           br(),
+                           br(),
+                          div(imageOutput("logoufpr"), align = "center")),
+                    column(7, h3("Desenvolvimento:"),
+                           br(),
+                           br(),
+                           h5("Gislayne de Paula Bueno"),
+                           h6("Elementos de programação aplicados a estatística"),
+                           h6("Estatística - UFPR 2º semestre - 2023")
+                          )
+                           
+                                 )),
+                           
+                    )
+                  
 
 
