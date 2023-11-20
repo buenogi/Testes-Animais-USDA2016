@@ -34,7 +34,7 @@ navbarPage( bg = "#052935",
                       "Anualmente, desde 1971, o USDA (Departamento de Agricultura 
                     dos Estados Unidos) coleta as informações de animais 
                     empregados em diferentes instâncias de experimentação. 
-                    Esta prática vai de encontro ao Ato de Bem-estar Animal 
+                    Esta prática vai de encontro a Lei de Bem-estar Animal 
                     (Animal Welfare Act).
                     Os estudos são caracterizados em quatro classes de 
                     acordo com a exposição a dor e ao estresse, conforme indicado abaixo:"),
