@@ -32,3 +32,5 @@ packrat/
 
 .DS_Store
 .json
+.css
+.TeX
