@@ -1,7 +1,34 @@
-.Rproj.user
-.Rhistory
+# Arquivos gerados pelo R
 .RData
-.Ruserdata
-.Rproj
+.Rhistory
+
+# Diretórios gerados pelo R
+.Rproj.user/
+
+# Pacotes e ambientes virtuais
+renv/
+packrat/
+
+# Outros arquivos e diretórios comuns
+*.rds
+*.Rproj
+.Rcheck/
+.RShiny/
+
+# Arquivos temporários
+.Renviron
+.Rprofile.site
+.Rproj.user/
+.Rhistory
+.Rapp.history
+.Renviron.site
+.Rproj*
+*.html
+
+# Arquivos específicos do RStudio
+.Rproj.user/
+
+# Outros arquivos
+
 .DS_Store
 .json
